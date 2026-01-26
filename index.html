@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jobless RO: Calibrated</title>
+    <title>Jobless RO: Perfect XP</title>
     <style>
         :root {
             /* NEON GREEN THEME */
@@ -246,15 +246,10 @@ const DB = {
         'Sonic Blow':{sp:20, val:3.5, type:'phys'}, 'Grimtooth':{sp:15, val:2.5, type:'phys'}, 'Katar Mastery':{type:'pass'}
     },
     mobs: [
-        // Set A (1-9)
         [{n:'Poring',hp:30,atk:8,xp:10},{n:'Fabre',hp:40,atk:10,xp:12},{n:'Lunatic',hp:45,atk:12,xp:15},{n:'Picky',hp:50,atk:15,xp:18}],
-        // Set B (11-19)
         [{n:'Wolf',hp:150,atk:30,xp:50},{n:'Spore',hp:140,atk:25,xp:45},{n:'Skeleton',hp:180,atk:35,xp:60},{n:'Boa',hp:160,atk:40,xp:55}],
-        // Set C (21-29)
         [{n:'Orc Warrior',hp:600,atk:70,xp:200},{n:'Munak',hp:500,atk:60,xp:180},{n:'Sohee',hp:550,atk:65,xp:190},{n:'Bigfoot',hp:700,atk:80,xp:220}],
-        // Set D (31-39)
         [{n:'Raydric',hp:1000,atk:120,xp:350},{n:'High Orc',hp:1200,atk:130,xp:400},{n:'Argiope',hp:1100,atk:110,xp:380},{n:'Mantis',hp:900,atk:140,xp:360}],
-        // Set E (41-49)
         [{n:'Alarm',hp:1500,atk:160,xp:500},{n:'Minorous',hp:1600,atk:170,xp:550},{n:'Majoruros',hp:1700,atk:180,xp:600},{n:'Wanderer',hp:1400,atk:200,xp:580}]
     ],
     bosses: [
@@ -273,7 +268,7 @@ const app = {
     sys: { floor:1, battle:false, timer:null, diff:'easy', speed: 10, autoAlloc: false },
 
     init() {
-        const save = JSON.parse(localStorage.getItem('jro_calibrated_v1'));
+        const save = JSON.parse(localStorage.getItem('jro_perfect_v1'));
         if(save && save.p.name && save.p.hp > 0) {
             this.p = save.p; this.sys = save.sys;
             if(!this.p.equip) this.p.equip = {wpn:null, arm:null};
@@ -295,7 +290,7 @@ const app = {
 
     hardReset() {
         if(confirm("WIPE SAVE AND RESTART?")) {
-            localStorage.removeItem('jro_calibrated_v1');
+            localStorage.removeItem('jro_perfect_v1');
             location.reload();
         }
     },
@@ -376,7 +371,7 @@ const app = {
         });
     },
 
-    save() { localStorage.setItem('jro_calibrated_v1', JSON.stringify({p:this.p, sys:this.sys})); },
+    save() { localStorage.setItem('jro_perfect_v1', JSON.stringify({p:this.p, sys:this.sys})); },
 
     log(msg, type='') {
         const b = document.getElementById('log');
@@ -505,7 +500,8 @@ const app = {
             dex: Math.floor((mobData.dex || this.sys.floor) * (this.sys.diff==='hard'?1.2:1) * nerf),
             str:1, vit:1, int:1, luk:1, lvl: this.sys.floor
         };
-        if(isBoss) this.sys.mob.xp = Math.max(this.sys.mob.xp, this.p.next * 1.2);
+        // Ensure boss gives enough XP for next level
+        if(isBoss) this.sys.mob.xp = Math.max(this.sys.mob.xp, this.p.next * 1.5);
 
         this.sys.patb = 0; this.sys.eatb = 0;
         document.getElementById('battle-ui').hidden = false;
@@ -595,14 +591,18 @@ const app = {
             this.p.xp = 0;
             this.p.mhp += 10; this.p.hp = this.p.mhp; this.p.msp += 5; this.p.sp = this.p.msp;
             
+            // --- CALIBRATED XP LOGIC ---
+            // F1-9 (Lv1-9): 1 Kill/Level
+            // F11-19 (Lv10-19): 2 Kills/Level
+            // F21-29 (Lv20-29): 3 Kills/Level
             let killsReq = 1;
-            if(this.p.lvl < 2) killsReq = 1;
-            else if(this.p.lvl < 30) killsReq = 3;
-            else if(this.p.lvl < 50) killsReq = 4;
-            else if(this.p.lvl < 70) killsReq = 5;
-            else if(this.p.lvl < 80) killsReq = 20;
-            else killsReq = 100;
+            if (this.p.lvl < 10) killsReq = 1;
+            else if (this.p.lvl < 20) killsReq = 2;
+            else if (this.p.lvl < 30) killsReq = 3;
+            else if (this.p.lvl < 40) killsReq = 4;
+            else killsReq = 5;
             
+            // Auto-scale Next XP based on what we just killed
             this.p.next = mob.xp * killsReq;
 
             const ptsGain = Math.floor(Math.random() * 4) + 1;
@@ -661,26 +661,16 @@ const app = {
     victoryScreen() {
         clearInterval(this.sys.timer);
         this.sys.battle = false;
-        
-        let secretMsg = "";
-        let titleColor = "yellow";
-        
-        // SECRET HINT LOGIC
-        if(this.sys.diff === 'easy') {
-            secretMsg = "打爆 HARD MODE 先有 AB 食雞子相睇";
-        } else {
-            secretMsg = "SECRET UNLOCKED: MESSAGE 會長拎相";
-            titleColor = "#ff00ff";
-        }
+        let secretMsg = ""; let titleColor = "yellow";
+        if(this.sys.diff === 'easy') { secretMsg = "打爆 HARD MODE 先有 AB 食雞子相睇"; } 
+        else { secretMsg = "SECRET UNLOCKED: MESSAGE 會長拎相"; titleColor = "#ff00ff"; }
 
         document.getElementById('controls').innerHTML = `
             <div class="overlay-box victory">
                 <h2 style="color:${titleColor}">MISSION ACCOMPLISHED</h2>
                 <p>FLOOR 50 CLEARED!</p>
                 <p>Thank you for playing Jobless RO.</p>
-                <div style="margin-top:15px; padding:10px; border:1px dashed ${titleColor}; color:${titleColor}; font-weight:bold;">
-                    ${secretMsg}
-                </div>
+                <div style="margin-top:15px; padding:10px; border:1px dashed ${titleColor}; color:${titleColor}; font-weight:bold;">${secretMsg}</div>
                 <button onclick="app.startScreen()" style="border-color:#ff0; color:#ff0; margin-top:15px;">NEW GAME</button>
             </div>`;
     },
