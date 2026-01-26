@@ -103,4 +103,671 @@
         .log-crit { color: #ffff00; font-weight: bold; }
         .log-dmg { color: #ff5555; }
         .log-win { color: var(--highlight); font-weight: bold; border-top: 1px dashed var(--highlight); padding-top: 5px; margin-top: 5px;}
-        .log-loot { color: var(--rare); border: 1px solid var(--rare); padding
+        .log-loot { color: var(--rare); border: 1px solid var(--rare); padding: 2px 5px; background: #222200; display: inline-block; margin-top: 2px; }
+        .log-reset { color: #00ffff; font-weight: bold; }
+
+        /* Controls */
+        nav { flex-shrink: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; min-height: 50px; }
+        nav button:only-child { grid-column: span 2; }
+        
+        button {
+            background: var(--btn-bg); color: var(--highlight); border: 1px solid var(--btn-border);
+            padding: 15px; font-family: inherit; font-weight: bold; cursor: pointer;
+            text-transform: uppercase; letter-spacing: 1px;
+            box-shadow: 0 0 5px rgba(57, 255, 20, 0.1);
+        }
+        button:active { background: #004400; box-shadow: 0 0 10px var(--highlight); }
+        
+        /* Overlays (Start/End) */
+        .overlay-box {
+            grid-column: span 2; border: 2px solid var(--highlight); 
+            padding: 20px; background: #001100; text-align: center;
+            border-radius: 8px; box-shadow: 0 0 20px rgba(57, 255, 20, 0.2);
+        }
+        .game-over { border-color: #ff0000; background: #110000; box-shadow: 0 0 20px rgba(255, 0, 0, 0.3); }
+        .victory { border-color: #ffff00; background: #111100; box-shadow: 0 0 20px rgba(255, 255, 0, 0.3); }
+
+        input { 
+            background: #000; border: 1px solid var(--border); color: #fff; 
+            padding: 15px; text-align: center; width: 100%; box-sizing: border-box; 
+            font-family: inherit; font-size: 18px; margin-bottom: 20px; text-transform: uppercase;
+            outline: none;
+        }
+        
+        .alloc-row { display: flex; justify-content: space-between; background: #082208; padding: 5px 10px; margin-bottom: 2px; align-items: center; border: 1px solid #113311; }
+        .btn-plus { padding: 5px 15px; background: #003300; border: 1px solid var(--highlight); color: #fff; }
+        .reward-btn { text-align: left; border-left: 4px solid #777; background: #112211; }
+        .reward-btn.skill { border-left-color: #55aaff; }
+
+        .hint-text { margin-top:20px; font-size:11px; color:#558855; font-style: italic; border-top:1px dashed #224422; padding-top:10px; }
+
+        [hidden] { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="ctrl-row">
+            <div class="left-group">
+                <button class="btn-restart" onclick="app.hardReset()">[R]ESTART</button>
+                <div id="btn-auto-alloc" class="toggle-box" onclick="app.toggleAuto()">[ ] AUTO</div>
+            </div>
+            <div class="speed-group">
+                <button class="btn-speed active" id="spd-10" onclick="app.setSpeed(10)">10x</button>
+                <button class="btn-speed" id="spd-30" onclick="app.setSpeed(30)">30x</button>
+                <button class="btn-speed" id="spd-100" onclick="app.setSpeed(100)">100x</button>
+            </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+            <div>
+                <span id="ui-name" style="font-weight:bold; color:#fff;">Player</span>
+                <span id="ui-job" style="font-size:11px; color:#88aa88;">Novice</span>
+            </div>
+            <div style="text-align:right; font-size:11px;">
+                LVL <span id="ui-lvl" style="color:#ffff00;">1</span> | F<span id="ui-floor">1</span>/50
+            </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div>
+                <div style="font-size:10px; display:flex; justify-content:space-between;">HP <span id="ui-hp-txt"></span></div>
+                <progress id="hp-bar" value="100" max="100"></progress>
+            </div>
+            <div>
+                <div style="font-size:10px; display:flex; justify-content:space-between;">SP <span id="ui-sp-txt"></span></div>
+                <progress id="sp-bar" value="20" max="20"></progress>
+            </div>
+        </div>
+
+        <div class="equip-row">
+            <div class="equip-slot"><span>R.HAND:</span> <b id="ui-wpn">-</b></div>
+            <div class="equip-slot"><span>BODY:</span> <b id="ui-arm">-</b></div>
+        </div>
+
+        <div class="stat-grid">
+            <div><div class="stat-box">STR</div><div id="v-str" class="stat-val">1</div></div>
+            <div><div class="stat-box">AGI</div><div id="v-agi" class="stat-val">1</div></div>
+            <div><div class="stat-box">VIT</div><div id="v-vit" class="stat-val">1</div></div>
+            <div><div class="stat-box">INT</div><div id="v-int" class="stat-val">1</div></div>
+            <div><div class="stat-box">DEX</div><div id="v-dex" class="stat-val">1</div></div>
+            <div><div class="stat-box">LUK</div><div id="v-luk" class="stat-val">1</div></div>
+        </div>
+    </header>
+
+    <div id="battle-ui" hidden>
+        <div class="enemy-title"><span id="e-name">Target</span> <small id="e-hp-txt" style="color:#888;"></small></div>
+        <div class="atb-row">
+            <span style="color:#39ff14; width:30px;">YOU</span>
+            <progress id="atb-p" value="0" max="1000"></progress>
+        </div>
+        <div class="atb-row">
+            <span style="color:#ff4444; width:30px;">FOE</span>
+            <progress id="atb-e" value="0" max="1000"></progress>
+        </div>
+        <div style="text-align:center; font-size:10px; color:#448844; margin-top:5px;">COMBAT LOGIC ACTIVE</div>
+    </div>
+
+    <nav id="controls"></nav>
+
+    <main id="log"></main>
+
+<script>
+const DB = {
+    jobs: {
+        'Novice': { next:['Swordman','Mage','Thief'], hp:60, sp:20 },
+        'Swordman': { next:['Knight'], hp:150, sp:40 },
+        'Mage': { next:['Wizard'], hp:80, sp:100 },
+        'Thief': { next:['Assassin'], hp:100, sp:50 },
+        'Knight': { next:[], hp:400, sp:80 },
+        'Wizard': { next:[], hp:200, sp:200 },
+        'Assassin': { next:[], hp:250, sp:80 }
+    },
+    noviceSkills: [
+        { n: 'First Aid', sp: 3, val: 20, type: 'heal', desc: 'Heal HP' },
+        { n: 'Heavy Strike', sp: 5, val: 1.2, type: 'phys', desc: 'Phys Dmg' },
+        { n: 'Mana Bolt', sp: 5, val: 1.2, type: 'mag', desc: 'Mag Dmg' }
+    ],
+    jobSkills: {
+        'Swordman': [{n:'Bash', sp:8, type:'phys', val:1.5, desc:'Heavy Strike'}, {n:'Magnum Break', sp:15, type:'phys', val:1.2, desc:'Fire AoE'}, {n:'Auto Berserk', sp:0, type:'pass', val:0, desc:'Passive: +ATK at Low HP'}],
+        'Mage': [{n:'Fire Bolt', sp:10, type:'mag', val:1.8, desc:'Fire Dmg'}, {n:'Cold Bolt', sp:10, type:'mag', val:1.8, desc:'Water Dmg'}, {n:'Lightning Bolt', sp:10, type:'mag', val:1.8, desc:'Wind Dmg'}],
+        'Thief': [{n:'Envenom', sp:10, type:'phys', val:1.2, desc:'Poison Dmg'}, {n:'Double Attack', sp:0, type:'pass', val:0, desc:'Passive: 20% Double Hit'}, {n:'Hiding', sp:0, type:'pass', val:0, desc:'Passive: +10 Flee'}],
+        'Knight': [{n:'Bowling Bash', sp:20, type:'phys', val:3.0, desc:'Massive AoE'}, {n:'Pierce', sp:15, type:'phys', val:2.0, desc:'Ignore Def'}, {n:'Two-Hand Quicken', sp:0, type:'pass', val:0, desc:'Passive: +ASPD'}],
+        'Wizard': [{n:'Storm Gust', sp:30, type:'mag', val:4.0, desc:'Ultimate Ice'}, {n:'Meteor Storm', sp:30, type:'mag', val:4.0, desc:'Ultimate Fire'}, {n:'Lord of Vermilion', sp:35, type:'mag', val:4.5, desc:'Ultimate Wind'}],
+        'Assassin': [{n:'Sonic Blow', sp:20, type:'phys', val:3.5, desc:'8-Hit Stun'}, {n:'Grimtooth', sp:15, type:'phys', val:2.5, desc:'Ranged AoE'}, {n:'Katar Mastery', sp:0, type:'pass', val:0, desc:'Passive: +Crit'}]
+    },
+    skills: {
+        'First Aid':{sp:3, val:20, type:'heal'}, 'Heavy Strike':{sp:5, val:1.2, type:'phys'}, 'Mana Bolt':{sp:5, val:1.2, type:'mag'},
+        'Bash':{sp:8, val:1.5, type:'phys'}, 'Magnum Break':{sp:15, val:1.2, type:'phys'}, 'Auto Berserk':{type:'pass'},
+        'Fire Bolt':{sp:10, val:1.8, type:'mag'}, 'Cold Bolt':{sp:10, val:1.8, type:'mag'}, 'Lightning Bolt':{sp:10, val:1.8, type:'mag'},
+        'Envenom':{sp:10, val:1.2, type:'phys'}, 'Double Attack':{type:'pass'}, 'Hiding':{type:'pass'},
+        'Bowling Bash':{sp:20, val:3.0, type:'phys'}, 'Pierce':{sp:15, val:2.0, type:'phys'}, 'Two-Hand Quicken':{type:'pass'},
+        'Storm Gust':{sp:30, val:4.0, type:'mag'}, 'Meteor Storm':{sp:30, val:4.0, type:'mag'}, 'Lord of Vermilion':{sp:35, val:4.5, type:'mag'},
+        'Sonic Blow':{sp:20, val:3.5, type:'phys'}, 'Grimtooth':{sp:15, val:2.5, type:'phys'}, 'Katar Mastery':{type:'pass'}
+    },
+    mobs: [
+        [{n:'Poring',hp:30,atk:8,xp:10},{n:'Fabre',hp:40,atk:10,xp:12},{n:'Lunatic',hp:45,atk:12,xp:15},{n:'Picky',hp:50,atk:15,xp:18}],
+        [{n:'Wolf',hp:150,atk:30,xp:50},{n:'Spore',hp:140,atk:25,xp:45},{n:'Skeleton',hp:180,atk:35,xp:60},{n:'Boa',hp:160,atk:40,xp:55}],
+        [{n:'Orc Warrior',hp:600,atk:70,xp:200},{n:'Munak',hp:500,atk:60,xp:180},{n:'Sohee',hp:550,atk:65,xp:190},{n:'Bigfoot',hp:700,atk:80,xp:220}],
+        [{n:'Raydric',hp:1000,atk:120,xp:350},{n:'High Orc',hp:1200,atk:130,xp:400},{n:'Argiope',hp:1100,atk:110,xp:380},{n:'Mantis',hp:900,atk:140,xp:360}],
+        [{n:'Alarm',hp:1500,atk:160,xp:500},{n:'Minorous',hp:1600,atk:170,xp:550},{n:'Majoruros',hp:1700,atk:180,xp:600},{n:'Wanderer',hp:1400,atk:200,xp:580}]
+    ],
+    bosses: [
+        {n:'Angeling',hp:800,atk:40,xp:1000}, {n:'Golden Thief Bug',hp:2000,atk:80,xp:3000},
+        {n:'Eddga',hp:5000,atk:150,xp:8000}, {n:'Osiris',hp:10000,atk:250,xp:15000},
+        {n:'Baphomet',hp:25000,atk:500,xp:30000}
+    ],
+    items: {
+        wpn: [{n:'Knife', val:5}, {n:'Main Gauche', val:10}, {n:'Blade', val:25}, {n:'Katana', val:35}, {n:'Saber', val:50}, {n:'Muramasa', val:80}, {n:'Excalibur', val:120}],
+        arm: [{n:'Cotton Shirt', val:10}, {n:'Leather Jacket', val:20}, {n:'Coat', val:60}, {n:'Mink Coat', val:100}, {n:'Plate Armor', val:250}, {n:'Lord Clothes', val:400}]
+    }
+};
+
+const app = {
+    p: null,
+    sys: { floor:1, battle:false, timer:null, diff:'easy', speed: 10, autoAlloc: false },
+
+    init() {
+        const save = JSON.parse(localStorage.getItem('jro_ultimate_v1'));
+        if(save && save.p.name && save.p.hp > 0) {
+            this.p = save.p; this.sys = save.sys;
+            if(!this.p.equip) this.p.equip = {wpn:null, arm:null};
+            if(!this.sys.speed || this.sys.speed < 10) this.sys.speed = 10;
+            if(this.sys.floorKills === undefined) this.sys.floorKills = 0;
+            
+            this.setSpeed(this.sys.speed);
+            this.updateAutoBtn();
+            this.sys.battle = false; clearInterval(this.sys.timer);
+            
+            if(this.sys.pendingStarter) return this.starterSkillMenu();
+            if(this.p.pts > 0 && !this.sys.autoAlloc) return this.statMenu(this.sys.floor === 1);
+            if(this.sys.pendingJob) return this.jobMenu();
+            this.render(); this.menu();
+        } else {
+            this.sys.speed = 10; this.setSpeed(10); this.startScreen();
+        }
+    },
+
+    hardReset() {
+        if(confirm("WIPE SAVE AND RESTART?")) {
+            localStorage.removeItem('jro_ultimate_v1');
+            location.reload();
+        }
+    },
+
+    setSpeed(spd) {
+        this.sys.speed = spd;
+        document.querySelectorAll('.btn-speed').forEach(b => b.classList.remove('active'));
+        document.getElementById(`spd-${spd}`).classList.add('active');
+    },
+
+    toggleAuto() {
+        this.sys.autoAlloc = !this.sys.autoAlloc;
+        this.updateAutoBtn();
+        if(this.sys.autoAlloc && this.p.pts > 0) {
+            this.autoDistribute(); this.render();
+            if(document.getElementById('controls').innerHTML.includes("POINTS:")) this.menu(); 
+        }
+    },
+
+    updateAutoBtn() {
+        const btn = document.getElementById('btn-auto-alloc');
+        if(this.sys.autoAlloc) { btn.innerHTML = `[X] AUTO`; btn.classList.add('active'); } 
+        else { btn.innerHTML = `[ ] AUTO`; btn.classList.remove('active'); }
+    },
+
+    autoDistribute() {
+        while(this.p.pts > 0) {
+            const s = ['str','agi','vit','int','dex','luk'][Math.floor(Math.random()*6)];
+            this.p[s]++; this.p.pts--;
+            if(s==='vit') { this.p.mhp+=10; this.p.hp+=10; }
+            if(s==='int') { this.p.msp+=2; this.p.sp+=2; }
+        }
+    },
+
+    startScreen() {
+        const c = document.getElementById('controls');
+        c.innerHTML = `
+            <div class="overlay-box">
+                <span style="color:#39ff14; font-weight:bold;">IDENTITY REGISTRATION</span>
+                <input id="inpName" placeholder="ENTER NAME..." maxlength="10">
+                <span style="color:#fff; font-size:12px; display:block; margin-bottom:10px;">SELECT PROTOCOL</span>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <button onclick="app.newGame(document.getElementById('inpName').value, 'easy')" style="border-color:#88aa88; color:#88aa88;">EASY<br><sub style="font-size:9px">0.8x Stats</sub></button>
+                    <button onclick="app.newGame(document.getElementById('inpName').value, 'hard')" style="border-color:#ff4444; color:#ff4444;">HARD<br><sub style="font-size:9px">1.5x Stats</sub></button>
+                </div>
+                <div class="hint-text">MISSION: 打爆機睇AB食雞子相</div>
+            </div>
+        `;
+    },
+
+    newGame(name, difficulty) {
+        name = name.trim() || "Novice";
+        this.p = {
+            name: name, job: 'Novice', lvl: 1, xp: 0, next: 10,
+            hp: 60, mhp: 60, sp: 20, msp: 20,
+            str:1, agi:1, vit:1, int:1, dex:1, luk:1,
+            pts: 9, pots: 3, bonuses: { atk:0, matk:0, hit:0, flee:0 },
+            equip: { wpn: null, arm: null }, sk: {}
+        };
+        this.sys = { floor: 1, battle: false, diff: difficulty, speed: 10, autoAlloc: false, pendingStarter: true, floorKills: 0 };
+        this.setSpeed(10);
+        this.log(`Identity Confirmed: ${name}.`);
+        this.render();
+        this.starterSkillMenu(); 
+    },
+
+    starterSkillMenu() {
+        this.save();
+        const c = document.getElementById('controls');
+        c.innerHTML = ''; c.className = 'single-col';
+        this.log("Select Starting Skill Module:", 'log-win');
+        DB.noviceSkills.forEach(s => {
+            const btn = document.createElement('button');
+            btn.className = 'reward-btn skill';
+            btn.innerHTML = `${s.n} <sub>${s.desc}</sub>`;
+            btn.onclick = () => { this.p.sk[s.n] = 1; this.sys.pendingStarter = false; this.statMenu(true); };
+            c.appendChild(btn);
+        });
+    },
+
+    save() { localStorage.setItem('jro_ultimate_v1', JSON.stringify({p:this.p, sys:this.sys})); },
+
+    log(msg, type='') {
+        const b = document.getElementById('log');
+        const div = document.createElement('div');
+        div.className = 'log-entry ' + type;
+        div.innerHTML = msg;
+        b.insertBefore(div, b.firstChild);
+        if(b.children.length > 30) b.lastChild.remove();
+    },
+
+    getStats(char) {
+        const lvl = char.lvl || 1;
+        const bAtk = (char.bonuses ? char.bonuses.atk : 0);
+        const bHit = (char.bonuses ? char.bonuses.hit : 0);
+        const bFlee = (char.bonuses ? char.bonuses.flee : 0);
+        const wVal = (char.equip && char.equip.wpn) ? char.equip.wpn.val : 0;
+        
+        let passAspd = 0; let passCrit = 0; let passFlee = 0; let passAtk = 0;
+        if(char.sk) {
+            if(char.sk['Hiding']) passFlee += 10;
+            if(char.sk['Katar Mastery']) passCrit += 10;
+            if(char.sk['Two-Hand Quicken']) passAspd += 5;
+            if(char.sk['Auto Berserk'] && (char.hp / char.mhp) < 0.25) passAtk += Math.floor(lvl * 2);
+        }
+
+        return {
+            atk: (char.str||1) + Math.floor((char.dex||1)/5) + Math.floor((char.luk||1)/3) + Math.floor(lvl*2) + bAtk + wVal + passAtk,
+            aspd: 3 + ((char.agi||1) * 0.5) + passAspd, 
+            flee: (char.agi||1) + lvl + bFlee + passFlee,
+            hit: (char.dex||1) + lvl + bHit,
+            def: Math.floor((char.vit||1) / 2) + Math.floor(lvl/2),
+            crit: 1 + ((char.luk||1) * 0.3) + passCrit
+        };
+    },
+
+    render() {
+        if(!this.p) return;
+        ['str','agi','vit','int','dex','luk'].forEach(k => document.getElementById('v-'+k).innerText = this.p[k]);
+        document.getElementById('ui-name').innerText = this.p.name;
+        document.getElementById('ui-job').innerText = this.p.job;
+        document.getElementById('ui-lvl').innerText = this.p.lvl;
+        document.getElementById('ui-floor').innerText = this.sys.floor;
+        document.getElementById('ui-wpn').innerText = this.p.equip.wpn ? `${this.p.equip.wpn.n} (+${this.p.equip.wpn.val})` : "-";
+        document.getElementById('ui-arm').innerText = this.p.equip.arm ? `${this.p.equip.arm.n} (+${this.p.equip.arm.val} HP)` : "-";
+        document.getElementById('hp-bar').value = this.p.hp; document.getElementById('hp-bar').max = this.p.mhp;
+        document.getElementById('ui-hp-txt').innerText = `${Math.floor(this.p.hp)}/${this.p.mhp}`;
+        document.getElementById('sp-bar').value = this.p.sp; document.getElementById('sp-bar').max = this.p.msp;
+        document.getElementById('ui-sp-txt').innerText = `${Math.floor(this.p.sp)}/${this.p.msp}`;
+    },
+
+    btn(txt, fn) {
+        const b = document.createElement('button');
+        b.innerHTML = txt; b.onclick = fn;
+        document.getElementById('controls').appendChild(b);
+    },
+
+    getKillsNeeded(floor) {
+        if (floor <= 9) return 1;
+        if (floor <= 19) return 2;
+        if (floor <= 29) return 3;
+        if (floor <= 39) return 4;
+        return 5;
+    },
+
+    menu() {
+        this.save();
+        document.getElementById('controls').innerHTML = '';
+        document.getElementById('controls').className = '';
+        document.getElementById('battle-ui').hidden = true;
+        this.render();
+
+        if(this.sys.floor > 50) { this.victoryScreen(); return; }
+
+        if(this.sys.floor % 10 === 0) {
+            const boss = DB.bosses[(this.sys.floor/10)-1];
+            this.log(`<b style="color:#f55">BOSS DETECTED!</b>`);
+            this.btn("START BOSS BATTLE", () => this.fight(boss, true));
+            return;
+        }
+
+        const reqKills = this.getKillsNeeded(this.sys.floor);
+        const currentKills = this.sys.floorKills || 0;
+
+        if (currentKills >= reqKills) {
+            this.log("Floor Cleared.", 'log-win');
+            this.btn("NEXT FLOOR", () => {
+                this.sys.floor++;
+                this.sys.floorKills = 0;
+                this.menu();
+            });
+        } else {
+            let t = Math.floor((this.sys.floor-1)/10);
+            let pool = DB.mobs[t];
+            let mob;
+            if(this.sys.floor <= 5) {
+                pool.sort((a,b) => a.hp - b.hp);
+                mob = Math.random() < 0.8 ? pool[Math.floor(Math.random()*Math.min(2,pool.length))] : pool[Math.floor(Math.random()*pool.length)];
+            } else {
+                mob = pool[Math.floor(Math.random()*pool.length)];
+            }
+            this.log(`Floor ${this.sys.floor} - Encounter ${currentKills+1}/${reqKills}: ${mob.n}`);
+            this.btn("FIGHT", () => this.fight(mob));
+            
+            if(Math.random() < 0.2) {
+                this.btn("REST (HEAL)", () => { 
+                    this.p.hp=this.p.mhp; this.log("Rested.", 'log-win');
+                    this.render(); 
+                });
+            }
+        }
+    },
+
+    fight(mobData, isBoss) {
+        let mult = (this.sys.diff === 'easy') ? 0.8 : 1.5;
+        let xpMult = (this.sys.diff === 'hard') ? 1.5 : 1.0;
+        const nerf = isBoss ? 0.40 : 0.40;
+
+        this.sys.battle = true;
+        this.sys.mob = {
+            ...mobData,
+            mhp: Math.max(1, Math.floor(mobData.hp * mult * nerf)), 
+            hp: Math.max(1, Math.floor(mobData.hp * mult * nerf)),
+            atk: Math.max(1, Math.floor(mobData.atk * mult * nerf)), 
+            xp: Math.floor(mobData.xp * xpMult),
+            agi: Math.floor((mobData.agi || this.sys.floor) * (this.sys.diff==='hard'?1.2:1) * nerf),
+            dex: Math.floor((mobData.dex || this.sys.floor) * (this.sys.diff==='hard'?1.2:1) * nerf),
+            str:1, vit:1, int:1, luk:1, lvl: this.sys.floor
+        };
+        if(isBoss) this.sys.mob.xp = Math.max(this.sys.mob.xp, this.p.next * 1.2);
+
+        this.sys.patb = 0; this.sys.eatb = 0;
+        document.getElementById('battle-ui').hidden = false;
+        document.getElementById('controls').innerHTML = '';
+        document.getElementById('e-name').innerText = this.sys.mob.n;
+        
+        const runningBtn = document.createElement('button');
+        runningBtn.innerText = "AUTO-BATTLE...";
+        runningBtn.disabled = true; runningBtn.style.opacity = 0.5;
+        document.getElementById('controls').appendChild(runningBtn);
+
+        if(this.sys.timer) clearInterval(this.sys.timer);
+        this.sys.timer = setInterval(() => this.gameLoop(), 30);
+    },
+
+    gameLoop() {
+        if(!this.sys.battle) return;
+        const iterations = this.sys.speed; 
+        for(let i=0; i<iterations; i++) {
+            if(!this.sys.battle) break;
+            this.tick();
+        }
+        if(this.sys.battle) {
+            document.getElementById('atb-p').value = this.sys.patb;
+            document.getElementById('atb-e').value = this.sys.eatb;
+            document.getElementById('e-hp-txt').innerText = `${this.sys.mob.hp}/${this.sys.mob.mhp}`;
+        }
+    },
+
+    tick() {
+        const pStats = this.getStats(this.p);
+        const eStats = this.getStats(this.sys.mob);
+        this.sys.patb += pStats.aspd; this.sys.eatb += eStats.aspd;
+        if(this.sys.patb >= 1000) { this.sys.patb = 0; this.attack(this.p, this.sys.mob, pStats, eStats, true); }
+        if(this.sys.eatb >= 1000) { this.sys.eatb = 0; this.attack(this.sys.mob, this.p, eStats, pStats, false); }
+    },
+
+    attack(att, def, attStats, defStats, isPlayer) {
+        let hitChance = 80 + (attStats.hit - defStats.flee);
+        if(hitChance < 5) hitChance = 5; if(hitChance > 100) hitChance = 100;
+
+        if(Math.random() * 100 > hitChance) {
+            if(this.sys.speed <= 10) this.log(`${att.name || att.n} missed!`, 'log-dmg');
+            return;
+        }
+
+        let isCrit = (Math.random() * 100 < attStats.crit);
+        let dmg = attStats.atk;
+        if(isCrit) dmg = Math.floor(dmg * 1.5);
+        else {
+            dmg = Math.max(1, dmg - defStats.def);
+            dmg = Math.floor(dmg * (0.9 + Math.random() * 0.2));
+        }
+
+        if(isPlayer && this.p.sk['Double Attack'] && Math.random() < 0.2) dmg *= 2;
+
+        def.hp -= dmg;
+        if(this.sys.speed <= 10 || isCrit || def.hp <= 0) {
+            let msg = `${att.name || att.n} hits ${dmg}`;
+            if(isCrit) msg += "!";
+            this.log(msg, isPlayer ? (isCrit ? 'log-crit' : '') : 'log-dmg');
+        }
+
+        if(isPlayer && this.p.hp < this.p.mhp * 0.3 && this.p.pots > 0) {
+            this.p.pots--; this.p.hp += 50; this.log("Auto-Potion!", 'log-reset');
+        } else if(!isPlayer) { this.render(); }
+
+        if(def.hp <= 0) {
+            if(isPlayer) this.win(def); else this.gameOver();
+        }
+    },
+
+    win(mob) {
+        clearInterval(this.sys.timer);
+        this.sys.battle = false;
+        document.getElementById('battle-ui').hidden = true;
+        
+        this.p.xp += mob.xp;
+        this.sys.floorKills = (this.sys.floorKills || 0) + 1;
+        
+        this.log(`Victory! +${mob.xp} XP.`, 'log-win');
+        this.triggerRandomEvent();
+        this.checkLoot();
+
+        if(this.p.xp >= this.p.next) {
+            this.p.lvl++;
+            this.p.xp = 0;
+            this.p.mhp += 10; this.p.hp = this.p.mhp; this.p.msp += 5; this.p.sp = this.p.msp;
+            
+            let killsReq = 1;
+            if(this.p.lvl < 2) killsReq = 1;
+            else if(this.p.lvl < 30) killsReq = 3;
+            else if(this.p.lvl < 50) killsReq = 4;
+            else if(this.p.lvl < 70) killsReq = 5;
+            else if(this.p.lvl < 80) killsReq = 20;
+            else killsReq = 100;
+            
+            this.p.next = mob.xp * killsReq;
+
+            const ptsGain = Math.floor(Math.random() * 4) + 1;
+            this.p.pts += ptsGain;
+            this.log(`LEVEL UP! +${ptsGain} Pts`, 'log-crit');
+            
+            if(this.sys.autoAlloc) { this.autoDistribute(); this.menu(); } 
+            else this.statMenu(false);
+        } else {
+            if(this.sys.floor % 10 === 0) {
+                this.sys.floor++; this.sys.floorKills = 0;
+            }
+            this.menu();
+        }
+    },
+
+    checkLoot() {
+        let chance = 0.01 + (this.p.luk * 0.001) + (this.p.lvl * 0.001);
+        if(chance > 0.1) chance = 0.1;
+        if(Math.random() < chance) {
+            const type = Math.random() < 0.5 ? 'wpn' : 'arm';
+            const pool = DB.items[type];
+            let tier = Math.min(pool.length-1, Math.floor(this.sys.floor / 8));
+            tier += Math.floor(Math.random()*3) - 1;
+            if(tier < 0) tier = 0; if(tier >= pool.length) tier = pool.length - 1;
+            const drop = pool[tier];
+            const current = this.p.equip[type];
+            if(!current || drop.val > current.val) {
+                if(type === 'arm' && current) { this.p.mhp -= current.val; this.p.hp = Math.min(this.p.hp, this.p.mhp); }
+                this.p.equip[type] = drop;
+                if(type === 'arm') { this.p.mhp += drop.val; this.p.hp += drop.val; }
+                this.log(`FOUND: ${drop.n}! Equipped.`, 'log-loot');
+                this.render();
+            }
+        }
+    },
+
+    triggerRandomEvent() {
+        if(Math.random() > 0.3) return;
+        const types = ['atk', 'matk', 'hp', 'hit', 'flee'];
+        const type = types[Math.floor(Math.random() * types.length)];
+        if (type === 'atk') { this.p.bonuses.atk += 1; this.log("Blacksmith refined weapon (+1 ATK)", 'log-reset'); }
+        else if (type === 'matk') { this.p.bonuses.matk += 1; this.log("Blacksmith refined staff (+1 MATK)", 'log-reset'); }
+        else if (type === 'hp') { this.p.mhp += 1; this.p.hp += 1; this.log("Sage blessed vitality (+1 HP)", 'log-reset'); }
+        else if (type === 'hit') { this.p.bonuses.hit += 1; this.log("Sage blessed vision (+1 HIT)", 'log-reset'); }
+        else if (type === 'flee') { this.p.bonuses.flee += 1; this.log("Sage blessed steps (+1 FLEE)", 'log-reset'); }
+    },
+
+    gameOver() {
+        clearInterval(this.sys.timer);
+        this.sys.battle = false;
+        localStorage.removeItem('jro_ultimate_v1');
+        document.getElementById('controls').innerHTML = `<div class="overlay-box game-over"><h2 style="color:red">MISSION FAILED</h2><p>YOU DIED ON FLOOR ${this.sys.floor}</p><button onclick="app.startScreen()" style="border-color:#f55; color:#f55">RESTART</button></div>`;
+    },
+
+    victoryScreen() {
+        clearInterval(this.sys.timer);
+        this.sys.battle = false;
+        
+        let secretMsg = "";
+        let titleColor = "yellow";
+        
+        if(this.sys.diff === 'easy') {
+            secretMsg = "打爆 HARD MODE 先有 AB 食雞子相睇";
+        } else {
+            secretMsg = "SECRET UNLOCKED: MESSAGE 會長拎相";
+            titleColor = "#ff00ff"; // Special color for hard clear
+        }
+
+        document.getElementById('controls').innerHTML = `
+            <div class="overlay-box victory">
+                <h2 style="color:${titleColor}">MISSION ACCOMPLISHED</h2>
+                <p>FLOOR 50 CLEARED!</p>
+                <p>Thank you for playing Jobless RO.</p>
+                <div style="margin-top:15px; padding:10px; border:1px dashed ${titleColor}; color:${titleColor}; font-weight:bold;">
+                    ${secretMsg}
+                </div>
+                <button onclick="app.startScreen()" style="border-color:#ff0; color:#ff0; margin-top:15px;">NEW GAME</button>
+            </div>`;
+    },
+
+    statMenu(isStart = false) {
+        const c = document.getElementById('controls');
+        c.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#39ff14; margin-bottom:5px;">POINTS: ${this.p.pts}</div>`;
+        ['str','agi','vit','int','dex','luk'].forEach(s => {
+            const row = document.createElement('div');
+            row.className = 'alloc-row';
+            row.style.gridColumn = "span 2";
+            row.innerHTML = `<span>${s.toUpperCase()} <b style="color:#fff">${this.p[s]}</b></span><button class="btn-plus" id="btn-${s}">+</button>`;
+            c.appendChild(row);
+            row.querySelector(`#btn-${s}`).onclick = () => {
+                if(this.p.pts > 0) {
+                    this.p[s]++; this.p.pts--;
+                    if(s==='vit') { this.p.mhp+=10; this.p.hp+=10; }
+                    if(s==='int') { this.p.msp+=2; this.p.sp+=2; }
+                    this.render(); this.statMenu(isStart);
+                }
+            };
+        });
+        const done = document.createElement('button');
+        done.innerText = isStart ? "START" : "CONFIRM";
+        done.style.gridColumn = "span 2";
+        done.onclick = () => {
+            if(this.p.pts > 0 && isStart) this.log("Spend points!", 'log-dmg');
+            else {
+                const jd = DB.jobs[this.p.job];
+                const req = jd.next.length ? (jd.next.length>1?10:30) : 999;
+                if(this.p.lvl >= req && jd.next.length) this.jobMenu(); else { this.menu(); }
+            }
+        };
+        c.appendChild(done);
+    },
+
+    jobMenu() {
+        const c = document.getElementById('controls');
+        c.innerHTML = '';
+        this.log("Job Change Available!", 'log-win');
+        DB.jobs[this.p.job].next.forEach(j => {
+            this.btn(`CHANGE TO ${j}`, () => {
+                c.innerHTML = '';
+                this.log(`Change to ${j}?`, 'log-reset');
+                this.btn("KEEP STATS", () => { this.applyJob(j); });
+                this.btn("RESET STATS", () => { this.resetStats(); this.applyJob(j); });
+            });
+        });
+    },
+
+    applyJob(jobName) {
+        this.p.job = jobName; const b = DB.jobs[jobName];
+        this.p.mhp+=b.hp; this.p.hp=this.p.mhp; this.p.msp+=b.sp; this.p.sp=this.p.msp;
+        this.skillSelectMenu(jobName);
+    },
+
+    skillSelectMenu(jobName) {
+        const c = document.getElementById('controls');
+        c.innerHTML = ''; c.className = 'single-col';
+        this.log(`Select Signature Ability for ${jobName}:`, 'log-win');
+        
+        const options = DB.jobSkills[jobName];
+        options.forEach(s => {
+            const btn = document.createElement('button');
+            btn.className = 'reward-btn skill';
+            btn.innerHTML = `${s.n} <sub>${s.desc}</sub>`;
+            btn.onclick = () => { 
+                this.p.sk[s.n] = 1; 
+                this.sys.pendingJob = false; 
+                this.menu(); 
+            };
+            c.appendChild(btn);
+        });
+    },
+
+    resetStats() {
+        let invested = 0; let vitInv = this.p.vit - 1; let intInv = this.p.int - 1;
+        ['str','agi','vit','int','dex','luk'].forEach(s => { invested += (this.p[s]-1); this.p[s]=1; });
+        this.p.pts += invested;
+        this.p.mhp -= (vitInv * 10); this.p.hp = this.p.mhp; 
+        this.p.msp -= (intInv * 2); this.p.sp = this.p.msp;
+        this.log("Stats Reset.", 'log-reset');
+    }
+};
+
+const originalMenu = app.menu;
+app.menu = function() {
+    if(this.p.pts > 0 && this.sys.autoAlloc) this.autoDistribute();
+    if(this.p.pts > 0 && !this.sys.autoAlloc) { this.log("Unspent points."); this.statMenu(false); } 
+    else originalMenu.call(this);
+};
+
+app.init();
+</script>
+</body>
+</html>
