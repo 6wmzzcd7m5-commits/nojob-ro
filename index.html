@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jobless RO: Ultimate</title>
+    <title>Jobless RO: Calibrated</title>
     <style>
         :root {
             /* NEON GREEN THEME */
@@ -246,10 +246,15 @@ const DB = {
         'Sonic Blow':{sp:20, val:3.5, type:'phys'}, 'Grimtooth':{sp:15, val:2.5, type:'phys'}, 'Katar Mastery':{type:'pass'}
     },
     mobs: [
+        // Set A (1-9)
         [{n:'Poring',hp:30,atk:8,xp:10},{n:'Fabre',hp:40,atk:10,xp:12},{n:'Lunatic',hp:45,atk:12,xp:15},{n:'Picky',hp:50,atk:15,xp:18}],
+        // Set B (11-19)
         [{n:'Wolf',hp:150,atk:30,xp:50},{n:'Spore',hp:140,atk:25,xp:45},{n:'Skeleton',hp:180,atk:35,xp:60},{n:'Boa',hp:160,atk:40,xp:55}],
+        // Set C (21-29)
         [{n:'Orc Warrior',hp:600,atk:70,xp:200},{n:'Munak',hp:500,atk:60,xp:180},{n:'Sohee',hp:550,atk:65,xp:190},{n:'Bigfoot',hp:700,atk:80,xp:220}],
+        // Set D (31-39)
         [{n:'Raydric',hp:1000,atk:120,xp:350},{n:'High Orc',hp:1200,atk:130,xp:400},{n:'Argiope',hp:1100,atk:110,xp:380},{n:'Mantis',hp:900,atk:140,xp:360}],
+        // Set E (41-49)
         [{n:'Alarm',hp:1500,atk:160,xp:500},{n:'Minorous',hp:1600,atk:170,xp:550},{n:'Majoruros',hp:1700,atk:180,xp:600},{n:'Wanderer',hp:1400,atk:200,xp:580}]
     ],
     bosses: [
@@ -268,7 +273,7 @@ const app = {
     sys: { floor:1, battle:false, timer:null, diff:'easy', speed: 10, autoAlloc: false },
 
     init() {
-        const save = JSON.parse(localStorage.getItem('jro_ultimate_v1'));
+        const save = JSON.parse(localStorage.getItem('jro_calibrated_v1'));
         if(save && save.p.name && save.p.hp > 0) {
             this.p = save.p; this.sys = save.sys;
             if(!this.p.equip) this.p.equip = {wpn:null, arm:null};
@@ -290,7 +295,7 @@ const app = {
 
     hardReset() {
         if(confirm("WIPE SAVE AND RESTART?")) {
-            localStorage.removeItem('jro_ultimate_v1');
+            localStorage.removeItem('jro_calibrated_v1');
             location.reload();
         }
     },
@@ -371,7 +376,7 @@ const app = {
         });
     },
 
-    save() { localStorage.setItem('jro_ultimate_v1', JSON.stringify({p:this.p, sys:this.sys})); },
+    save() { localStorage.setItem('jro_calibrated_v1', JSON.stringify({p:this.p, sys:this.sys})); },
 
     log(msg, type='') {
         const b = document.getElementById('log');
@@ -487,7 +492,7 @@ const app = {
     fight(mobData, isBoss) {
         let mult = (this.sys.diff === 'easy') ? 0.8 : 1.5;
         let xpMult = (this.sys.diff === 'hard') ? 1.5 : 1.0;
-        const nerf = isBoss ? 0.40 : 0.40;
+        const nerf = isBoss ? 0.15 : 0.40;
 
         this.sys.battle = true;
         this.sys.mob = {
@@ -649,7 +654,7 @@ const app = {
     gameOver() {
         clearInterval(this.sys.timer);
         this.sys.battle = false;
-        localStorage.removeItem('jro_ultimate_v1');
+        localStorage.removeItem('jro_calibrated_v1');
         document.getElementById('controls').innerHTML = `<div class="overlay-box game-over"><h2 style="color:red">MISSION FAILED</h2><p>YOU DIED ON FLOOR ${this.sys.floor}</p><button onclick="app.startScreen()" style="border-color:#f55; color:#f55">RESTART</button></div>`;
     },
 
@@ -660,11 +665,12 @@ const app = {
         let secretMsg = "";
         let titleColor = "yellow";
         
+        // SECRET HINT LOGIC
         if(this.sys.diff === 'easy') {
             secretMsg = "打爆 HARD MODE 先有 AB 食雞子相睇";
         } else {
             secretMsg = "SECRET UNLOCKED: MESSAGE 會長拎相";
-            titleColor = "#ff00ff"; // Special color for hard clear
+            titleColor = "#ff00ff";
         }
 
         document.getElementById('controls').innerHTML = `
