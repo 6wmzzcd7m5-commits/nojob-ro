@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jobless RO: 50F</title>
+    <title>Jobless RO: Ultimate</title>
     <style>
         :root {
+            /* NEON GREEN THEME */
             --bg: #020502; --panel: #051a05; --border: #39ff14; 
             --text: #ccffcc; --highlight: #39ff14;
             --hp: #ff4444; --sp: #0088ff; 
@@ -33,6 +34,15 @@
             margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px dashed #336633;
         }
         
+        .left-group { display: flex; gap: 5px; align-items: center; }
+
+        /* Restart Button */
+        .btn-restart {
+            background: #220000; border: 1px solid #ff4444; color: #ff4444;
+            padding: 4px 8px; font-size: 10px; cursor: pointer; font-weight: bold;
+        }
+        .btn-restart:active { background: #ff0000; color: #000; }
+
         .toggle-box {
             display: flex; align-items: center; gap: 5px; font-size: 10px; cursor: pointer;
             border: 1px solid #225522; padding: 4px 8px; background: #001100; color: #888;
@@ -93,34 +103,4 @@
         .log-crit { color: #ffff00; font-weight: bold; }
         .log-dmg { color: #ff5555; }
         .log-win { color: var(--highlight); font-weight: bold; border-top: 1px dashed var(--highlight); padding-top: 5px; margin-top: 5px;}
-        .log-loot { color: var(--rare); border: 1px solid var(--rare); padding: 2px 5px; background: #222200; display: inline-block; margin-top: 2px; }
-        .log-reset { color: #00ffff; font-weight: bold; }
-
-        /* Controls */
-        nav { flex-shrink: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; min-height: 50px; }
-        nav button:only-child { grid-column: span 2; }
-        
-        button {
-            background: var(--btn-bg); color: var(--highlight); border: 1px solid var(--btn-border);
-            padding: 15px; font-family: inherit; font-weight: bold; cursor: pointer;
-            text-transform: uppercase; letter-spacing: 1px;
-            box-shadow: 0 0 5px rgba(57, 255, 20, 0.1);
-        }
-        button:active { background: #004400; box-shadow: 0 0 10px var(--highlight); }
-        
-        .overlay-box {
-            grid-column: span 2; border: 2px solid var(--highlight); 
-            padding: 20px; background: #001100; text-align: center;
-            border-radius: 8px; box-shadow: 0 0 20px rgba(57, 255, 20, 0.2);
-        }
-        .game-over { border-color: #ff0000; background: #110000; box-shadow: 0 0 20px rgba(255, 0, 0, 0.3); }
-        .victory { border-color: #ffff00; background: #111100; box-shadow: 0 0 20px rgba(255, 255, 0, 0.3); }
-
-        input { 
-            background: #000; border: 1px solid var(--border); color: #fff; 
-            padding: 15px; text-align: center; width: 100%; box-sizing: border-box; 
-            font-family: inherit; font-size: 18px; margin-bottom: 20px; text-transform: uppercase;
-            outline: none;
-        }
-        
-        .alloc-row { display: flex
+        .log-loot { color: var(--rare); border: 1px solid var(--rare); padding
