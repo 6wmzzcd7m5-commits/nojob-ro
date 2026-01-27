@@ -1,111 +1,146 @@
-/* --- DB LAYER 1: UNIVERSAL TRANSLATIONS --- */
+/* --- 1. TRANSLATION DB (LAYER 1) --- */
 :root {
-    /* Colors from v3 Engine */
-    --bg: #111; --panel: #222; --border: #444; --text: #eee;
-    --hp: #ff5555; --sp: #55aaff; --c-n: #55ff55; --bd: #444;
-    --r: #ffeb3b;
-
-    /* English Dictionary */
-    --t-save-en: "SAVE"; --t-load-en: "LOAD"; 
-    --t-fight-en: "FIGHT"; --t-start-en: "START JOURNEY";
+    /* English Strings */
+    --t-start-en: "INITIALIZE SYSTEM"; 
+    --t-save-en: "SYNC_DATA";
+    --t-load-en: "RECALL_DATA";
     
-    /* Chinese Dictionary */
-    --t-save-cn: "存檔"; --t-load-cn: "讀檔"; 
-    --t-fight-cn: "戰鬥"; --t-start-cn: "開啟冒險";
+    /* Chinese Strings */
+    --t-start-cn: "啟動系統"; 
+    --t-save-cn: "同步數據";
+    --t-load-cn: "召回數據";
 }
 
-/* Logic: Mapping based on Body Class */
-.lang-en { --u-save: var(--t-save-en); --u-fight: var(--t-fight-en); --u-start: var(--t-start-en); }
-.lang-cn { --u-save: var(--t-save-cn); --u-fight: var(--t-fight-cn); --u-start: var(--t-start-cn); }
+/* Mapping Logic */
+.lang-en { --u-start: var(--t-start-en); --u-save: var(--t-save-en); --u-load: var(--t-load-en); }
+.lang-cn { --u-start: var(--t-start-cn); --u-save: var(--t-save-cn); --u-load: var(--t-load-cn); }
 
-/* Automated Translation Injection */
-[data-t="save"]::before { content: var(--u-save); }
-[data-t="fight"]::before { content: var(--u-fight); }
+/* Automated Injection into Shell Buttons */
 [data-t="start"]::before { content: var(--u-start); }
+[data-t="save"]::before { content: var(--u-save); }
+[data-t="load"]::before { content: var(--u-load); }
 
-/* --- CORE UI STYLING --- */
-body { 
-    background: var(--bg); color: var(--text); 
-    font-family: system-ui, monospace; margin: 0; padding: 10px;
-    display: flex; flex-direction: column; gap: 15px;
+/* --- 2. THE NEON STAGE --- */
+
+#stage {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    min-height: 120px;
+    padding-bottom: 20px;
+    background: linear-gradient(180deg, #000 0%, #081008 100%);
+    position: relative;
+    overflow: hidden;
 }
 
-.panel { 
-    background: var(--panel); border: 1px solid var(--border); 
-    padding: 10px; border-radius: 8px;
+/* Scanline Effect Overlay */
+#stage::after {
+    content: " ";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: none;
+    z-index: 10;
 }
 
-progress { 
-    width: 100%; height: 8px; appearance: none; border: none;
-    background: #444; border-radius: 4px; overflow: hidden; display: block;
-}
-progress::-webkit-progress-bar { background: #444; }
-progress::-webkit-progress-value { transition: width 0.3s; }
+/* --- 3. SPRITE GEOMETRY DB --- */
 
-#hp-bar::-webkit-progress-value { background: var(--hp); }
-#sp-bar::-webkit-progress-value { background: var(--sp); }
-#atb-p::-webkit-progress-value { background: var(--c-n); }
-#atb-e::-webkit-progress-value { background: var(--hp); }
-
-/* --- LAYERED SPRITE SYSTEM --- */
-.avatar-box { 
-    width: 60px; height: 80px; position: relative; 
-    display: flex; justify-content: center; align-items: flex-end;
+.avatar-box {
+    width: 60px;
+    height: 80px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    z-index: 5;
 }
 
-.spr { 
-    width: 32px; height: 44px; position: absolute; bottom: 5px; 
-    animation: idle 1.2s infinite ease-in-out;
+.spr {
+    width: 30px;
+    height: 40px;
+    position: absolute;
+    bottom: 5px;
+    animation: idle 1.5s infinite ease-in-out;
 }
 
-.hd { /* Head Layer */
-    width: 22px; height: 20px; background: #fca; 
-    position: absolute; left: 5px; top: 0; z-index: 5; border-radius: 4px; 
+/* head layer */
+.hd {
+    width: 22px;
+    height: 20px;
+    background: #fca;
+    position: absolute;
+    left: 4px;
+    top: 0;
+    border-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
-.bd { /* Body Layer */
-    width: 20px; height: 20px; background: #eee; 
-    position: absolute; left: 6px; top: 18px; z-index: 3; border-radius: 2px; 
+/* body layer */
+.bd {
+    width: 20px;
+    height: 22px;
+    background: #eee;
+    position: absolute;
+    left: 5px;
+    top: 18px;
+    border-radius: 2px;
 }
 
-/* --- JOB COSTUME DB (Gradients) --- */
-.j-Novice .bd { background: linear-gradient(#fff, #dca); }
-.j-Swordman .bd { background: linear-gradient(#d84, #468); border: 1px solid #777; }
-.j-Mage .bd { background: linear-gradient(90deg, #348, #eee); }
-.j-Thief .bd { background: linear-gradient(#333, #525); }
+/* Job-specific costumes (Gradients) */
+.j-Novice .bd   { background: linear-gradient(#fff, #999); }
+.j-Swordman .bd { background: linear-gradient(#d84, #333); border: 1px solid #777; }
+.j-Mage .bd     { background: linear-gradient(#4af, #003); }
+.j-Thief .bd    { background: linear-gradient(#333, #606); }
 
-/* --- MONSTER GEOMETRY DB --- */
-[data-mob="Poring"] .hd { background: #fca; border-radius: 50%; width: 26px; height: 22px; top: 15px; }
-[data-mob="Lunatic"] .hd { background: #fff; border-radius: 50%; width: 24px; height: 22px; top: 15px; }
-[data-mob="Lunatic"]::after { content: 'V'; position: absolute; top: 5px; left: 8px; color: #fff; font-size: 12px; }
+/* Monster Definitions */
+[data-mob="Poring"] .hd { background: #ff9999; border-radius: 50%; width: 26px; height: 24px; top: 15px; }
+[data-mob="Poring"] .bd { display: none; }
 
 [data-mob="Angeling"] .hd { 
-    background: #fff; border-radius: 50%; width: 34px; height: 30px; 
+    background: #fff; border-radius: 50%; width: 32px; height: 30px; 
     top: 5px; box-shadow: 0 0 15px #fff; 
 }
+[data-mob="Angeling"]::before { content: "👼"; position: absolute; top: -15px; left: 18px; font-size: 12px; }
 
-/* --- ANIMATIONS & UTILS --- */
-@keyframes idle { 
-    0%, 100% { transform: translateY(0); } 
-    50% { transform: translateY(2px); } 
+/* --- 4. ANIMATION & OVERLAYS --- */
+
+/* Boss Warning (Neon Red Contrast) */
+.warning-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(255, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    animation: warn-flash 0.4s infinite alternate;
+    border: 3px solid #ff3131;
+    pointer-events: none;
 }
 
-.anim-shake { animation: shake 0.2s cubic-bezier(.36,.07,.19,.97) both; }
+.warning-text {
+    color: #fff;
+    font-weight: 900;
+    font-size: 1.4rem;
+    text-shadow: 0 0 10px #f00, 0 0 20px #f00;
+    letter-spacing: 5px;
+}
+
+@keyframes idle {
+    0%, 100% { transform: translateY(0) scaleX(1); }
+    50% { transform: translateY(3px) scaleX(1.05); }
+}
+
+@keyframes warn-flash {
+    from { opacity: 0.2; }
+    to { opacity: 0.8; }
+}
+
+.anim-shake { animation: shake 0.2s both; }
 @keyframes shake {
-    10%, 90% { transform: translate3d(-1px, 0, 0); }
-    20%, 80% { transform: translate3d(2px, 0, 0); }
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
 }
-
-.btn-neon {
-    background: #000; color: #fff; border: 1px solid var(--c-n);
-    padding: 10px; cursor: pointer; font-weight: bold; transition: 0.2s;
-}
-.btn-neon:active { background: var(--c-n); color: #000; }
-
-.grid { display: grid; gap: 10px; }
-.g-2 { grid-template-columns: 1fr 1fr; }
-.g-6 { grid-template-columns: repeat(6, 1fr); }
-.g-5 { grid-template-columns: repeat(5, 1fr); }
-
-.flex { display: flex; justify-content: space-between; align-items: center; }
-.c-n { color: var(--c-n); } .c-red { color: var(--hp); } .c-yel { color: var(--r); }
