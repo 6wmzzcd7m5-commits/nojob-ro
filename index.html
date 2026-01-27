@@ -287,12 +287,12 @@
                 DB_ITEMS.pool.forEach(i => {
                     if (Math.random() < i.rate) {
                         const item = { ...i };
-                        if (item.type === 'weapon') {
+                        if (item.category === 'weapon') {
                             if (!this.p.wpn || item.val > this.p.wpn.val) {
                                 this.p.wpn = item;
                                 UI.log(`${DB.txt('equip')} ${DB_ITEMS.getName(item.n)}`, "c-yel");
                             }
-                        } else if (item.type === 'armor') {
+                        } else if (item.category === 'armor') {
                             if (!this.p.arm || item.val > this.p.arm.val) {
                                 this.p.arm = item;
                                 UI.log(`${DB.txt('equip')} ${DB_ITEMS.getName(item.n)}`, "c-yel");

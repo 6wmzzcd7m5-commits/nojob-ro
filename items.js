@@ -73,21 +73,21 @@ window.DB_ITEMS = {
 
     // 3. EXPANDED LOOT POOL
     pool: [
-        { n: 'Red Potion', type: 'heal', val: 100, rate: 0.1 },
-        { n: 'Orange Potion', type: 'heal', val: 300, rate: 0.05 },
-        { n: 'White Potion', type: 'heal', val: 1000, rate: 0.02 },
-        { n: 'Blue Potion', type: 'sp_heal', val: 150, rate: 0.03 },
-        { n: 'Yggdrasil Berry', type: 'full', val: 1.0, rate: 0.01 },
-        { n: 'Awakening Potion', type: 'buff', stat: 'aspd', val: 15, rate: 0.05 },
-        { n: 'Katana', type: 'weapon', stat: 'atk', val: 25, rate: 0.05 },
-        { n: 'Broadsword', type: 'weapon', stat: 'atk', val: 50, rate: 0.03 },
-        { n: 'Claymore', type: 'weapon', stat: 'atk', val: 110, rate: 0.01 },
-        { n: 'Rod', type: 'weapon', stat: 'matk', val: 25, rate: 0.05 },
-        { n: 'Wizardry Staff', type: 'weapon', stat: 'matk', val: 105, rate: 0.01 },
-        { n: 'Hunter Bow', type: 'weapon', stat: 'atk', val: 95, rate: 0.02 },
-        { n: 'Adventurer Suit', type: 'armor', stat: 'def', val: 10, rate: 0.05 },
-        { n: 'Chain Mail', type: 'armor', stat: 'def', val: 25, rate: 0.03 },
-        { n: 'Full Plate', type: 'armor', stat: 'def', val: 55, rate: 0.01 }
+        { n: 'Red Potion', effect: 'recover hp', val: 100, rate: 0.1 },
+        { n: 'Orange Potion', effect: 'recover hp', val: 300, rate: 0.05 },
+        { n: 'White Potion', effect: 'recover hp', val: 1000, rate: 0.02 },
+        { n: 'Blue Potion', effect: 'recover sp', val: 150, rate: 0.03 },
+        { n: 'Yggdrasil Berry', effect: 'recover all', val: 1.0, rate: 0.01 },
+        { n: 'Awakening Potion', effect: 'buff', stat: 'aspd', val: 15, rate: 0.05 },
+        { n: 'Katana', category: 'weapon', stat: 'atk', val: 25, rate: 0.05 },
+        { n: 'Broadsword', category: 'weapon', stat: 'atk', val: 50, rate: 0.03 },
+        { n: 'Claymore', category: 'weapon', stat: 'atk', val: 110, rate: 0.01 },
+        { n: 'Rod', category: 'weapon', stat: 'matk', val: 25, rate: 0.05 },
+        { n: 'Wizardry Staff', category: 'weapon', stat: 'matk', val: 105, rate: 0.01 },
+        { n: 'Hunter Bow', category: 'weapon', stat: 'atk', val: 95, rate: 0.02 },
+        { n: 'Adventurer Suit', category: 'armor', stat: 'def', val: 10, rate: 0.05 },
+        { n: 'Chain Mail', category: 'armor', stat: 'def', val: 25, rate: 0.03 },
+        { n: 'Full Plate', category: 'armor', stat: 'def', val: 55, rate: 0.01 }
         // Cards are handled separately by monster binding
     ],
 
