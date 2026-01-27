@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jobless RO v1.2.2 | Master Shell</title>
+    <title>Jobless RO v1.2.2 | Rouge Edition</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="visuals.css">
 </head>
@@ -68,37 +68,77 @@
         </div>
     </section>
 
-    <main id="ctl" class="grid"></main>
+    <main id="ctl" class="grid">
+        <button class="btn-neon" style="grid-column: span 2; padding: 25px; font-size: 1.2rem;" onclick="G.init()" data-t="start"></button>
+    </main>
 
     <footer id="log" class="panel"></footer>
 </div>
 
 <script>
+/**
+ * JOBLESS RO ENGINE v1.2.2
+ * Global State & Fragment Router
+ */
+const DB = {
+    jobs: {
+        'Novice': { next:['Swordman','Mage','Thief'], pool:['First Aid'], hp:60, sp:20, stats:[2,2,2,1,1,1] },
+        'Swordman': { next:['Knight'], pool:['Bash'], hp:150, sp:40, stats:[5,3,4,1,2,1] },
+        'Mage': { next:['Wizard'], pool:['Fire Bolt'], hp:80, sp:100, stats:[1,4,2,8,3,1] },
+        'Thief': { next:['Assassin'], pool:['Envenom'], hp:100, sp:50, stats:[4,6,2,2,4,2] }
+    },
+    skills: {
+        'First Aid':{sp:3, val:20, type:'heal'}, 'Bash':{sp:8, val:1.5, type:'phys'},
+        'Fire Bolt':{sp:10, val:1.8, type:'mag'}, 'Envenom':{sp:10, val:1.2, type:'phys'}
+    },
+    mobs: [
+        [{n:'Poring',hp:30,atk:5,xp:10},{n:'Lunatic',hp:45,atk:8,xp:15}],
+        [{n:'Wolf',hp:150,atk:25,xp:50},{n:'Skeleton',hp:180,atk:30,xp:60}]
+    ]
+};
+
+const el = i => document.getElementById(i);
+
 const G = {
-    p: null, // Player data
-    s: { f:1, b:false, tm:null, l:'en', patb:0, eatb:0 }, // System state
-    
-    // THE FRAGMENT LOADER
-    async loadScene(name) {
-        const res = await fetch(`./scenes/${name}.html`);
-        const html = await res.text();
-        const container = el('ctl');
-        container.innerHTML = html;
-        
-        // Execute scripts within fragments
-        container.querySelectorAll('script').forEach(s => {
-            const n = document.createElement('script');
-            n.textContent = s.textContent;
-            document.head.appendChild(n).parentNode.removeChild(n);
-        });
-        this.render();
+    p: null, 
+    s: { f:1, b:false, tm:null, l:'en', patb:0, eatb:0 },
+
+    // Initialization: Checks for save or starts fresh
+    init() {
+        const saved = localStorage.getItem('ro_rouge_v121');
+        if (saved) {
+            try {
+                this.p = JSON.parse(atob(saved));
+                this.loadScene('mnu');
+            } catch(e) { this.loadScene('reg'); }
+        } else {
+            this.loadScene('reg');
+        }
     },
 
-    // GLOBAL RENDER: Updates HUD and Formulas
+    // Fragment Router: Loads HTML, executes internal script, renders HUD
+    async loadScene(name) {
+        try {
+            const res = await fetch(`./scenes/${name}.html`);
+            if (!res.ok) throw new Error();
+            const html = await res.text();
+            el('ctl').innerHTML = html;
+            
+            el('ctl').querySelectorAll('script').forEach(s => {
+                const n = document.createElement('script');
+                n.textContent = s.textContent;
+                document.head.appendChild(n).parentNode.removeChild(n);
+            });
+            this.render();
+        } catch(e) {
+            el('ctl').innerHTML = `<button class="btn-neon" onclick="G.init()">ERROR: RETRY LOAD</button>`;
+        }
+    },
+
+    // Global Render: Updates persistent UI and Calculates derived stats
     render() {
         if(!this.p) return;
         
-        // Identity & Vitals
         el('ui-job').innerText = this.p.job;
         el('ui-lvl').innerText = this.p.lvl;
         el('ui-floor').innerText = this.s.f;
@@ -107,48 +147,43 @@ const G = {
         el('hp-bar').value = this.p.hp; el('hp-bar').max = this.p.mh;
         el('sp-bar').value = this.p.sp; el('sp-bar').max = this.p.msp;
 
-        // Base Attribute Rendering
         ['str','agi','vit','int','dex','luk'].forEach(k => { el('ui-'+k).innerText = this.p[k]; });
 
-        // Derived Combat Math
+        // Derived Stats Calculation
         el('ui-atk').innerText = Math.floor(this.p.str * 2.5 + this.p.lvl * 2);
         el('ui-matk').innerText = Math.floor(this.p.int * 3 + this.p.lvl * 2);
         el('ui-hit').innerText = this.p.dex + this.p.lvl;
         el('ui-flee').innerText = this.p.agi + this.p.lvl;
         el('ui-cri').innerText = Math.floor(this.p.luk * 0.5) + '%';
 
-        // Battle UI Toggle
         el('battle-ui').hidden = !this.s.b;
         if(this.s.b && this.s.mob) el('ui-target').innerText = this.s.mob.n;
         
         el('p-spr').className = `spr j-${this.p.job}`;
+        document.getElementById('stage').style.filter = 'none'; // Clear death grayscale
     },
 
+    // Boss Warning Helper
+    triggerWarning(callback) {
+        const stage = el('stage');
+        const warn = document.createElement('div');
+        warn.className = 'warning-overlay';
+        warn.innerHTML = '<div class="warning-text">BOSS WARNING</div>';
+        stage.appendChild(warn);
+        setTimeout(() => { warn.remove(); if(callback) callback(); }, 1500);
+    },
+
+    // State Persistence
+    sv() { localStorage.setItem('ro_rouge_v121', btoa(JSON.stringify(this.p))); },
+    exp() { const a=document.createElement('a'); a.href='data:text/plain;base64,'+btoa(JSON.stringify(this.p)); a.download='save.jro'; a.click(); },
+    wipe() { if(confirm("Reset Progress?")){ localStorage.removeItem('ro_rouge_v121'); location.reload(); } },
+    lang() { this.s.l = this.s.l==='en'?'cn':'en'; document.body.className='lang-'+this.s.l; },
     log(m, c='') {
         const l = el('log');
         l.insertAdjacentHTML('afterbegin', `<div class="entry ${c}">${m}</div>`);
         if(l.children.length > 5) l.lastElementChild.remove();
-    },
-
-    // UTILITIES
-    lang() { this.s.l = this.s.l==='en'?'cn':'en'; document.body.className='lang-'+this.s.l; },
-    exp() { const a=document.createElement('a'); a.href='data:text/plain;base64,'+btoa(JSON.stringify(this.p)); a.download='save.jro'; a.click(); },
-    imp(e) { const f=e.files[0], r=new FileReader(); r.onload=x=>{this.p=JSON.parse(atob(x.target.result));this.render();this.mnu();}; r.readAsText(f); },
-    wipe() { if(confirm("Reset Progress?")){ localStorage.removeItem('ro_rouge_v121'); location.reload(); } }
-};
-
-const el = i => document.getElementById(i);
-
-// Initialize
-(async () => {
-    const saved = localStorage.getItem('ro_rouge_v121');
-    if(saved) {
-        G.p = JSON.parse(atob(saved));
-        G.loadScene('mnu');
-    } else {
-        G.loadScene('reg');
     }
-})();
+};
 </script>
 </body>
 </html>
