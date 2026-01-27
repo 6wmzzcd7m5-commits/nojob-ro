@@ -76,7 +76,7 @@ window.UI = {
                 ${DB_ITEMS.getName(n)} x${count}
             </div>`).join('');
 
-        el('inv-hud').innerHTML = invHtml || '<div style="color:#444; width:100%; text-align:center;">EMPTY_INVENTORY</div>';
+        el('inv-hud').innerHTML = invHtml || `<div style="color:#444; width:100%; text-align:center;">${DB.txt('empty_inv')}</div>`;
 
         // Skill HUD
         let sklHtml = (p.skills || []).map(sn => {
@@ -85,7 +85,7 @@ window.UI = {
             const isPas = sd && sd.mode === 'pas';
             return `<div class="stat-cell" style="border-color:var(--sp); color:var(--sp); font-size:8px;">${isPas ? '[P]' : '[A]'} ${DB.getName('skills', sn)}</div>`;
         }).join('');
-        el('skill-hud').innerHTML = sklHtml || '<div style="color:#444; width:100%; text-align:center;">NO_SKILLS_LEARNED</div>';
+        el('skill-hud').innerHTML = sklHtml || `<div style="color:#444; width:100%; text-align:center;">${DB.txt('no_skills')}</div>`;
     },
 
     // Damage Popup Engine

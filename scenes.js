@@ -4,8 +4,8 @@ window.SCENES = {
     start: (p, s) => `
         <div class="panel grid g-1" style="border-color:var(--neon); text-align:center;">
             <div style="font-family:var(--impact); font-size:24px; margin-bottom:10px;">JOBLESS RO</div>
-            <div style="font-size:10px; margin-bottom:15px; color:#888;">ULTIMATE MOBILE EDITION</div>
-            <button onclick="G.showReg()" style="width:100%; padding:15px;">START GAME</button>
+            <div style="font-size:10px; margin-bottom:15px; color:#888;">${DB.txt('mobile_ed')}</div>
+            <button onclick="G.showReg()" style="width:100%; padding:15px;">${DB.txt('start')}</button>
         </div>`,
 
     // 1. Ported: Registration Scene
@@ -51,9 +51,9 @@ window.SCENES = {
     gameover: (p, s) => `
         <div class="panel grid g-1" style="border-color:var(--hp); text-align:center;">
             <div style="color:var(--hp); font-size:18px; font-weight:bold;">GAME OVER</div>
-            <div style="font-size:10px; margin:10px 0;">FLOOR REACHED: ${s.f}</div>
-            <div style="font-size:10px; color:#888; margin-bottom:10px;">YOUR ADVENTURE ENDS HERE... FOR NOW.</div>
-            <button onclick="location.reload()" class="btn-red" style="width:100%;">RETRY</button>
+            <div style="font-size:10px; margin:10px 0;">${DB.txt('reached')} ${s.f}</div>
+            <div style="font-size:10px; color:#888; margin-bottom:10px;">${DB.txt('ended')}</div>
+            <button onclick="location.reload()" class="btn-red" style="width:100%;">${DB.txt('retry')}</button>
         </div>`,
 
     // 6. NEW: Leaderboard Scene
@@ -67,9 +67,9 @@ window.SCENES = {
         `).join('');
         return `
             <div class="panel grid g-1" style="border-color:var(--sp);">
-                <div style="text-align:center; color:var(--sp); font-weight:bold; margin-bottom:5px; font-size:11px;">🏆 TOP 10 LEGENDS</div>
+                <div style="text-align:center; color:var(--sp); font-weight:bold; margin-bottom:5px; font-size:11px;">${DB.txt('legends')}</div>
                 <div style="max-height:140px; overflow-y:auto; background:rgba(0,0,0,0.5); padding:2px;">${rows || '<div style="text-align:center; color:#444;">NO DATA</div>'}</div>
-                <button onclick="UI.loadScene('mnu', G.p, G.s)" style="width:100%; font-size:9px; border-color:var(--sp); margin-top:5px; padding:10px;">BACK</button>
+                <button onclick="UI.loadScene('mnu', G.p, G.s)" style="width:100%; font-size:9px; border-color:var(--sp); margin-top:5px; padding:10px;">${DB.txt('back')}</button>
             </div>`;
     }
 };

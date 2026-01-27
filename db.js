@@ -12,7 +12,11 @@ window.DB = {
                 speed: "SPEED_SET:", event_atk: "EVENT: Permanent ATK +1",
                 event_matk: "EVENT: Permanent MATK +1", event_hp: "EVENT: Permanent MaxHP +10",
                 equip: "EQUIP:", card_get: "CARD!! +", defeat: "DEFEATED! RETREAT TO TOWN.",
-                loc: "LOC:"
+                loc: "LOC:", skill: "SKILL", crit: "CRITICAL HIT!",
+                empty_inv: "EMPTY_INVENTORY", no_skills: "NO_SKILLS_LEARNED",
+                fetching: "FETCHING_LEGENDS...", offline: "RANK_OFFLINE", synced: "LEGENDARY_DATA_SYNCED",
+                retry: "RETRY", back: "BACK", legends: "🏆 TOP 10 LEGENDS",
+                ended: "YOUR ADVENTURE ENDS HERE...", reached: "FLOOR REACHED:", mobile_ed: "ULTIMATE MOBILE EDITION"
             },
             maps: {
                 "Prontera Field": "Prontera Field", "Payon Cave": "Payon Cave", "Prontera Culvert": "Prontera Culvert",
@@ -46,15 +50,19 @@ window.DB = {
         },
         tc: { // Traditional Chinese
             st: { // UI Strings
-                save: "存檔", reset: "重置", rank: "排名", warp: "傳送: 地圖", init: "建立你的帳號",
-                create: "建立角色", combat: "戰鬥進行中", clear: "通過!",
-                lv: "等級", flr: "樓層", novice: "初學者", start: "開始冒險",
+                save: "存檔", reset: "重置", rank: "排名", warp: "傳送: 地圖", init: "建立角色帳號",
+                create: "創建冒險者", combat: "戰鬥中...", clear: "清除!",
+                lv: "Lv", flr: "FLR", novice: "初學者", start: "開始冒險",
                 easy: "簡單", normal: "普通", hard: "困難", stats: "數值",
                 job_office: "轉職中心", confirm_reset: "重新開始冒險？",
-                speed: "倍速設定:", event_atk: "事件: 永久增加 攻擊力 +1",
-                event_matk: "事件: 永久增加 魔法攻擊 +1", event_hp: "事件: 永久增加 最大血量 +10",
+                speed: "倍速設定:", event_atk: "事件: 永久 ATK +1",
+                event_matk: "事件: 永久 MATK +1", event_hp: "事件: 永久 MaxHP +10",
                 equip: "裝備:", card_get: "獲得卡片!! +", defeat: "被擊敗了！撤回城鎮。",
-                loc: "區域:"
+                loc: "區域:", skill: "技能", crit: "爆擊!!",
+                empty_inv: "物品欄空空如也", no_skills: "尚未學會技能",
+                fetching: "正在獲取傳奇榜...", offline: "排行榜離線", synced: "傳奇數據已同步",
+                retry: "重試", back: "返回", legends: "🏆 前10名傳奇",
+                ended: "你的冒險結束了...", reached: "到達樓層:", mobile_ed: "究極行動版"
             },
             maps: {
                 "Prontera Field": "普隆德拉 原野", "Payon Cave": "斐揚 洞窟", "Prontera Culvert": "普隆德拉 下水道",
@@ -63,7 +71,7 @@ window.DB = {
             },
             mobs: {
                 "Poring": "波利", "Fabre": "法布爾", "Lunatic": "瘋兔", "Chonchon": "蒼蠅", "Roda Frog": "羅達蛙",
-                "Spore": "蘑菇", "Tarou": "塔魯安", "Poison Spore": "毒蘑菇", "Wormtail": "土波利", "Angeling [MVP]": "天使波利 [MVP]",
+                "Spore": "蘑菇", "Tarou": "塔羅", "Poison Spore": "毒蘑菇", "Wormtail": "土波利", "Angeling [MVP]": "天使波利 [MVP]",
                 "Zombie": "殭屍", "Skeleton": "腐屍", "Poporing": "波波利", "Hydra": "希特拉", "Vadon": "螃蟹",
                 "Marina": "水母", "Thief Bug": "盜蟲", "Soldier Skeleton": "邪骸戰士", "Archer Skeleton": "邪骸弓箭手", "Golden Thief Bug [MVP]": "黃金盜蟲 [MVP]"
             },
@@ -83,7 +91,7 @@ window.DB = {
                 'Turn Undead': '轉生術', 'Envenom': '施毒', 'Double Strafe': '二連矢',
                 'Owl\'s Eye': '梟之眼', 'Vulture\'s Eye': '鵂鶹之眼', 'Improve Concentration': '集中力向上',
                 'Sonic Blow': '音速投擲', 'Falcon Assault': '獵鷹突擊', 'Venom Splasher': '毒性反彈',
-                'Back Stab': '背刺', 'Slasher': '斬擊'
+                'Back Stab': '背刺', 'Slasher': '斬擊', 'Increase HP Recovery': '生命力恢復', 'Two-Hand Mastery': '雙手劍修練'
             }
         }
     },

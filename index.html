@@ -217,7 +217,7 @@
 
                 // 2. Skill Execution
                 if (skillData) {
-                    UI.log(`${DB.txt('skill', 'st') || 'SKILL'}: ${DB.getName('skills', skillName)}!`, "c-yel");
+                    UI.log(`${DB.txt('skill')}! : ${DB.getName('skills', skillName)}`, "c-yel");
 
                     // Determine Skill Color
                     let sCol = 'c-yel';
@@ -258,7 +258,7 @@
                     const criRate = parseFloat(el('ui-cri').innerText) / 100;
                     const isCrit = Math.random() < criRate;
                     let dmg = isCrit ? Math.floor(baseDmg * 1.5) : baseDmg;
-                    if (isCrit) UI.log("CRITICAL HIT!", "c-yel");
+                    if (isCrit) UI.log(DB.txt('crit'), "c-yel");
 
                     this.s.mob.hp -= dmg;
                     el('e-hp-fill').style.width = (Math.max(0, this.s.mob.hp) / this.s.mob.mhp * 100) + "%";
@@ -338,12 +338,12 @@
 
             async loadRank() {
                 try {
-                    UI.log("FETCHING_LEGENDS...", "c-yel");
+                    UI.log(DB.txt('fetching'), "c-yel");
                     const res = await fetch('leaderboard.json?t=' + Date.now());
                     const data = await res.json();
                     UI.loadScene('rank', data);
                 } catch (e) {
-                    UI.log("RANK_OFFLINE", "c-red");
+                    UI.log(DB.txt('offline'), "c-red");
                     UI.loadScene('rank', []);
                 }
             },
@@ -368,7 +368,7 @@
                             }
                         })
                     });
-                    UI.log("LEGENDARY_DATA_SYNCED", "c-blu");
+                    UI.log(DB.txt('synced'), "c-blu");
                 } catch (e) {
                     console.error("Submission failed:", e);
                 }
