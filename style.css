@@ -1,0 +1,126 @@
+/* --- CORE RESET & VARIABLES --- */
+:root {
+    /* Colors derived from the v3 engine */
+    --bg: #0a0a0a; 
+    --panel: #161616; 
+    --border: #333; 
+    --text: #e0e0e0;
+    --hp: #ff4444; 
+    --sp: #44aaff; 
+    --c-n: #33ff33; 
+    --bd: #444;
+    --r: #ffd700;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    background: var(--bg); 
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    margin: 0; 
+    padding: 10px;
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
+    max-width: 500px; /* Optimized for mobile-first view */
+    margin: 0 auto;
+    overflow-x: hidden;
+}
+
+/* --- LAYOUT CONTAINERS --- */
+.panel {
+    background: var(--panel); 
+    border: 1px solid var(--border);
+    padding: 12px; 
+    border-radius: 4px; /* Classic sharp RPG panel look */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+.flex { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.flex-col { display: flex; flex-direction: column; gap: 8px; }
+
+.grid { display: grid; gap: 8px; }
+.g-1 { grid-template-columns: 1fr; }
+.g-2 { grid-template-columns: 1fr 1fr; }
+.g-3 { grid-template-columns: repeat(3, 1fr); }
+.g-6 { grid-template-columns: repeat(6, 1fr); }
+.g-5 { grid-template-columns: repeat(5, 1fr); }
+
+/* --- HUD COMPONENTS --- */
+.stat-cell {
+    text-align: center;
+    font-size: 0.65rem;
+    color: #888;
+    background: rgba(0,0,0,0.2);
+    padding: 4px 2px;
+    border: 1px solid #222;
+}
+
+.stat-cell b, .stat-cell span {
+    font-size: 0.85rem;
+    display: block;
+    margin-top: 2px;
+}
+
+/* --- BUTTONS & INPUTS --- */
+button {
+    background: #222;
+    color: #fff;
+    border: 1px solid #444;
+    padding: 10px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    text-transform: uppercase;
+}
+
+button:active { transform: translateY(2px); background: #333; }
+
+.btn-neon {
+    border-color: var(--c-n);
+    color: var(--c-n);
+    background: rgba(51, 255, 51, 0.05);
+}
+
+.btn-neon:hover { background: rgba(51, 255, 51, 0.1); box-shadow: 0 0 8px var(--c-n); }
+
+.btn-sm { padding: 4px 8px; font-size: 0.7rem; }
+.btn-red { border-color: var(--hp); color: var(--hp); }
+
+/* --- LOG SYSTEM --- */
+#log {
+    height: 120px;
+    overflow-y: hidden;
+    font-size: 0.8rem;
+    color: #aaa;
+    display: flex;
+    flex-direction: column;
+}
+
+.entry {
+    padding: 3px 0;
+    border-bottom: 1px solid #222;
+    animation: fadeIn 0.3s ease;
+}
+
+.entry:first-child { 
+    color: #fff; 
+    border-left: 3px solid var(--c-n); 
+    padding-left: 8px; 
+}
+
+/* --- UTILS --- */
+[hidden] { display: none !important; }
+.c-n { color: var(--c-n); text-shadow: 0 0 5px rgba(51,255,51,0.3); }
+.c-red { color: var(--hp); }
+.c-yel { color: var(--r); }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateX(-5px); } to { opacity: 1; transform: translateX(0); } }
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0px rgba(255, 215, 0, 0.4); }
+    50% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.6); }
+    100% { box-shadow: 0 0 0px rgba(255, 215, 0, 0.4); }
+}
