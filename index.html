@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jobless RO: Rouge Edition v1.1.7</title>
+    <title>Jobless RO: Rouge Edition v1.1.9</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="visuals.css">
 </head>
 <body class="lang-en">
 <div id="app">
@@ -28,11 +27,11 @@
             <div style="flex:1;">
                 <div class="flex">
                     <div><b id="un" class="c-n"></b> <span id="uj"></span></div>
-                    <div><span class="en">Lv</span><span class="cn">等級</span> <span id="ul"></span> <span class="c-d">F<span id="ufl"></span></span></div>
+                    <div>Lv <span id="ul"></span> <span class="c-d">F<span id="ufl"></span></span></div>
                 </div>
                 <div class="grid g-2">
-                    <div style="font-size:9px">HP <span id="uh"></span><progress id="bh"></progress></div>
-                    <div style="font-size:9px">SP <span id="us"></span><progress id="bs"></progress></div>
+                    <div style="font-size:9px"><span class="en">HP</span><span class="cn">血量</span> <span id="uh"></span><progress id="bh"></progress></div>
+                    <div style="font-size:9px"><span class="en">SP</span><span class="cn">魔力</span> <span id="us"></span><progress id="bs"></progress></div>
                 </div>
             </div>
         </div>
@@ -45,83 +44,47 @@
             <div id="p-box" class="avatar-box"><div id="spr" class="spr ro-m"><div class="hr"></div><div class="hd"></div><div class="bd"></div></div></div>
             <div id="e-box" class="avatar-box" data-mob="Poring"><div class="spr"><div class="hd"></div><div class="bd"></div></div></div>
         </div>
-        <div class="grid">
-            <div class="flex" style="font-size:8px">ATB <progress id="ap" max="1000" style="width:80%"></progress></div>
-            <div class="flex" style="font-size:8px">MOB <progress id="ae" max="1000" style="width:80%"></progress></div>
-        </div>
+        <div class="grid"><progress id="ap" max="1000"></progress><progress id="ae" max="1000"></progress></div>
     </section>
 
-    <nav id="ctl" class="grid g-2" style="min-height:110px"></nav>
+    <nav id="ctl" class="grid g-2" style="min-height:100px"></nav>
 </div>
 
 <script>
 const J=[{hp:60,sp:20,as:50},{hp:150,sp:40,as:45},{hp:80,sp:120,as:60},{hp:110,sp:50,as:35},{hp:100,sp:60,as:40},{hp:90,sp:100,as:55},{hp:120,sp:50,as:50},{hp:350,sp:80,as:40},{hp:150,sp:280,as:55},{hp:240,sp:100,as:25},{hp:220,sp:120,as:35},{hp:200,sp:220,as:50},{hp:280,sp:100,as:45}];
-const B=[{n:'Angeling',h:2500,a:80,m:1},{n:'GT Bug',h:6000,a:150,m:1},{n:'Eddga',h:15000,a:300,m:1},{n:'Osiris',h:40000,a:800,m:1},{n:'Baphomet',h:99999,a:1800,m:1}];
+const B=[{n:'Angeling',h:2500,a:80,m:1},{n:'GT Bug',h:6000,a:150,m:1},{n:'Eddga',h:15000,a:300,m:1},{n:'Baphomet',h:99999,a:1800,m:1}];
 const SK0=[{n:'FirstAid',en:'First Aid',cn:'緊急治療',v:20,t:'h'},{n:'Bash',en:'Bash',cn:'狂擊',v:1.4,t:'p'},{n:'Napalm',en:'Napalm',cn:'心靈爆破',v:1.5,t:'m'}];
 const ARCH = { Melee:[1,6,7,12], Magical:[2,5,8,11], Rouge:[3,4,9,10] };
-const K='jro_v117', el=i=>document.getElementById(i), rnd=m=>Math.floor(Math.random()*m);
+const K='jro_v119', el=i=>document.getElementById(i), rnd=m=>Math.floor(Math.random()*m);
 
 const G={
     p:null, s:{f:1,b:false,tm:null,spd:10,au:false,l:'en'}, tmp:{g:'m'}, pb:0, eb:0, mob:null,
     init(){ const r=localStorage.getItem(K); try { if(r){ this.p=JSON.parse(atob(r)); document.body.className='lang-'+this.s.l; this.draw(); this.mnu(); } else { this.scr(); } } catch(e){ this.scr(); } },
-    scr(){ el('ctl').innerHTML=`<div class="panel" style="grid-column:span 2;text-align:center"><input id="in" placeholder="NAME" maxlength="10"><div class="flex" style="justify-content:center;gap:10px;margin:10px 0"><button onclick="G.setG('m')">MALE</button><button onclick="G.setG('f')">FEMALE</button></div><button onclick="G.ng()" style="width:100%"><span class="en">START</span><span class="cn">開始</span></button></div>`; },
+    scr(){ el('ctl').innerHTML=`<div class="panel" style="grid-column:span 2;text-align:center"><input id="in" placeholder="NAME"><div class="flex" style="justify-content:center;gap:10px;margin:10px 0"><button onclick="G.setG('m')">M</button><button onclick="G.setG('f')">F</button></div><button onclick="G.ng()" style="width:100%"><span class="en">START</span><span class="cn">開始</span></button></div>`; },
     setG(g){ this.tmp.g=g; el('spr').className=`spr ro-${g} j-0`; },
     ng(){ this.p={n:el('in').value||"Novice",j:0,lv:1,xp:0,hp:60,mh:60,sp:20,str:1,agi:1,vit:1,int:1,dex:1,luk:1,pts:5,sk:{},act:null,g:this.tmp.g,arch:null}; this.skM(); },
     skM(){ el('ctl').innerHTML=''; SK0.forEach(s=>{ this.btn(`<span class="en">${s.en}</span><span class="cn">${s.cn}</span>`, ()=>{ this.p.sk[s.n]=1; this.p.act=s; this.stM(true); }); }); },
     stM(st){ 
         el('ctl').innerHTML=''; 
         ['str','agi','vit','int','dex','luk'].forEach(k=>{ this.btn(k.toUpperCase()+"+",()=>{if(this.p.pts>0){this.p[k]++;this.p.pts--;this.draw();this.stM(st);}}); }); 
-        this.btn(`<span class="en">OK (PTS:${this.p.pts})</span><span class="cn">確定 (餘下:${this.p.pts})</span>`,()=>{ if(this.p.lv>=10&&!this.p.arch)this.jbM(); else this.mnu(); }); 
+        this.btn(`<span class="en">OK(${this.p.pts})</span><span class="cn">確定(${this.p.pts})</span>`,()=>{ if(this.p.lv>=10&&!this.p.arch)this.jbM(); else this.mnu(); }, 'btn-neon'); 
     },
     jbM(){ el('ctl').innerHTML=''; ["Melee","Magical","Rouge"].forEach(type => { this.btn(`<span class="en">${type}</span>`, () => { this.p.arch = type; el('ctl').innerHTML=''; ARCH[type].filter(id=>id<7).forEach(jID => { this.btn(`JOB ${jID}`, () => { this.p.j = jID; this.p.mh+=100; this.p.hp=this.p.mh; this.mnu(); }); }); }, 'btn-neon'); }); },
     calc(c){ const j=J[c.j]; return {atk:~~(c.str*2.5+c.lv*2), matk:~~(c.int*3+c.lv*2), hit:c.dex+c.lv, flee:c.agi+c.lv, crt:~~(c.luk*0.5), aspd:~~(j.as+(c.agi*0.8)), def:~~(c.vit/2)}; },
-    
     mnu(){ 
         this.sv(); el('ctl').innerHTML=''; this.draw(); 
-        if(this.s.au && !this.s.b){ 
-            if (this.p.hp/this.p.mh < 0.3) { 
-                this.btn(`<span class="en">REST</span><span class="cn">休息</span>`, ()=>{this.p.hp=this.p.mh; this.mnu();}, 'btn-red'); 
-                return; 
-            } 
-            setTimeout(()=>this.bt(this.s.f%10==0), 700); 
-            return; 
-        } 
+        if(this.s.au && !this.s.b){ if (this.p.hp/this.p.mh < 0.3) { this.btn(`REST`, ()=>{this.p.hp=this.p.mh; this.mnu();}, 'btn-red'); return; } setTimeout(()=>this.bt(this.s.f%10==0), 700); return; } 
         this.btn(`<span class="en">${this.s.f%10==0?'BOSS':'FIGHT'}</span><span class="cn">${this.s.f%10==0?'首領':'戰鬥'}</span>`, ()=>this.bt(this.s.f%10==0), this.s.f%10==0?'btn-red':'');
         this.btn(`<span class="en">REST</span><span class="cn">休息</span>`, ()=>{this.p.hp=this.p.mh; this.draw();});
     },
-
-    bt(isB){ 
-        if(this.s.b) return; this.s.b=true; this.pb=0; this.eb=0; 
-        this.mob=isB?{...B[rnd(B.length)]}:{n:'Poring',h:this.s.f*40,a:this.s.f*5}; 
-        this.mob.hp=this.mob.h; this.mob.mh=this.mob.h; 
-        el('e-box').setAttribute('data-mob', this.mob.n); 
-        el('e-box').setAttribute('data-mvp', !!this.mob.m); 
-        clearInterval(this.s.tm); this.s.tm=setInterval(()=>this.loop(), 30); 
-    },
+    bt(isB){ if(this.s.b) return; this.s.b=true; this.pb=0; this.eb=0; this.mob=isB?{...B[rnd(B.length)]}:{n:'Poring',h:this.s.f*40,a:this.s.f*5}; this.mob.hp=this.mob.h; this.mob.mh=this.mob.h; el('e-box').setAttribute('data-mob', this.mob.n); el('e-box').setAttribute('data-mvp', !!this.mob.m); clearInterval(this.s.tm); this.s.tm=setInterval(()=>this.loop(), 30); },
     loop(){ if(!this.s.b) return; for(let i=0; i<this.s.spd; i++){ if(!this.s.b) break; this.tk(); } this.uiTick(); },
-    tk(){ 
-        const ps=this.calc(this.p); this.pb+=ps.aspd; this.eb+=10; 
-        if(this.pb>=1000){ this.pb=0; this.act(this.p,this.mob,ps,1); } 
-        if(this.eb>=1000){ this.eb=0; this.act(this.mob,this.p,{hit:80+this.s.f*1.5,atk:this.mob.a},0); } 
-    },
-    act(s,t,st,p){ 
-        const b=p?el('e-box'):el('p-box'); 
-        const tflee=p?0:this.calc(this.p).flee;
-        if (rnd(100) > Math.max(5,80+(st.hit-tflee))) { this.pop(b,"MISS"); return; } 
-        let d=Math.max(1,(st.atk*(this.p.act?.v||1))-(p?0:st.def)); t.hp-=~~d; 
-        if(this.s.spd<=30){this.pop(b,~~d);b.classList.add('anim-shake');setTimeout(()=>b.classList.remove('anim-shake'),400);} 
-        if(t.hp<=0)this.win(p); 
-    },
-    win(p){ 
-        clearInterval(this.s.tm); this.s.b=false; 
-        if(!p){ el('ctl').innerHTML=`<button onclick="location.reload()">REBORN</button>`; return; } 
-        this.p.xp+=150; this.s.f++; this.mnu(); 
-    },
+    tk(){ const ps=this.calc(this.p); this.pb+=ps.aspd; this.eb+=10; if(this.pb>=1000){ this.pb=0; this.act(this.p,this.mob,ps,1); } if(this.eb>=1000){ this.eb=0; this.act(this.mob,this.p,{hit:80+this.s.f*1.5,atk:this.mob.a},0); } },
+    act(s,t,st,p){ const b=p?el('e-box'):el('p-box'); if (rnd(100) > Math.max(5,80+(st.hit-(p?0:this.calc(this.p).flee)))) { this.pop(b,"MISS"); return; } let d=Math.max(1,(st.atk*(this.p.act?.v||1))-(p?0:st.def)); t.hp-=~~d; if(this.s.spd<=30){this.pop(b,~~d);b.classList.add('anim-shake');setTimeout(()=>b.classList.remove('anim-shake'),400);} if(t.hp<=0)this.win(p); },
+    win(p){ clearInterval(this.s.tm); this.s.b=false; if(!p){ el('ctl').innerHTML=`<button onclick="location.reload()">REBORN</button>`; return; } this.p.xp+=150; this.s.f++; this.mnu(); },
     uiTick(){ el('uh').innerText=~~this.p.hp; el('bh').value=this.p.hp; el('bh').max=this.p.mh; el('ae').value=this.mob?~~this.mob.hp:0; el('ae').max=this.mob?this.mob.mh:1; el('ap').value=this.pb; },
     draw(){ 
-        const s=this.calc(this.p); 
-        el('un').innerText=this.p.n; el('ul').innerText=this.p.lv; el('ufl').innerText=this.s.f; 
-        el('spr').className=`spr ro-${this.p.g} j-${this.p.j}`;
+        const s=this.calc(this.p); el('un').innerText=this.p.n; el('ul').innerText=this.p.lv; el('ufl').innerText=this.s.f; el('spr').className=`spr ro-${this.p.g} j-${this.p.j}`;
         el('stat-row').innerHTML=['str','agi','vit','int','dex','luk'].map(k=>`<div class="stat-cell">${k.toUpperCase()}<br><b class="stv">${this.p[k]}</b></div>`).join('');
         el('sub-stat-row').innerHTML=[{l:'ATK',v:s.atk},{l:'MAT',v:s.matk},{l:'HIT',v:s.hit},{l:'FLE',v:s.flee},{l:'CRT',v:s.crt+'%'}].map(x=>`<div class="stat-cell">${x.l}<br><b class="stv" style="color:#0f0">${x.v}</b></div>`).join('');
         el('b-au').className=this.s.au?'btn-sm active':'btn-sm'; 
@@ -129,8 +92,8 @@ const G={
     pop(d,t){ const p=document.createElement('div'); p.className=`dmg-pop`; p.innerText=t; d.appendChild(p); setTimeout(()=>p.remove(),800); },
     btn(t,f,c=''){ const b=document.createElement('button'); b.innerHTML=t; b.onclick=f; if(c) b.className=c; el('ctl').appendChild(b); },
     lang(){ this.s.l=this.s.l=='en'?'cn':'en'; document.body.className='lang-'+this.s.l; this.draw(); if(!this.s.b)this.mnu(); },
-    spd(x){ this.s.spd=x; el('s10').className=x==10?'btn-sm active':'btn-sm'; el('s100').className=x==100?'btn-sm active':'btn-sm'; },
-    tAu(){ this.s.au=!this.s.au; if(!this.s.b) this.mnu(); },
+    spd(x){ this.s.spd=x; },
+    tAu(){ this.s.au=!this.s.au; if(!this.s.b)this.mnu(); },
     sv(){ localStorage.setItem(K, btoa(JSON.stringify(this.p))); },
     wipe(){ if(confirm("RESET?")){localStorage.removeItem(K); location.reload();} },
     exp(){ const a=document.createElement('a'); a.href='data:text/plain;base64,'+btoa(JSON.stringify(this.p)); a.download='save.jro'; a.click(); },
