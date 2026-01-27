@@ -30,7 +30,7 @@
             <div class="flex panel" style="border-style: dashed; margin: 0; padding: 8px; background: rgba(57, 255, 20, 0.05);">
                 <b id="ui-job" class="c-n">LINKING...</b>
                 <div class="c-n">BASE_LVL.<span id="ui-lvl">01</span></div>
-                <div class="c-n">MAP_ZONE.<span id="ui-floor">01</span></div>
+                <div class="c-n">ZONE_FLR.<span id="ui-floor">01</span></div>
             </div>
             <div class="flex-col" style="gap: 5px; margin-top: 10px;">
                 <progress id="hp-bar" value="0" max="100"></progress>
@@ -57,16 +57,12 @@
     </header>
 
     <section id="stage" class="panel">
-        <div id="p-box" class="avatar-box">
-            <div id="p-spr" class="spr"><div class="hd"></div><div class="bd"></div></div>
-        </div>
-        <div id="e-box" class="avatar-box">
-            <div id="e-spr" class="spr"><div class="hd"></div><div class="bd"></div></div>
-        </div>
+        <div id="p-box" class="avatar-box"><div id="p-spr" class="spr"><div class="hd"></div><div class="bd"></div></div></div>
+        <div id="e-box" class="avatar-box"><div id="e-spr" class="spr"><div class="hd"></div><div class="bd"></div></div></div>
     </section>
 
     <main id="ctl" class="grid">
-        <button id="boot-btn" style="grid-column: span 2; padding: 40px;" onclick="G.boot()">
+        <button id="boot-btn" style="grid-column: span 2; padding: 40px; font-size: 1.1rem;" onclick="G.boot()">
             CONNECTING_TO_AEGIS_DB...
         </button>
     </main>
@@ -80,67 +76,4 @@ const G = {
     p: null, s: { f:1, b:false, l:'en' },
     async boot() {
         try {
-            const [r1, r2] = await Promise.all([fetch('./db.html'), fetch('./items.html')]);
-            const [h1, h2] = await Promise.all([r1.text(), r2.text()]);
-            const inject = (h) => {
-                const t = document.createElement('div'); t.innerHTML = h;
-                const s = t.querySelector('script'); const n = document.createElement('script');
-                n.textContent = s.textContent; document.head.appendChild(n).parentNode.removeChild(n);
-            };
-            inject(h1); inject(h2);
-            this.log("AEGIS_DB_SYNC: SUCCESS", "c-n");
-            this.init();
-        } catch(e) { 
-            el('boot-btn').innerText = "FATAL: DB_LINK_FAILED";
-            console.error(e);
-        }
-    },
-    init() {
-        const saved = localStorage.getItem('ro_rouge_v121');
-        if (saved) { try { this.p = JSON.parse(atob(saved)); this.loadScene('mnu'); } catch(e) { this.loadScene('reg'); } }
-        else { this.loadScene('reg'); }
-    },
-    async loadScene(name) {
-        try {
-            const res = await fetch(`./scenes/${name}.html`);
-            el('ctl').innerHTML = await res.text();
-            el('ctl').querySelectorAll('script').forEach(s => {
-                const n = document.createElement('script'); n.textContent = s.textContent;
-                document.head.appendChild(n).parentNode.removeChild(n);
-            });
-            this.render();
-        } catch(e) { el('ctl').innerHTML = `<button onclick="location.reload()">RELOAD_AEGIS</button>`; }
-    },
-    render() {
-        if(!this.p) return;
-        el('ui-job').innerText = this.p.job.toUpperCase();
-        el('ui-lvl').innerText = this.p.lvl.toString().padStart(2, '0');
-        el('ui-floor').innerText = this.s.f.toString().padStart(2, '0');
-        el('hp-bar').value = this.p.hp; el('hp-bar').max = this.p.mh;
-        el('sp-bar').value = this.p.sp; el('sp-bar').max = this.p.msp;
-        ['str','agi','vit','int','dex','luk'].forEach(k => el('ui-'+k).innerText = this.p[k]);
-        el('ui-atk').innerText = Math.floor(this.p.str * 2 + this.p.lvl);
-        el('ui-matk').innerText = Math.floor(this.p.int * 2 + this.p.lvl);
-        el('ui-hit').innerText = this.p.dex + this.p.lvl;
-        el('ui-flee').innerText = this.p.agi + this.p.lvl;
-        el('ui-cri').innerText = Math.floor(this.p.luk * 0.3) + '%';
-        el('p-spr').className = `spr j-${this.p.job}`;
-    },
-    lang() { this.s.l = el('lang-toggle').checked ? 'cn' : 'en'; document.body.className = 'lang-' + this.s.l; },
-    sv() { localStorage.setItem('ro_rouge_v121', btoa(JSON.stringify(this.p))); },
-    wipe() { if(confirm("ERASE IDENTITY?")){ localStorage.clear(); location.reload(); } },
-    log(m, c='') {
-        const l = el('log'); l.insertAdjacentHTML('afterbegin', `<div class="entry ${c}">[KERNEL]: ${m}</div>`);
-        if(l.children.length > 5) l.lastElementChild.remove();
-    },
-    exp() { const a = document.createElement('a'); a.href = 'data:text/plain;base64,'+btoa(JSON.stringify(this.p)); a.download = `AEGIS_${this.p.n}.jro`; a.click(); },
-    triggerWarning(cb) {
-        const stage = el('stage'); const warn = document.createElement('div');
-        warn.className = 'warning-overlay'; warn.innerHTML = '<div class="warning-text">MVP_WARNING</div>';
-        stage.appendChild(warn); setTimeout(() => { warn.remove(); if(cb) cb(); }, 1500);
-    }
-};
-G.lang();
-</script>
-</body>
-</html>
+            const
