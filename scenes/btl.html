@@ -1,144 +1,169 @@
-<div class="panel grid g-2" style="grid-column: span 2; border-style: double; border-width: 3px;">
-    <div id="btl-cmds" class="grid g-2" style="grid-column: span 2;">
-        <button onclick="btl.act('atk')">CMD://ATTACK</button>
-        <button onclick="btl.showSkills()">CMD://SKILLS</button>
-        <button onclick="btl.act('pot')" style="color: var(--hp); border-color: var(--hp);">CMD://RECOVERY</button>
-        <button onclick="btl.escape()" style="border-color: #666; color: #666;">CMD://ABORT</button>
+<div class="panel grid g-1" style="grid-column: span 2;">
+    <div class="panel" style="text-align: center; border-style: dashed; background: rgba(57, 255, 20, 0.05); min-height: 80px;">
+        <div id="combat-status" class="c-n" style="font-size: 0.7rem; margin-bottom: 5px;">[AUTO_COMBAT_ACTIVE]</div>
+        <div id="skill-proc-notify" class="c-rare" style="font-weight: 900; font-size: 1.4rem; text-shadow: 0 0 10px var(--rare); height: 30px; transition: 0.2s;"></div>
     </div>
 
-    <div id="btl-sk" class="grid g-2" style="grid-column: span 2; display: none;">
+    <div class="panel" style="margin-top: 5px; background: rgba(255,0,0,0.05); border-color: var(--hp);">
+        <div class="flex">
+            <b id="e-name" class="c-red" style="letter-spacing: 1px;">SCANNING...</b>
+            <span class="c-red" style="font-size: 0.8rem;">HP: <span id="e-hp-txt">0</span></span>
         </div>
+        <progress id="e-hp-bar" value="0" max="100" style="border-color: var(--hp); height: 10px;"></progress>
+    </div>
+    
+    <div style="text-align: center; font-size: 0.6rem; color: #444;">[ SYSTEM_OVERRIDE: MANUAL_INPUT_DISABLED ]</div>
 </div>
 
 <script>
 const btl = {
+    mob: null,
+    tmP: null, // Player Heartbeat
+    tmE: null, // Enemy Heartbeat
+    
     init() {
-        G.s.b = true; 
-        G.s.patb = 0; G.s.eatb = 0;
+        // 1. Fetch Monster from Aegis DB
+        this.mob = window.getMonster(G.s.f);
+        this.mob.mhp = this.mob.hp;
         
-        // Tiered Mob selection
-        const tier = Math.min(1, Math.floor(G.s.f / 10));
-        const pool = DB.mobs[tier];
-        G.s.mob = { ...pool[Math.floor(Math.random() * pool.length)], mhp: 0 };
-        G.s.mob.mhp = G.s.mob.hp;
+        // 2. Setup UI
+        el('e-name').innerText = this.mob.n.toUpperCase();
+        el('e-box').setAttribute('data-mob', this.mob.n);
+        this.updateE();
+        
+        G.log(`ENGAGING_TARGET: ${this.mob.n}`, "c-red");
 
-        G.log(`TARGET_ACQUIRED: ${G.s.mob.n.toUpperCase()}`, 'c-red');
+        // 3. Set Attack Speeds
+        // Player speed scales with AGI (Base 2s, caps at 0.6s)
+        const pSpeed = Math.max(600, 2000 - (G.p.agi * 25));
         
-        // Set Foe Metadata on Stage
-        el('e-box').setAttribute('data-mob', G.s.mob.n);
-        
-        this.startClock();
+        // 4. Start the Battle Heartbeats
+        this.tmP = setInterval(() => this.playerTurn(), pSpeed);
+        this.tmE = setInterval(() => this.monsterTurn(), 2500);
     },
 
-    startClock() {
-        clearInterval(G.s.tm);
-        G.s.tm = setInterval(() => {
-            if (!G.s.b) return;
-
-            // Clock Logic
-            G.s.patb += (2 + G.p.agi * 0.1);
-            G.s.eatb += 2.2; // Slightly faster enemy scaling
-
-            if (G.s.eatb >= 100) {
-                G.s.eatb = 0;
-                this.hitP();
-            }
-            if (G.s.patb >= 100) {
-                G.s.patb = 100;
-                this.toggleUI(true);
-            }
-
-            el('atb-p').value = G.s.patb;
-            el('atb-e').value = G.s.eatb;
-        }, 50);
+    updateE() {
+        el('e-hp-bar').value = this.mob.hp;
+        el('e-hp-bar').max = this.mob.mhp;
+        el('e-hp-txt').innerText = Math.max(0, this.mob.hp).toLocaleString();
     },
 
-    act(type, val) {
-        if (G.s.patb < 100 && type !== 'pot') return;
+    playerTurn() {
+        if (this.mob.hp <= 0) return;
         
-        const m = G.s.mob;
-        const atk = Math.floor(G.p.str * 2.5 + G.p.lvl * 2);
+        let dmg = 0;
+        let logMsg = "";
+        let logColor = "";
 
-        if (type === 'atk') {
-            m.hp -= atk;
-            G.log(`DEALT_${atk}_DMG -> ${m.n}`);
-        } else if (type === 'sk') {
-            const s = DB.skills[val];
-            if (G.p.sp < s.sp) { G.log("ERR://ENERGY_LOW", "c-red"); return; }
-            G.p.sp -= s.sp;
-            const dmg = Math.floor(atk * s.val);
-            m.hp -= dmg;
-            G.log(`EXEC_${val.toUpperCase()}: ${dmg}_DMG`);
-        } else if (type === 'pot') {
-            if (G.p.pots > 0) {
-                G.p.pots--; G.p.hp = Math.min(G.p.mh, G.p.hp + 50);
-                G.log("SYS://RECOVERY_COMPLETE", "c-n");
-            } else { G.log("ERR://SUPPLY_EMPTY", "c-red"); return; }
+        // --- SKILL PROC LOGIC ---
+        // 15% base chance + 0.5% per LUK point
+        const procChance = 15 + (G.p.luk * 0.5);
+        const skillKeys = Object.keys(G.p.sk);
+        let usedSkill = null;
+
+        if (Math.random() * 100 < procChance && skillKeys.length > 0) {
+            const randKey = skillKeys[Math.floor(Math.random() * skillKeys.length)];
+            const sk = window.DB_SKILLS[randKey];
+            
+            if (G.p.sp >= sk.sp) {
+                G.p.sp -= sk.sp;
+                usedSkill = randKey;
+
+                // Execute Skill Effects
+                if (sk.type === 'phys') dmg = Math.floor((G.p.str * 2.2 + G.p.lvl) * sk.val);
+                if (sk.type === 'mag') dmg = Math.floor((G.p.int * 2.2 + G.p.lvl) * sk.val);
+                if (sk.type === 'heal_pct') {
+                    const hAmt = Math.floor(G.p.mh * sk.val);
+                    G.p.hp = Math.min(G.p.mh, G.p.hp + hAmt);
+                    G.log(`CRITICAL_HEAL: +${hAmt}HP`, "c-n");
+                }
+
+                // UI Notification
+                const notifier = el('skill-proc-notify');
+                notifier.innerText = `>> ${randKey.toUpperCase()} <<`;
+                notifier.style.opacity = "1";
+                setTimeout(() => { notifier.style.opacity = "0"; }, 500);
+                
+                logMsg = `PROC: [${randKey}]!!`;
+                logColor = "c-rare";
+            }
         }
 
-        this.toggleUI(false);
-        G.s.patb = 0;
-        G.render();
+        // --- BASIC ATTACK (If no skill proc or no SP) ---
+        if (!usedSkill) {
+            const hitRate = 80 + (G.p.dex + G.p.lvl) - this.mob.flee;
+            if (Math.random() * 100 > hitRate) {
+                logMsg = "MISS";
+                logColor = "entry";
+            } else {
+                dmg = Math.floor(G.p.str * 2.5 + G.p.lvl);
+                // Basic Critical Check
+                if (Math.random() * 100 < (G.p.luk * 0.4)) {
+                    dmg = Math.floor(dmg * 1.5);
+                    logMsg = `CRITICAL: ${dmg}`;
+                    logColor = "c-yel";
+                } else {
+                    logMsg = `HIT: ${dmg}`;
+                }
+            }
+        }
 
-        if (m.hp <= 0) this.win();
+        if (dmg > 0) {
+            this.mob.hp -= dmg;
+            el('e-spr').classList.add('hit-shake');
+            setTimeout(() => el('e-spr').classList.remove('hit-shake'), 150);
+        }
+
+        if (logMsg) G.log(logMsg, logColor);
+        this.updateE();
+        G.render();
+        if (this.mob.hp <= 0) this.win();
     },
 
-    hitP() {
-        const dmg = Math.max(1, G.s.mob.atk - Math.floor(G.p.lvl / 3));
-        G.p.hp -= dmg;
-        G.log(`INCOMING_DMG: ${dmg}`, "c-red");
-        el('p-box').classList.add('anim-shake');
-        setTimeout(() => el('p-box').classList.remove('anim-shake'), 200);
-        G.render();
+    monsterTurn() {
+        if (this.mob.hp <= 0) return;
 
-        if (G.p.hp <= 0) {
-            clearInterval(G.s.tm);
-            G.loadScene('gameover');
+        // Player Flee Check
+        const fleeRate = (G.p.agi + G.p.lvl) - this.mob.hit;
+        if (Math.random() * 100 < fleeRate) {
+            G.log("FLEE!", "c-n");
+        } else {
+            let dmg = Math.max(1, this.mob.atk - Math.floor(G.p.vit * 1.5));
+            G.p.hp -= dmg;
+            G.log(`${this.mob.n.toUpperCase()} ATTACK: ${dmg}`, "c-red");
+            el('p-spr').classList.add('hit-shake');
+            setTimeout(() => el('p-spr').classList.remove('hit-shake'), 150);
         }
+
+        G.render();
+        if (G.p.hp <= 0) this.lose();
     },
 
     win() {
-        clearInterval(G.s.tm);
-        G.s.b = false;
-        G.p.xp += G.s.mob.xp;
-        G.log(`OBJECTIVE_COMPLETE: +${G.s.mob.xp}XP`, "c-n");
-        el('e-box').removeAttribute('data-mob');
+        this.cleanup();
+        G.log(`TARGET_DEFEATED! EARNED ${this.mob.zeny}z`, "c-yel");
+        G.p.zeny += this.mob.zeny;
         
-        if (G.p.xp >= G.p.next) G.loadScene('reward');
-        else G.loadScene('mnu');
+        // 1 Floor = 1 Level Up Logic
+        G.p.lvl++;
+        G.s.f++;
+        
+        G.sv(); // Auto-Save
+        setTimeout(() => G.loadScene('reward'), 1000);
     },
 
-    toggleUI(on) {
-        el('btl-cmds').style.opacity = on ? "1" : "0.3";
-        el('btl-cmds').style.pointerEvents = on ? "auto" : "none";
+    lose() {
+        this.cleanup();
+        alert("CRITICAL_FAILURE: IDENTITY_TERMINATED.");
+        localStorage.clear();
+        location.reload();
     },
 
-    showSkills() {
-        const skBox = el('btl-sk');
-        el('btl-cmds').style.display = 'none';
-        skBox.style.display = 'grid';
-        skBox.innerHTML = '<button onclick="btl.hideSkills()" style="grid-column:span 2">BACK_TO_ROOT</button>';
-        for (let s in G.p.sk) {
-            const b = document.createElement('button');
-            b.innerHTML = `${s.toUpperCase()}<br><small>${DB.skills[s].sp}SP</small>`;
-            b.onclick = () => this.act('sk', s);
-            skBox.appendChild(b);
-        }
-    },
-
-    hideSkills() {
-        el('btl-sk').style.display = 'none';
-        el('btl-cmds').style.display = 'grid';
-    },
-
-    escape() {
-        if (confirm("ABORT_ENCOUNTER?")) {
-            clearInterval(G.s.tm);
-            G.s.b = false;
-            el('e-box').removeAttribute('data-mob');
-            G.loadScene('mnu');
-        }
+    cleanup() {
+        clearInterval(this.tmP);
+        clearInterval(this.tmE);
     }
 };
+
 btl.init();
 </script>
