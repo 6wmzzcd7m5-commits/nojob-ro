@@ -1,241 +1,393 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jobless RO v5.0 | Ultimate Edition</title>
+    <title>Jobless RO v1.02 | Ultimate Edition</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="spr.css">
 </head>
+
 <body class="lang-en" style="background:#000;">
 
-<div id="app" style="height: 100dvh; display: flex; flex-direction: column;">
-    <header class="panel" style="border-color: var(--neon); background:#000;">
-        <div class="flex" style="border-bottom:1px solid var(--neon); padding-bottom:5px; margin-bottom:5px;">
-            <div class="flex" style="gap:5px">
-                <button class="btn-sm" id="btn-save" onclick="G.exp()">SAVE</button>
-                <button class="btn-sm" id="btn-rank" onclick="G.rank()" style="color:var(--zeny)">RANK</button>
-                <button class="btn-sm" onclick="G.toggleLang()">EN/繁</button>
+    <div id="app" style="height: 100dvh; display: flex; flex-direction: column;">
+        <header class="panel" style="border-color: var(--neon); background:#000;">
+            <div class="flex" style="border-bottom:1px solid var(--neon); padding-bottom:5px; margin-bottom:5px;">
+                <div class="flex" style="gap:5px">
+                    <button class="btn-sm" id="btn-save" onclick="G.exp()">SAVE</button>
+                    <button class="btn-sm btn-red" onclick="G.reset()">RESET</button>
+                    <button class="btn-sm" id="btn-rank" onclick="G.rank()" style="color:var(--zeny)">RANK</button>
+                    <button class="btn-sm" onclick="G.toggleLang()">EN/繁</button>
+                </div>
+                <button class="btn-sm" id="btn-speed" onclick="G.cycleSpd()" style="min-width:40px;">1x</button>
             </div>
-            <button class="btn-sm" id="btn-speed" onclick="G.cycleSpd()" style="min-width:40px;">1x</button>
-            <div class="c-n"><span id="lbl-flr">FLR</span>: <span id="ui-floor">1</span></div>
-        </div>
-        
-        <div class="flex">
-            <div style="flex:1;">
-                <div class="flex">
-                    <div>
-                        <span id="ui-name" class="c-n" style="font-weight:bold; margin-right:5px;">Novice</span>
-                        <b id="ui-job" class="c-n">Novice</b> 
+
+            <div class="flex">
+                <div style="flex:1;">
+                    <div class="flex">
+                        <div>
+                            <span id="ui-name" class="c-n" style="font-weight:bold; margin-right:5px;">Novice</span>
+                            <b id="ui-job" class="c-n">Novice</b>
+                        </div>
+                        <div style="font-size: 9px;"><span id="lbl-lv">Lv</span> <span id="ui-lvl">1</span></div>
                     </div>
-                    <div style="font-size: 9px;"><span id="lbl-lv">Lv</span> <span id="ui-lvl">1</span></div>
-                </div>
-                <div class="bar-container" style="border-color:var(--neon);"><div id="hp-fill" class="fill"></div></div>
-                <div class="bar-container" style="height:2px; margin-top:2px; border:none; background:transparent;">
-                    <div id="atb-fill" style="width:0%; height:100%; background:var(--neon); opacity:0.4;"></div>
+                    <div class="bar-container" style="border-color:var(--neon); position: relative;">
+                        <div id="hp-fill" class="fill"></div>
+                        <div id="hp-text"
+                            style="position: absolute; width:100%; text-align:center; top:0; font-size:8px; color:#fff; text-shadow:1px 1px #000; line-height:10px;">
+                            0/0</div>
+                    </div>
+                    <div class="bar-container" style="height:2px; margin-top:2px; border:none; background:transparent;">
+                        <div id="atb-fill" style="width:0%; height:100%; background:var(--neon); opacity:0.4;"></div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="grid g-6" style="margin-top:5px; font-size:8px;">
-            <div class="stat-cell">ATK<b id="ui-atk">0</b></div>
-            <div class="stat-cell">MATK<b id="ui-matk">0</b></div>
-            <div class="stat-cell">CRI<b id="ui-cri">0</b></div>
-            <div class="stat-cell">HIT<b id="ui-hit">0</b></div>
-            <div class="stat-cell">FLEE<b id="ui-flee">0</b></div>
-            <div class="stat-cell">DEF<b id="ui-def">0</b></div>
-        </div>
-
-        <div class="grid g-6" style="margin-top:4px;">
-            <div class="stat-cell">STR<b id="ui-str">1</b></div><div class="stat-cell">AGI<b id="ui-agi">1</b></div>
-            <div class="stat-cell">VIT<b id="ui-vit">1</b></div><div class="stat-cell">INT<b id="ui-int">1</b></div>
-            <div class="stat-cell">DEX<b id="ui-dex">1</b></div><div class="stat-cell">LUK<b id="ui-luk">1</b></div>
-        </div>
-    </header>
-
-    <section id="stage" class="panel" style="border-color:var(--neon); background:#000;">
-        <div id="p-box" class="avatar-box"><div id="p-spr" class="spr"><div class="hd"></div><div class="bd"></div></div></div>
-        <div id="e-box" class="avatar-box">
-            <div id="e-spr" class="spr"><div class="hd"></div><div class="bd"></div></div>
-            <small id="e-name" style="position:absolute; bottom:-15px; font-size:9px; color:var(--hp)"></small>
-            <div style="position:absolute; top:-20px; width:100%;">
-                <div class="bar-container" style="height:4px; border-color:var(--neon);"><div id="e-hp-fill" class="fill" style="background:var(--hp); width:100%;"></div></div>
-                <div class="bar-container" style="height:2px; border:none; background:transparent;"><div id="e-atb-fill" style="width:0%; height:100%; background:rgba(255,255,255,0.3);"></div></div>
+            <div class="grid g-6" style="margin-top:5px; font-size:8px;">
+                <div class="stat-cell">ATK<b id="ui-atk">0</b></div>
+                <div class="stat-cell">MATK<b id="ui-matk">0</b></div>
+                <div class="stat-cell">CRI<b id="ui-cri">0</b></div>
+                <div class="stat-cell">HIT<b id="ui-hit">0</b></div>
+                <div class="stat-cell">FLEE<b id="ui-flee">0</b></div>
+                <div class="stat-cell">DEF<b id="ui-def">0</b></div>
             </div>
+
+            <div class="grid g-6" style="margin-top:4px;">
+                <div class="stat-cell">STR<b id="ui-str">1</b></div>
+                <div class="stat-cell">AGI<b id="ui-agi">1</b></div>
+                <div class="stat-cell">VIT<b id="ui-vit">1</b></div>
+                <div class="stat-cell">INT<b id="ui-int">1</b></div>
+                <div class="stat-cell">DEX<b id="ui-dex">1</b></div>
+                <div class="stat-cell">LUK<b id="ui-luk">1</b></div>
+            </div>
+        </header>
+
+        <section id="stage" class="panel">
+            <div style="position: absolute; top: 5px; left: 8px; font-size: 9px; z-index: 10; font-weight: bold; opacity: 0.8;"
+                id="ui-loc" class="c-ora">Prontera Field</div>
+            <div style="position: absolute; top: 5px; right: 8px; font-size: 10px; z-index: 10;" class="c-n">
+                <span id="lbl-flr">FLR</span>: <span id="ui-floor">1</span>
+            </div>
+            <div id="p-box" class="avatar-box">
+                <div id="p-spr" class="spr">
+                    <div class="hd"></div>
+                    <div class="bd"></div>
+                </div>
+            </div>
+            <div id="e-box" class="avatar-box">
+                <div id="e-spr" class="spr">
+                    <div class="hd"></div>
+                    <div class="bd"></div>
+                </div>
+                <small id="e-name" style="position:absolute; bottom:-15px; font-size:9px; color:var(--hp)"></small>
+                <div style="position:absolute; top:-20px; width:100%;">
+                    <div class="bar-container" style="height:4px; border-color:var(--neon);">
+                        <div id="e-hp-fill" class="fill" style="background:var(--hp); width:100%;"></div>
+                    </div>
+                    <div class="bar-container" style="height:2px; border:none; background:transparent;">
+                        <div id="e-atb-fill" style="width:0%; height:100%; background:rgba(255,255,255,0.3);"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div id="inv-hud" class="panel"
+            style="margin-top:5px; font-size:9px; height:45px; overflow-x:auto; display:flex; gap:5px; align-items:center; border-color:var(--neon); background:#000;">
         </div>
-    </section>
 
-    <div id="inv-hud" class="panel" style="margin-top:5px; font-size:9px; height:45px; overflow-x:auto; display:flex; gap:5px; align-items:center; border-color:var(--neon); background:#000;"></div>
+        <div id="skill-hud" class="panel"
+            style="margin-top:2px; font-size:9px; height:40px; overflow-x:auto; display:flex; gap:3px; align-items:center; border-color:var(--sp); background:#000;">
+        </div>
 
-    <main id="ctl" class="grid" style="margin-top:10px; min-height:120px;"></main>
-    <footer id="log" class="panel" style="flex: 1; overflow: hidden; border-color:var(--neon); background:#000;"></footer>
-</div>
+        <main id="ctl" class="grid"></main>
+        <footer id="log" class="panel"></footer>
+    </div>
 
-<script src="db.js"></script>
-<script src="items.js"></script>
-<script src="ui.js"></script>
+    <script src="db.js"></script>
+    <script src="items.js"></script>
+    <script src="scenes.js"></script>
+    <script src="ui.js"></script>
 
-<script>
-const el = i => document.getElementById(i);
-const G = {
-    p: null, 
-    s: { f:1, b:false, atb:0, eatb:0, loop:null, mob:null, spd: 1, repo: "6wmzzcd7m5-commits/nojob-ro", tmpG: 'm' },
+    <script>
+        const el = i => document.getElementById(i);
+        const G = {
+            p: null,
+            s: { f: 1, b: false, atb: 0, eatb: 0, loop: null, mob: null, spd: 1, repo: "6wmzzcd7m5-commits/nojob-ro", tmpG: 'm' },
 
-    boot() {
-        const saved = localStorage.getItem('ro_prime_v3');
-        if(saved) {
-            this.p = JSON.parse(atob(saved));
-            if(!this.p.inv) this.p.inv = [];
-            this.s.f = this.p.floor || 1;
-            UI.loadScene('mnu', this.p, this.s);
-        } else { UI.loadScene('reg', this.p, this.s); }
-        UI.render(this.p, this.s);
-    },
+            boot() {
+                const saved = localStorage.getItem('ro_prime_v3');
+                if (saved) {
+                    this.p = JSON.parse(atob(saved));
+                    if (!this.p.items) this.p.items = {};
+                    this.s.f = this.p.floor || 1;
+                    UI.loadScene('mnu', this.p, this.s);
+                } else {
+                    this.p = { n: "JOBLESS", job: "Novice", gender: 'm', lvl: 1, str: 1, agi: 1, vit: 1, int: 1, dex: 1, luk: 1, hp: 1, mh: 1, items: {} };
+                    UI.loadScene('start', this.p, this.s);
+                }
+                UI.render(this.p, this.s);
+                if (!saved) this.startPreview();
+                console.log("GAME_BOOT: SUCCESS_V1.02");
+            },
 
-    setG(val) { this.s.tmpG = val; el('g-m').classList.toggle('active', val==='m'); el('g-f').classList.toggle('active', val==='f'); },
+            startPreview() {
+                if (this.s.pvw) clearInterval(this.s.pvw);
+                const rotate = () => {
+                    if (!DB.mobs || !DB.mobs.names) return;
+                    const m = DB.mobs.names[Math.floor(Math.random() * DB.mobs.names.length)];
+                    const name = m.replace(/ \[MVP\]/g, '');
+                    const cls = name.replace(/\s+/g, '-');
+                    el('e-spr').className = `spr ${m.includes('[MVP]') ? 'spr-mvp' : ''} m-${cls}`;
+                    el('e-name').innerText = DB.getName('mobs', m);
+                    el('e-hp-fill').style.width = "100%";
+                };
+                rotate();
+                this.s.pvw = setInterval(rotate, 3000);
+            },
 
-    initChar() {
-        const n = el('pname').value || "Novice";
-        const d = parseFloat(el('pdiff').value) || 1.0;
-        this.p = { n, gender: this.s.tmpG, diff: d, job:'Novice', lvl:1, str:5, agi:5, vit:5, int:5, dex:5, luk:5, hp:100, mh:100, floor:1, inv:[] };
-        this.sv(); UI.render(this.p, this.s); UI.loadScene('mnu', this.p, this.s);
-    },
+            showReg() {
+                if (this.s.pvw) clearInterval(this.s.pvw);
+                UI.loadScene('reg', this.p, this.s);
+            },
 
-    toggleLang() { 
-        document.body.classList.toggle('lang-tc'); 
-        UI.render(this.p, this.s); 
-        UI.loadScene(this.s.b ? 'btl' : (this.s.scene || 'mnu'), this.p, this.s);
-    },
+            reset() { if (confirm(DB.txt('confirm_reset'))) { localStorage.removeItem('ro_prime_v3'); location.reload(); } },
 
-    cycleSpd() { 
-        const spds = [1, 5, 20];
-        this.s.spd = spds[(spds.indexOf(this.s.spd) + 1) % spds.length];
-        if(this.s.b) this.startLoop();
-        UI.render(this.p, this.s);
-        UI.log("SPEED_SET: " + this.s.spd + "X", "c-yel");
-    },
+            setG(val) { this.s.tmpG = val; },
 
-    startLoop() {
-        if(this.s.loop) clearInterval(this.s.loop);
-        this.s.loop = setInterval(() => {
-            if(!this.s.b) return;
-            const job = DB.getJob(this.p.job);
-            
-            // Player Attack Bar Logic
-            this.s.atb += ((job.aspd + (this.p.agi * 0.8) + (this.p.dex * 0.2)) / 10);
-            el('atb-fill').style.width = Math.min(100, this.s.atb / 10) + "%";
+            initChar() {
+                if (this.s.pvw) clearInterval(this.s.pvw);
+                const n = el('pname').value || "Novice";
+                const d = parseFloat(el('pdiff').value) || 1.0;
+                this.p = { n, gender: this.s.tmpG || 'm', diff: d, job: 'Novice', lvl: 1, str: 5, agi: 5, vit: 5, int: 5, dex: 5, luk: 5, hp: 100, mh: 100, floor: 1, items: {}, wpn: null, arm: null, skills: [] };
+                this.sv(); UI.render(this.p, this.s); UI.loadScene('mnu', this.p, this.s);
+            },
 
-            // Enemy Attack Bar Logic
-            const eFill = 150 + (this.s.f * 2);
-            this.s.eatb += (eFill / 10);
-            el('e-atb-fill').style.width = Math.min(100, this.s.eatb / 10) + "%";
+            toggleLang() {
+                document.body.classList.toggle('lang-tc');
+                UI.render(this.p, this.s);
+                UI.loadScene(this.s.b ? 'btl' : (this.s.scene || 'mnu'), this.p, this.s);
+            },
 
-            if(this.s.atb >= 1000) { this.s.atb = 0; this.pAttack(); }
-            if(this.s.eatb >= 1000) { this.s.eatb = 0; this.eAttack(); }
-        }, 30 / this.s.spd);
-    },
+            cycleSpd() {
+                const spds = [1, 5, 20];
+                this.s.spd = spds[(spds.indexOf(this.s.spd) + 1) % spds.length];
+                if (this.s.b) this.startLoop();
+                UI.render(this.p, this.s);
+                UI.log(DB.txt('speed') + " " + this.s.spd + "X", "c-yel");
+            },
 
-    pAttack() {
-        let dmg = Math.max(1, parseInt(el('ui-atk').innerText) - (this.s.mob.def || 0));
-        let skillName = "";
-        
-        // 5% Skill Trigger logic
-        if (Math.random() < 0.05) {
-            let cat = "";
-            for (let c in DB.jobs) if (DB.jobs[c][this.p.job]) cat = c;
-            if (cat && DB.skills[cat]) {
-                const sKeys = Object.keys(DB.skills[cat]);
-                skillName = sKeys[Math.floor(Math.random() * sKeys.length)];
-                dmg = Math.floor(dmg * DB.skills[cat][skillName].mult);
-                UI.log(`SKILL: ${DB.getName('skills', skillName)}!`, "c-yel");
-            }
-        }
-        
-        // Critical Hit (RO Formula)
-        const criRate = parseFloat(el('ui-cri').innerText) / 100;
-        const isCrit = !skillName && Math.random() < criRate;
-        if (isCrit) { dmg = Math.floor(dmg * 1.5); UI.log("CRITICAL HIT!", "c-yel"); }
+            startLoop() {
+                if (this.s.loop) clearInterval(this.s.loop);
+                this.s.loop = setInterval(() => {
+                    if (!this.s.b) return;
+                    const job = DB.getJob(this.p.job);
 
-        el('p-spr').classList.add('lung'); setTimeout(() => el('p-spr').classList.remove('lung'), 150);
-        this.s.mob.hp -= dmg;
-        el('e-hp-fill').style.width = (this.s.mob.hp / this.s.mob.mhp * 100) + "%";
-        UI.pop(dmg, 'e-box', (skillName || isCrit) ? 'c-yel' : '');
-        if(this.s.mob.hp <= 0) this.resolveWin();
-    },
+                    // Player Attack Bar Logic
+                    this.s.atb += ((job.aspd + (this.p.agi * 0.8) + (this.p.dex * 0.2)) / 10);
+                    el('atb-fill').style.width = Math.min(100, this.s.atb / 10) + "%";
 
-    eAttack() {
-        const def = parseInt(el('ui-def').innerText);
-        const dmg = Math.max(1, this.s.mob.atk - def);
-        el('e-spr').classList.add('lung'); setTimeout(() => el('e-spr').classList.remove('lung'), 150);
-        this.p.hp -= dmg;
-        UI.render(this.p, this.s); 
-        UI.pop(dmg, 'p-box', 'c-red');
-        if(this.p.hp <= 0) this.resolveLoss();
-    },
+                    // Enemy Attack Bar Logic
+                    const eFill = 150 + (this.s.f * 2);
+                    this.s.eatb += (eFill / 10);
+                    el('e-atb-fill').style.width = Math.min(100, this.s.eatb / 10) + "%";
 
-    resolveWin() {
-        this.s.b = false; clearInterval(this.s.loop);
-        DB_ITEMS.pool.forEach(i => { if(Math.random() < i.rate) { this.p.inv.push(i.n); UI.log(`+ ${DB_ITEMS.getName(i.n)}`, "c-yel"); }});
-        
-        // 10% Random Event trigger
-        if (Math.random() < 0.10) {
-            const events = [
-                { effect: () => { this.p.str += 1; UI.log("EVENT: Permanent ATK +1", "c-n"); }},
-                { effect: () => { this.p.int += 1; UI.log("EVENT: Permanent MATK +1", "c-n"); }},
-                { effect: () => { this.p.mh += 10; UI.log("EVENT: Permanent MaxHP +10", "c-n"); }}
-            ];
-            events[Math.floor(Math.random() * events.length)].effect();
-        }
+                    if (this.s.atb >= 1000) { this.s.atb = 0; this.pAttack(); }
+                    if (this.s.eatb >= 1000) { this.s.eatb = 0; this.eAttack(); }
+                }, 30 / this.s.spd);
+            },
 
-        this.p.lvl++; this.s.f++; this.p.floor = this.s.f;
-        this.p.hp = this.p.mh;
-        UI.loadScene( (this.p.lvl === 10 || this.p.lvl === 50) ? 'job' : 'mnu', this.p, this.s);
-        this.sv(); UI.render(this.p, this.s);
-    },
+            pAttack() {
+                let baseDmg = Math.max(1, parseInt(el('ui-atk').innerText) - (this.s.mob.def || 0));
+                let skillName = "";
+                let skillData = null;
 
-    resolveLoss() {
-        this.s.b = false; clearInterval(this.s.loop);
-        UI.log("DEFEATED! RETREAT TO TOWN.", "c-red");
-        this.p.hp = this.p.mh;
-        UI.loadScene('mnu', this.p, this.s);
-        UI.render(this.p, this.s);
-    },
+                // 1. Skill Trigger Check (Only use Active skills)
+                if (this.p.skills && this.p.skills.length > 0 && Math.random() < 0.10) {
+                    const activePool = this.p.skills.filter(sn => {
+                        for (let c in DB.skills) if (DB.skills[c][sn] && DB.skills[c][sn].mode === 'act') return true;
+                        return false;
+                    });
 
-    changeJob(newJob) {
-        this.p.job = newJob;
-        ['str','agi','vit','int','dex','luk'].forEach(s => this.p[s] += 5);
-        this.p.mh += 100; this.p.hp = this.p.mh;
-        this.sv(); UI.render(this.p, this.s); UI.loadScene('mnu', this.p, this.s);
-    },
+                    if (activePool.length > 0) {
+                        skillName = activePool[Math.floor(Math.random() * activePool.length)];
+                        for (let c in DB.skills) if (DB.skills[c][skillName]) skillData = DB.skills[c][skillName];
+                    }
+                }
 
-    startBattle() {
-        const isBoss = (this.s.f % 10 === 0);
-        let mobIndex;
-        if (isBoss) {
-            const bossPool = DB.mobs.names.filter(n => n.includes('[MVP]'));
-            mobIndex = DB.mobs.names.indexOf(bossPool[Math.floor(Math.random() * bossPool.length)]);
-        } else {
-            const regularPool = DB.mobs.names.filter(n => !n.includes('[MVP]'));
-            mobIndex = DB.mobs.names.indexOf(regularPool[Math.floor(Math.random() * regularPool.length)]);
-        }
+                // 2. Skill Execution
+                if (skillData) {
+                    UI.log(`${DB.txt('skill', 'st') || 'SKILL'}: ${DB.getName('skills', skillName)}!`, "c-yel");
 
-        this.s.mob = DB.mobs.scaling(this.s.f);
-        this.s.mob.n = DB.mobs.names[mobIndex];
-        this.s.mob.hp *= (this.p.diff || 1.0); 
-        this.s.mob.atk *= (this.p.diff || 1.0); 
-        this.s.mob.mhp = this.s.mob.hp;
+                    // Determine Skill Color
+                    let sCol = 'c-yel';
+                    if (skillData.type === 'fire') sCol = 'c-ora';
+                    if (skillData.type === 'water' || skillData.type === 'cold' || skillData.type === 'wind') sCol = 'c-blu';
+                    if (skillData.type === 'heal' || skillData.type === 'poison') sCol = 'c-grn';
 
-        el('e-box').setAttribute('data-tier', Math.ceil(this.s.f / 10));
-        el('e-spr').className = `spr ${this.s.mob.n.includes('[MVP]') ? 'spr-mvp' : ''}`;
-        el('e-name').innerText = this.s.mob.n; el('e-hp-fill').style.width = "100%";
-        this.s.b = true; this.s.atb = 0; this.s.eatb = 0;
-        this.startLoop(); UI.loadScene('btl', this.p, this.s);
-    },
+                    // Special: Healing Skills
+                    if (skillData.type === 'heal') {
+                        const healAmt = Math.floor(baseDmg * skillData.mult);
+                        this.p.hp = Math.min(this.p.mh, this.p.hp + healAmt);
+                        UI.render(this.p, this.s);
+                        UI.pop(healAmt, 'p-box', sCol);
+                        return;
+                    }
 
-    sv() { localStorage.setItem('ro_prime_v3', btoa(JSON.stringify(this.p))); },
-    exp() { const a=document.createElement('a'); a.href='data:text/plain;base64,'+btoa(JSON.stringify(this.p)); a.download='save.jro'; a.click(); },
-    rank() { window.open(`https://github.com/${this.s.repo}/issues/new?title=RANK_SUBMISSION&body=${encodeURIComponent(JSON.stringify({...this.p, hash: getSecureHash(this.p)}))}`, '_blank'); }
-};
-window.onload = () => G.boot();
-</script>
+                    // Special: Multi-Hit & Bonus Targeting
+                    let totalHits = skillData.hits || 1;
+                    if (skillData.bonus) {
+                        const isTarget = Array.isArray(skillData.bonus.target)
+                            ? skillData.bonus.target.some(t => this.s.mob.n.includes(t))
+                            : this.s.mob.n.includes(skillData.bonus.target);
+                        if (isTarget) totalHits = skillData.bonus.hits;
+                    }
+
+                    for (let i = 0; i < totalHits; i++) {
+                        setTimeout(() => {
+                            if (this.s.mob.hp <= 0) return;
+                            const hitDmg = Math.floor(baseDmg * skillData.mult);
+                            this.s.mob.hp -= hitDmg;
+                            el('e-hp-fill').style.width = (Math.max(0, this.s.mob.hp) / this.s.mob.mhp * 100) + "%";
+                            UI.pop(hitDmg, 'e-box', sCol);
+                            if (this.s.mob.hp <= 0) this.resolveWin();
+                        }, i * 150);
+                    }
+                } else {
+                    // 3. Normal Attack / Critical Hit
+                    const criRate = parseFloat(el('ui-cri').innerText) / 100;
+                    const isCrit = Math.random() < criRate;
+                    let dmg = isCrit ? Math.floor(baseDmg * 1.5) : baseDmg;
+                    if (isCrit) UI.log("CRITICAL HIT!", "c-yel");
+
+                    this.s.mob.hp -= dmg;
+                    el('e-hp-fill').style.width = (Math.max(0, this.s.mob.hp) / this.s.mob.mhp * 100) + "%";
+                    UI.pop(dmg, 'e-box', isCrit ? 'c-yel' : '');
+                    if (this.s.mob.hp <= 0) this.resolveWin();
+                }
+
+                el('p-spr').classList.add('lung'); setTimeout(() => el('p-spr').classList.remove('lung'), 150);
+            },
+
+            eAttack() {
+                const def = parseInt(el('ui-def').innerText);
+                const dmg = Math.max(1, this.s.mob.atk - def);
+                el('e-spr').classList.add('lung'); setTimeout(() => el('e-spr').classList.remove('lung'), 150);
+                this.p.hp -= dmg;
+                UI.render(this.p, this.s);
+                UI.pop(dmg, 'p-box', 'c-red');
+                if (this.p.hp <= 0) this.resolveLoss();
+            },
+
+            resolveWin() {
+                this.s.b = false; clearInterval(this.s.loop);
+
+                // 1. Roll for Shared Loot Pool (Potions, Gear)
+                DB_ITEMS.pool.forEach(i => {
+                    if (Math.random() < i.rate) {
+                        const item = { ...i };
+                        if (item.type === 'weapon') {
+                            if (!this.p.wpn || item.val > this.p.wpn.val) {
+                                this.p.wpn = item;
+                                UI.log(`${DB.txt('equip')} ${DB_ITEMS.getName(item.n)}`, "c-yel");
+                            }
+                        } else if (item.type === 'armor') {
+                            if (!this.p.arm || item.val > this.p.arm.val) {
+                                this.p.arm = item;
+                                UI.log(`${DB.txt('equip')} ${DB_ITEMS.getName(item.n)}`, "c-yel");
+                            }
+                        } else {
+                            if (!this.p.items) this.p.items = {};
+                            this.p.items[item.n] = (this.p.items[item.n] || 0) + 1;
+                            UI.log(`+ ${DB_ITEMS.getName(item.n)}`, "c-yel");
+                        }
+                    }
+                });
+
+                // 2. Roll for Specific Monster Card (1.5% Chance)
+                if (this.s.mob.card && Math.random() < 0.015) {
+                    if (!this.p.items) this.p.items = {};
+                    this.p.items[this.s.mob.card] = (this.p.items[this.s.mob.card] || 0) + 1;
+                    UI.log(`${DB.txt('card_get')} ${DB_ITEMS.getName(this.s.mob.card)}`, "c-yel");
+                }
+
+                // 10% Random Event trigger
+                if (Math.random() < 0.10) {
+                    const events = [
+                        { effect: () => { this.p.str += 1; UI.log(DB.txt('event_atk'), "c-n"); } },
+                        { effect: () => { this.p.int += 1; UI.log(DB.txt('event_matk'), "c-n"); } },
+                        { effect: () => { this.p.mh += 10; UI.log(DB.txt('event_hp'), "c-n"); } }
+                    ];
+                    events[Math.floor(Math.random() * events.length)].effect();
+                }
+
+                this.p.lvl++;
+                if (this.p.lvl === 30) this.grantSkill();
+                this.s.f++; this.p.floor = this.s.f;
+                this.p.hp = this.p.mh;
+                UI.loadScene((this.p.lvl === 10 || this.p.lvl === 50) ? 'job' : 'mnu', this.p, this.s);
+                this.sv(); UI.render(this.p, this.s);
+            },
+
+            resolveLoss() {
+                this.s.b = false; clearInterval(this.s.loop);
+                UI.log(DB.txt('defeat'), "c-red");
+                this.p.hp = this.p.mh;
+                UI.loadScene('gameover', this.p, this.s);
+                UI.render(this.p, this.s);
+            },
+
+            changeJob(newJob) {
+                this.p.job = newJob;
+                ['str', 'agi', 'vit', 'int', 'dex', 'luk'].forEach(s => this.p[s] += 5);
+                this.p.mh += 100; this.p.hp = this.p.mh;
+                this.grantSkill();
+                this.sv(); UI.render(this.p, this.s); UI.loadScene('mnu', this.p, this.s);
+            },
+
+            grantSkill() {
+                if (!this.p.skills) this.p.skills = [];
+                let cat = "";
+                for (let c in DB.jobs) if (DB.jobs[c][this.p.job]) cat = c;
+                if (!cat) return;
+                const tier = DB.jobs[cat][this.p.job].next.length > 0 ? 1 : 2;
+                const pool = Object.keys(DB.skills[cat]).filter(k => DB.skills[cat][k].tier === tier && !this.p.skills.includes(k));
+                if (pool.length > 0) {
+                    const s = pool[Math.floor(Math.random() * pool.length)];
+                    this.p.skills.push(s);
+                    UI.log(DB.getLang() === 'en' ? `LEARNED: ${s}!` : `獲得技能: ${DB.getName('skills', s)}!`, "c-yel");
+                }
+            },
+
+            startBattle() {
+                const isBoss = (this.s.f % 10 === 0);
+                let mobIndex;
+                if (isBoss) {
+                    const bossPool = DB.mobs.names.filter(n => n.includes('[MVP]'));
+                    mobIndex = DB.mobs.names.indexOf(bossPool[Math.floor(Math.random() * bossPool.length)]);
+                } else {
+                    const regularPool = DB.mobs.names.filter(n => !n.includes('[MVP]'));
+                    mobIndex = DB.mobs.names.indexOf(regularPool[Math.floor(Math.random() * regularPool.length)]);
+                }
+
+                this.s.mob = DB.mobs.scaling(this.s.f);
+                this.s.mob.n = DB.mobs.names[mobIndex];
+                this.s.mob.hp *= (this.p.diff || 1.0);
+                this.s.mob.atk *= (this.p.diff || 1.0);
+                this.s.mob.mhp = this.s.mob.hp;
+
+                el('e-spr').className = `spr ${this.s.mob.n.includes('[MVP]') ? 'spr-mvp' : ''} m-${this.s.mob.n.replace(/ \[MVP\]/g, '').replace(/\s+/g, '-')}`;
+                el('e-name').innerText = DB.getName('mobs', this.s.mob.n); el('e-hp-fill').style.width = "100%";
+                this.s.b = true; this.s.atb = 0; this.s.eatb = 0;
+                this.startLoop(); UI.loadScene('btl', this.p, this.s);
+            },
+
+            sv() { localStorage.setItem('ro_prime_v3', btoa(JSON.stringify(this.p))); },
+            exp() { const a = document.createElement('a'); a.href = 'data:text/plain;base64,' + btoa(JSON.stringify(this.p)); a.download = 'save.jro'; a.click(); },
+            rank() { window.open(`https://github.com/${this.s.repo}/issues/new?title=RANK_SUBMISSION&body=${encodeURIComponent(JSON.stringify({ ...this.p, hash: getSecureHash(this.p) }))}`, '_blank'); }
+        };
+        window.onload = () => G.boot();
+    </script>
 </body>
+
 </html>

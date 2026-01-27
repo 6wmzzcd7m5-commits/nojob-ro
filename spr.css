@@ -1,0 +1,717 @@
+/* --- AEGIS_SPRITE_ENGINE_V1.02 --- */
+
+/* --- 1. CORE LAYOUT --- */
+.avatar-box {
+    width: 70px;
+    height: 80px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    position: relative;
+}
+
+.spr {
+    width: 32px;
+    height: 48px;
+    position: relative;
+    z-index: 5;
+    animation: idle 1.5s infinite ease-in-out;
+}
+
+/* Base Body Parts */
+.hd {
+    width: 22px;
+    height: 20px;
+    background: #fca;
+    border: 1px solid #333;
+    border-radius: 4px;
+    position: absolute;
+    top: 0;
+    left: 5px;
+    z-index: 2;
+}
+
+.bd {
+    width: 26px;
+    height: 28px;
+    border: 1px solid #333;
+    position: absolute;
+    bottom: 2px;
+    left: 3px;
+    z-index: 1;
+    border-radius: 2px;
+}
+
+/* --- 2. PLAYER JOB COSTUMES --- */
+.j-Novice .bd {
+    background: linear-gradient(#fff, #ccc);
+}
+
+.j-Swordman .bd {
+    background: linear-gradient(#d84, #842);
+}
+
+.j-Mage .bd {
+    background: linear-gradient(#4af, #25a);
+}
+
+.j-Thief .bd {
+    background: linear-gradient(#444, #111);
+}
+
+.j-Archer .bd {
+    background: linear-gradient(#4a4, #151);
+}
+
+.j-Merchant .bd {
+    background: linear-gradient(#84a, #415);
+}
+
+.j-Acolyte .bd {
+    background: linear-gradient(#eee, #aaa);
+    border-left: 4px solid #aaf;
+}
+
+.j-Knight .bd {
+    background: linear-gradient(#ffd700, #b8860b);
+    border: 2px solid #fff;
+}
+
+.j-Wizard .bd {
+    background: linear-gradient(#9370db, #4b0082);
+    box-shadow: 0 0 5px #fff;
+}
+
+.j-Assassin .bd {
+    background: linear-gradient(#222, #000);
+    border-right: 5px solid #c00;
+}
+
+.j-Hunter .bd {
+    background: linear-gradient(#556b2f, #228b22);
+    border-top: 3px solid #8b4513;
+}
+
+.j-Blacksmith .bd {
+    background: linear-gradient(#708090, #2f4f4f);
+    border-bottom: 4px solid #ff4500;
+}
+
+.j-Priest .bd {
+    background: linear-gradient(#f0f8ff, #add8e6);
+    border: 2px solid #ffd700;
+}
+
+.ro-f .hd::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    height: 8px;
+    background: #631;
+    border-radius: 4px 4px 0 0;
+}
+
+/* --- 3. BESPOKE MONSTER SPRITES --- */
+/* Every monster here is unique and isolated */
+
+/* 3.1 Poring (Pink Slime) */
+.m-Poring .hd {
+    display: none;
+}
+
+.m-Poring .bd {
+    background: #ff9999;
+    border-radius: 50% 50% 40% 40%;
+    animation: m-bounce 0.8s infinite alternate;
+}
+
+.m-Poring .bd::after {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 8px;
+    width: 2px;
+    height: 3px;
+    background: #333;
+    border-radius: 50%;
+    box-shadow: 8px 0 #333;
+}
+
+/* 3.2 Fabre (Green Larva) */
+.m-Fabre .hd {
+    display: none;
+}
+
+.m-Fabre .bd {
+    background: repeating-linear-gradient(90deg, #6c3, #6c3 5px, #4a2 5px, #4a2 10px);
+    width: 32px;
+    height: 16px;
+    bottom: 0;
+    left: 0;
+    border-radius: 10px;
+}
+
+/* 3.3 Lunatic (Rabbit) */
+.m-Lunatic .hd {
+    background: #eee;
+    border-radius: 50%;
+    top: 5px;
+    width: 18px;
+    height: 18px;
+    left: 7px;
+}
+
+.m-Lunatic .hd::before,
+.m-Lunatic .hd::after {
+    content: '';
+    position: absolute;
+    top: -12px;
+    width: 6px;
+    height: 15px;
+    background: #eee;
+    border: 1px solid #333;
+    border-radius: 50% 50% 0 0;
+}
+
+.m-Lunatic .hd::before {
+    left: 2px;
+    transform: rotate(-10deg);
+}
+
+.m-Lunatic .hd::after {
+    right: 2px;
+    transform: rotate(10deg);
+}
+
+.m-Lunatic .bd {
+    background: #eee;
+    border-radius: 50% 50% 20% 20%;
+    width: 22px;
+    height: 20px;
+    left: 5px;
+}
+
+/* 3.4 Chonchon (Blue Fly) */
+.m-Chonchon .hd {
+    display: none;
+}
+
+.m-Chonchon .bd {
+    background: #aaddff;
+    border-radius: 50% 50% 20% 20%;
+    animation: m-flutter 0.15s infinite alternate;
+}
+
+.m-Chonchon .bd::before,
+.m-Chonchon .bd::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    width: 14px;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid #fff;
+    border-radius: 50%;
+}
+
+.m-Chonchon .bd::before {
+    left: -8px;
+    transform: rotate(-30deg);
+}
+
+.m-Chonchon .bd::after {
+    right: -8px;
+    transform: scaleX(-1) rotate(-30deg);
+}
+
+/* 3.5 Roda Frog (Green Frog) */
+.m-Roda-Frog .hd {
+    display: none;
+}
+
+.m-Roda-Frog .bd {
+    background: #4a2;
+    border-radius: 40% 40% 20% 20%;
+}
+
+.m-Roda-Frog .bd::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 4px;
+    width: 6px;
+    height: 6px;
+    background: #fff;
+    border: 1px solid #333;
+    border-radius: 50%;
+    box-shadow: 10px 0 #fff, 10px 0 0 1px #333;
+}
+
+/* 3.6 Spore (Red Mushroom) */
+.m-Spore .hd {
+    display: none;
+}
+
+.m-Spore .bd {
+    background: #fff;
+    width: 12px;
+    height: 20px;
+    left: 10px;
+    border-radius: 2px;
+}
+
+.m-Spore .bd::after {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: -10px;
+    width: 32px;
+    height: 16px;
+    background: #d44;
+    border: 1px solid #333;
+    border-radius: 16px 16px 2px 2px;
+    box-shadow: 5px 3px rgba(255, 255, 255, 0.3) inset;
+}
+
+/* 3.7 Tarou (Rat) */
+.m-Tarou .hd {
+    background: #888;
+    border-radius: 50% 50% 0 0;
+    top: 10px;
+}
+
+.m-Tarou .hd::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 0;
+    width: 6px;
+    height: 6px;
+    background: #888;
+    border-radius: 50%;
+    box-shadow: 16px 0 #888;
+}
+
+.m-Tarou .bd {
+    background: #888;
+    clip-path: polygon(20% 0, 80% 0, 100% 100%, 0 100%);
+}
+
+/* 3.8 Poison Spore (Purple Mushroom) */
+.m-Poison-Spore .hd {
+    display: none;
+}
+
+.m-Poison-Spore .bd {
+    background: #fff;
+    width: 12px;
+    height: 20px;
+    left: 10px;
+    border-radius: 2px;
+}
+
+.m-Poison-Spore .bd::after {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: -10px;
+    width: 32px;
+    height: 16px;
+    background: #94b;
+    border: 1px solid #333;
+    border-radius: 16px 16px 2px 2px;
+}
+
+/* 3.9 Wormtail (Brown Larva) */
+.m-Wormtail .hd {
+    display: none;
+}
+
+.m-Wormtail .bd {
+    background: repeating-linear-gradient(90deg, #963, #963 5px, #642 5px, #642 10px);
+    width: 32px;
+    height: 16px;
+    bottom: 0;
+    left: 0;
+    border-radius: 10px;
+}
+
+/* 3.10 Angeling (Angel Slime) */
+.m-Angeling .hd {
+    display: none;
+}
+
+.m-Angeling .bd {
+    background: #ffccff;
+    border: 1px solid #fff;
+    border-radius: 50% 50% 40% 40%;
+    animation: m-bounce 0.8s infinite alternate;
+}
+
+.m-Angeling .bd::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 8px;
+    width: 2px;
+    height: 3px;
+    background: #333;
+    border-radius: 50%;
+    box-shadow: 8px 0 #333;
+}
+
+.m-Angeling::before,
+.m-Angeling::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    width: 15px;
+    height: 10px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 50%;
+    z-index: 10;
+}
+
+.m-Angeling::before {
+    left: -12px;
+    transform: rotate(-20deg);
+}
+
+.m-Angeling::after {
+    right: -12px;
+    transform: scaleX(-1) rotate(-20deg);
+}
+
+/* 3.11 Zombie (Undead) */
+.m-Zombie .hd {
+    background: #675;
+    clip-path: polygon(10% 0, 90% 0, 100% 100%, 0 100%);
+}
+
+.m-Zombie .bd {
+    background: #675;
+    clip-path: polygon(0 0, 100% 10%, 90% 100%, 10% 90%);
+    animation: m-stiff 1.5s infinite steps(2);
+}
+
+/* 3.12 Skeleton (Undead) */
+.m-Skeleton .hd {
+    background: #f0f0f0;
+    clip-path: polygon(0 0, 100% 0, 100% 70%, 70% 100%, 30% 100%, 0 70%);
+}
+
+.m-Skeleton .hd::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 4px;
+    width: 4px;
+    height: 4px;
+    background: #333;
+    border-radius: 50%;
+    box-shadow: 10px 0 #333;
+}
+
+.m-Skeleton .bd {
+    background: #f0f0f0;
+    border: 2px solid #ccc;
+    width: 14px;
+    left: 9px;
+    animation: m-stiff 1.5s infinite steps(2);
+}
+
+/* 3.13 Poporing (Green Slime) */
+.m-Poporing .hd {
+    display: none;
+}
+
+.m-Poporing .bd {
+    background: #9f9;
+    border-radius: 50% 50% 40% 40%;
+    animation: m-bounce 0.8s infinite alternate;
+}
+
+.m-Poporing .bd::after {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 8px;
+    width: 2px;
+    height: 3px;
+    background: #333;
+    border-radius: 50%;
+    box-shadow: 8px 0 #333;
+}
+
+/* 3.14 Hydra (Tentacle) */
+.m-Hydra .hd {
+    display: none;
+}
+
+.m-Hydra .bd {
+    background: #d66;
+    width: 10px;
+    height: 40px;
+    left: 11px;
+    border-radius: 10px 10px 0 0;
+    box-shadow: -8px 10px 0 -2px #d66, 8px 15px 0 -2px #d66;
+}
+
+/* 3.15 Vadon (Crab) */
+.m-Vadon .hd {
+    display: none;
+}
+
+.m-Vadon .bd {
+    background: #e44;
+    width: 30px;
+    height: 20px;
+    left: 1px;
+    border-radius: 10px 10px 5px 5px;
+}
+
+.m-Vadon .bd::before,
+.m-Vadon .bd::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    width: 10px;
+    height: 12px;
+    background: #e44;
+    border: 1px solid #333;
+    border-radius: 5px;
+}
+
+.m-Vadon .bd::before {
+    left: 0;
+    transform: rotate(-20deg);
+}
+
+.m-Vadon .bd::after {
+    right: 0;
+    transform: rotate(20deg);
+}
+
+/* 3.16 Marina (Jellyfish) */
+.m-Marina .hd {
+    display: none;
+}
+
+.m-Marina .bd {
+    background: rgba(150, 200, 255, 0.6);
+    border: 1px solid #fff;
+    border-radius: 50% 50% 10% 10%;
+    width: 28px;
+    left: 2px;
+}
+
+.m-Marina .bd::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 4px;
+    width: 20px;
+    height: 15px;
+    background: repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(255, 255, 255, 0.4) 4px, rgba(255, 255, 255, 0.4) 6px);
+}
+
+/* 3.17 Thief Bug (Beetle) */
+.m-Thief-Bug .hd {
+    display: none;
+}
+
+.m-Thief-Bug .bd {
+    background: #753;
+    border-radius: 50% 50% 10% 10%;
+    width: 30px;
+    left: 1px;
+    clip-path: polygon(10% 0, 90% 0, 100% 100%, 0 100%);
+}
+
+/* 3.14 Soldier Skeleton (Equipped) */
+.m-Soldier-Skeleton .hd {
+    background: #f0f0f0;
+    border-radius: 50% 50% 10% 10%;
+}
+
+.m-Soldier-Skeleton .bd {
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    width: 16px;
+    left: 8px;
+    animation: m-stiff 1.5s infinite steps(2);
+}
+
+.m-Soldier-Skeleton .bd::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 15px;
+    width: 4px;
+    height: 20px;
+    background: #888;
+    border: 1px solid #333;
+}
+
+/* 3.15 Archer Skeleton */
+.m-Archer-Skeleton .hd {
+    background: #fcf;
+    border-radius: 50% 50% 10% 10%;
+}
+
+.m-Archer-Skeleton .bd {
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    width: 16px;
+    left: 8px;
+    animation: m-stiff 1.5s infinite steps(2);
+}
+
+.m-Archer-Skeleton .bd::before {
+    content: ')';
+    position: absolute;
+    top: 0;
+    left: 12px;
+    font-size: 20px;
+    color: #842;
+    font-weight: bold;
+    transform: rotate(10deg);
+}
+
+/* 3.16 Golden Thief Bug [MVP] */
+.m-Golden-Thief-Bug .hd {
+    display: none;
+}
+
+.m-Golden-Thief-Bug .bd {
+    background: linear-gradient(#fd0, #b80);
+    border: 2px solid #fff;
+    border-radius: 50% 50% 10% 10%;
+    width: 34px;
+    left: -1px;
+    box-shadow: 0 0 15px #ff0;
+}
+
+.m-Golden-Thief-Bug {
+    animation: m-boss-glow 2s infinite alternate;
+}
+
+/* --- 4. ANIMATIONS --- */
+@keyframes m-bounce {
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scaleY(0.8) scaleX(1.1);
+    }
+}
+
+@keyframes m-flutter {
+    from {
+        transform: translateY(0) rotate(-2deg);
+    }
+
+    to {
+        transform: translateY(-3px) rotate(2deg);
+    }
+}
+
+@keyframes m-stiff {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(2px) rotate(1deg);
+    }
+}
+
+@keyframes m-boss-glow {
+    0% {
+        filter: brightness(1) drop-shadow(0 0 5px #ff0);
+    }
+
+    100% {
+        transform: scale(1.1);
+        filter: brightness(1.3) drop-shadow(0 0 20px #ff0);
+    }
+}
+
+@keyframes idle {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(4px);
+    }
+}
+
+.lung {
+    animation: lung-act 0.15s ease-in-out;
+}
+
+@keyframes lung-act {
+    0% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(20px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+.shake {
+    animation: shake-act 0.2s ease-in-out;
+}
+
+@keyframes shake-act {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+.dmg-pop {
+    position: absolute;
+    font-family: var(--impact);
+    font-size: 18px;
+    color: #fff;
+    text-shadow: 2px 2px #000;
+    pointer-events: none;
+    z-index: 100;
+    animation: float-dmg 0.8s ease-out forwards;
+}
+
+@keyframes float-dmg {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-40px);
+        opacity: 0;
+    }
+}
