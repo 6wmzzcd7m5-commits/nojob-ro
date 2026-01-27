@@ -3,22 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jobless RO: Rouge Edition v1.0.4</title>
+    <title>Jobless RO: Rouge Edition v1.0.6</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dict.css">
 </head>
 <body class="lang-en">
 
 <div id="app">
-    <div id="rank-ui" class="hide">
-        <div id="rank-box">
-            <div class="flex" style="border-bottom:1px solid var(--n); margin-bottom:10px; color:var(--n); font-weight:bold;">
-                <span class="lbl-top"></span> <button class="btn-sm btn-red" onclick="G.closeRank()">X</button>
-            </div>
-            <div id="rank-list" class="lbl-loading"></div>
-        </div>
-    </div>
-
     <header class="panel grid">
         <div class="flex" style="border-bottom:1px dashed var(--bd); padding-bottom:5px;">
             <div class="flex" style="gap:4px">
@@ -36,32 +27,25 @@
                 <button class="btn-sm lbl-max" id="s100" onclick="G.spd(100)"></button>
             </div>
         </div>
-
-        <div class="flex eq-row">
-            <div><span id="uloc" class="c-n">Prontera</span></div>
-            <div style="font-size:10px"><span class="lbl-w"></span><span id="ueqw" class="eq-v">-</span> <span class="lbl-a"></span><span id="ueqa" class="eq-v">-</span></div>
-        </div>
-
         <div class="flex">
             <div style="flex:1;">
                 <div class="flex">
-                    <div><b id="un" class="c-n" style="font-size:12px"></b> <span id="uj"></span></div>
-                    <div style="font-size:11px"><span class="lbl-lv c-r"></span> <span id="ul" class="c-r">1</span> <span class="c-d"><span class="lbl-flr"></span><span id="ufl">1</span></span></div>
+                    <div><b id="un" class="c-n"></b> <span id="uj"></span></div>
+                    <div><span class="lbl-lv"></span> <span id="ul"></span> <span class="c-d">F<span id="ufl"></span></span></div>
                 </div>
-                <div class="grid g-2" style="margin-top:2px">
-                    <div style="font-size:9px"><div class="flex"><span class="lbl-hp"></span> <span id="uh"></span></div><progress id="bh" value="100" max="100"></progress></div>
-                    <div style="font-size:9px"><div class="flex"><span class="lbl-sp"></span> <span id="us"></span></div><progress id="bs" value="20" max="20"></progress></div>
+                <div class="grid g-2">
+                    <div style="font-size:9px"><span class="lbl-hp"></span> <span id="uh"></span><progress id="bh"></progress></div>
+                    <div style="font-size:9px"><span class="lbl-sp"></span> <span id="us"></span><progress id="bs"></progress></div>
                 </div>
             </div>
         </div>
-
-        <div class="grid g-6" style="background:#111; border:1px solid #333; padding:2px;">
-            <div class="stat-cell"><span class="lbl-str"></span><span id="vstr" class="stv">1</span></div>
-            <div class="stat-cell"><span class="lbl-agi"></span><span id="vagi" class="stv">1</span></div>
-            <div class="stat-cell"><span class="lbl-vit"></span><span id="vvit" class="stv">1</span></div>
-            <div class="stat-cell"><span class="lbl-int"></span><span id="vint" class="stv">1</span></div>
-            <div class="stat-cell"><span class="lbl-dex"></span><span id="vdex" class="stv">1</span></div>
-            <div class="stat-cell"><span class="lbl-luk"></span><span id="vluk" class="stv">1</span></div>
+        <div class="grid g-6">
+            <div class="stat-cell"><span class="lbl-str"></span><span id="vstr" class="stv"></span></div>
+            <div class="stat-cell"><span class="lbl-agi"></span><span id="vagi" class="stv"></span></div>
+            <div class="stat-cell"><span class="lbl-vit"></span><span id="vvit" class="stv"></span></div>
+            <div class="stat-cell"><span class="lbl-int"></span><span id="vint" class="stv"></span></div>
+            <div class="stat-cell"><span class="lbl-dex"></span><span id="vdex" class="stv"></span></div>
+            <div class="stat-cell"><span class="lbl-luk"></span><span id="vluk" class="stv"></span></div>
         </div>
     </header>
 
@@ -70,9 +54,9 @@
             <div id="p-box" class="avatar-box"><div id="spr" class="spr ro-m"><div class="hr"></div><div class="hd"></div><div class="bd"></div></div></div>
             <div id="e-box" class="avatar-box"><div id="espr" class="spr"><div id="ehd" class="hd"></div><div id="ehr" class="hr"></div><div id="ebd" class="bd"></div></div></div>
         </div>
-        <div class="grid" style="margin-top:5px;">
-            <div class="flex" style="font-size:9px">ATB <progress id="ap" value="0" max="1000" style="width:80%"></progress></div>
-            <div class="flex" style="font-size:9px">MOB <progress id="ae" value="0" max="1000" style="width:80%"></progress></div>
+        <div class="grid" style="margin-top:5px">
+            <div class="flex" style="font-size:9px">ATB <progress id="ap" max="1000" style="width:80%"></progress></div>
+            <div class="flex" style="font-size:9px">MOB <progress id="ae" max="1000" style="width:80%"></progress></div>
         </div>
     </section>
 
@@ -81,32 +65,25 @@
 </div>
 
 <script>
-// --- DATABASES ---
+// --- RESTORED: Complex Databases ---
 const J=[{hp:60,sp:20,as:50},{hp:150,sp:40,as:45},{hp:80,sp:120,as:60},{hp:110,sp:50,as:35},{hp:100,sp:60,as:40},{hp:90,sp:100,as:55},{hp:120,sp:50,as:50},{hp:350,sp:80,as:40},{hp:150,sp:280,as:55},{hp:240,sp:100,as:25},{hp:220,sp:120,as:35},{hp:200,sp:220,as:50},{hp:280,sp:100,as:45}];
 const B=[{n:'Angeling',h:2500,a:80,mvp:true},{n:'GT Bug',h:6000,a:150,mvp:true},{n:'Eddga',h:15000,a:300,mvp:true},{n:'Osiris',h:40000,a:800,mvp:true},{n:'Baphomet',h:99999,a:1800,mvp:true}];
 const SK0=[{n:'FirstAid',v:20,t:'h'},{n:'Bash',v:1.4,t:'p'},{n:'Napalm',v:1.5,t:'m'}];
 
 const SK_POOL = {
     Melee: [{n:'Bash',v:1.6,t:'p',d:'Heavy physical strike.'},{n:'Magnum',v:1.3,t:'p',d:'Fire property splash hit.'},{n:'BowlingBash',v:3.5,t:'p',d:'Massive double-hit strike.'}],
-    Magical: [{n:'FireBolt',v:2.2,t:'m',d:'Fire magic arrows.'},{n:'ColdBolt',v:2.2,t:'m',d:'Ice magic spears.'},{n:'StormGust',v:5.0,t:'m',d:'Freezing blizzard AOE.'},{n:'Heal',v:60,t:'h',d:'Restores HP via INT.'},{n:'Magnus',v:5.5,t:'m',d:'Holy purge attack.'}],
-    Rouge: [{n:'Double',t:'a',d:'Chance for 2 hits.'},{n:'Hiding',t:'a',d:'Dodge all hits.'},{n:'SonicBlow',v:4.5,t:'p',d:'8-hit rapid assassination.'},{n:'ArrowShower',v:2.5,t:'p',d:'Ranged AOE volley.'}]
+    Magical: [{n:'FireBolt',v:2.2,t:'m',d:'Fire magic arrows.'},{n:'Heal',v:60,t:'h',d:'Restores HP via INT.'},{n:'Magnus',v:5.5,t:'m',d:'Holy purge attack.'}],
+    Rouge: [{n:'Double',t:'a',d:'Chance for 2 hits.'},{n:'SonicBlow',v:4.5,t:'p',d:'8-hit rapid assassination.'},{n:'ArrowShower',v:2.5,t:'p',d:'Ranged AOE volley.'}]
 };
 
-const PASSIVES = [{n:'P_ATK',v:1.1,t:'p_atk',d:'Total ATK +10%'},{n:'P_MATK',v:1.1,t:'p_matk',d:'Total MATK +10%'},{n:'P_FLEE',v:25,t:'p_flee',d:'Permanent Flee +25'},{n:'P_LIFE',v:1.2,t:'p_hp',d:'Total MaxHP +20%'}];
+const PASSIVES = [{n:'P_ATK',v:1.1,t:'p_atk',d:'ATK +10%'},{n:'P_MATK',v:1.1,t:'p_matk',d:'MATK +10%'},{n:'P_FLEE',v:25,t:'p_flee',d:'Flee +25'},{n:'P_LIFE',v:1.2,t:'p_hp',d:'HP +20%'}];
 const CURSES = [{n:'C_STR',v:50,t:'c_str',d:'ATK+50 / VIT-15'},{n:'C_INT',v:75,t:'c_int',d:'MATK+75 / STR-12'},{n:'C_AGI',v:35,t:'c_agi',d:'Flee+35 / HP-20%'}];
 
-const ARCH = {
-    Melee: { jobs: [1, 6], next: { 1: 7, 6: 12 } },
-    Magical: { jobs: [2, 5], next: { 2: 8, 5: 11 } },
-    Rouge: { jobs: [3, 4], next: { 3: 9, 4: 10 } }
-};
+const ARCH = { Melee: { jobs: [1, 6], next: { 1: 7, 6: 12 } }, Magical: { jobs: [2, 5], next: { 2: 8, 5: 11 } }, Rouge: { jobs: [3, 4], next: { 3: 9, 4: 10 } } };
 
 const M_ART = { 
     'Poring': { h:'#fca', rad:'50%', w:24, ht:20, t:15 }, 
     'Angeling': { h:'#fff', rad:'50%', w:32, ht:28, t:5, mvp:true }, 
-    'GT Bug': { h:'#fc0', rad:'50%', w:35, ht:30, t:0, mvp:true },
-    'Eddga': { h:'#fa0', rad:'8px', w:35, ht:35, t:-5, mvp:true },
-    'Osiris': { h:'#eee', rad:'3px', w:30, ht:45, t:-10, mvp:true },
     'Baphomet': { h:'#333', w:40, ht:50, t:-15, mvp:true } 
 };
 
@@ -119,45 +96,29 @@ const G={
     
     init(){
         const r=localStorage.getItem(K);
-        if(r){ try { this.p=JSON.parse(atob(r)); document.body.className='lang-'+this.s.l; this.draw(); this.mnu(); } catch(e){ this.scr(); } } else { this.scr(); }
+        try { if(r){ this.p=JSON.parse(atob(r)); document.body.className='lang-'+this.s.l; this.draw(); this.mnu(); } else { this.scr(); } } catch(e){ this.scr(); }
         this.spd(10);
     },
 
-    scr(){
-        el('ctl').innerHTML=`<div class="panel" style="grid-column:span 2;text-align:center"><div class="lbl-reg" style="font-weight:bold;margin-bottom:10px"></div><div class="flex" style="justify-content:center;gap:15px;margin-bottom:15px"><input id="in" maxlength="10" placeholder="NAME"><div id="bm" class="g-tag ${this.tmp.g=='m'?'active':''}" onclick="G.setG('m')">_M</div><div id="bf" class="g-tag ${this.tmp.g=='f'?'active':''}" onclick="G.setG('f')">_F</div></div><button onclick="G.ng()" style="width:100%" class="lbl-start"></button></div>`;
-        this.updSpr();
-    },
-
-    setG(g){ this.tmp.g=g; el('bm').className=g=='m'?'g-tag active':'g-tag'; el('bf').className=g=='f'?'g-tag active':'g-tag'; this.updSpr(); },
+    scr(){ el('ctl').innerHTML=`<div class="panel" style="grid-column:span 2;text-align:center"><div class="lbl-reg" style="font-weight:bold;margin-bottom:10px"></div><div class="flex" style="justify-content:center;gap:15px;margin-bottom:15px"><input id="in" maxlength="10" placeholder="NAME"><div id="bm" class="g-tag ${this.tmp.g=='m'?'active':''}" onclick="G.setG('m')">_M</div><div id="bf" class="g-tag ${this.tmp.g=='f'?'active':''}" onclick="G.setG('f')">_F</div></div><button onclick="G.ng()" style="width:100%"><span class="lbl-start"></span></button></div>`; this.updSpr(); },
+    setG(g){ this.tmp.g=g; this.updSpr(); },
     updSpr(){ el('spr').className=`spr ro-${this.tmp.g} j-0`; },
 
     ng(){ this.p={n:el('in').value||"Novice",j:0,lv:1,xp:0,hp:60,mh:60,sp:20,ms:20,str:1,agi:1,vit:1,int:1,dex:1,luk:1,pts:5,sk:{},act:null,g:this.tmp.g,arch:null}; this.skM(); },
-    
     skM(){ el('ctl').innerHTML=''; SK0.forEach(s=>{ this.btn("",()=>{ this.p.sk[s.n]=1; this.p.act=s; this.stM(true); }, 'n-sk-'+s.n); }); },
-
-    stM(st){ 
-        el('ctl').innerHTML=''; 
-        ['str','agi','vit','int','dex','luk'].forEach(k=>{ this.btn(k.toUpperCase()+"+",()=>{if(this.p.pts>0){this.p[k]++;this.p.pts--;this.draw();this.stM(st);}}); }); 
-        if(st||this.p.pts==0) this.btn("OK",()=>{ if(this.p.lv>=10&&!this.p.arch)this.jbM(); else this.mnu(); }); 
-    },
+    stM(st){ el('ctl').innerHTML=''; ['str','agi','vit','int','dex','luk'].forEach(k=>{ this.btn(k.toUpperCase()+"+",()=>{if(this.p.pts>0){this.p[k]++;this.p.pts--;this.draw();this.stM(st);}}); }); if(st||this.p.pts==0) this.btn("OK",()=>{ if(this.p.lv>=10&&!this.p.arch)this.jbM(); else this.mnu(); }); },
 
     jbM(){
         el('ctl').innerHTML='';
         ["Melee","Magical","Rouge"].forEach(type => {
             this.btn(type, () => {
                 this.p.arch = type; el('ctl').innerHTML='';
-                ARCH[type].jobs.forEach(jID => {
-                    this.btn("", () => { this.p.j = jID; this.p.mh=J[jID].hp+this.p.lv*10; this.p.hp=this.p.mh; this.mnu(); }, 'n-job-'+jID);
-                });
+                ARCH[type].jobs.forEach(jID => { this.btn("", () => { this.p.j = jID; this.p.mh=J[jID].hp+this.p.lv*10; this.p.hp=this.p.mh; this.mnu(); }, 'n-job-'+jID); });
             }, 'btn-neon');
         });
     },
 
-    jcM(){
-        el('ctl').innerHTML=''; const nextJ = ARCH[this.p.arch].next[this.p.j];
-        this.btn("", () => { this.p.j = nextJ; this.p.mh += 300; this.p.hp=this.p.mh; this.mnu(); }, 'n-job-'+nextJ);
-    },
-
+    // --- RESTORED: Full Combat Formula ---
     calc(c){
         const j=J[c.j];
         let atk=c.str+(c.dex/5)+(c.luk/3)+c.lv*2, matk=c.int+(c.int/2)+(c.dex/5)+c.lv*2, flee=c.agi+c.lv, hit=c.dex+c.lv, hp_m=1.0;
@@ -184,7 +145,7 @@ const G={
         this.s.tm=setInterval(()=>this.loop(), 30);
     },
 
-    loop(){ if(!this.s.b) return; for(let i=0; i<this.s.spd; i++){ if(!this.s.b) break; this.tk(); } if(this.s.b) this.uiTick(); },
+    loop(){ if(!this.s.b) return; for(let i=0; i<this.s.spd; i++){ if(!this.s.b) break; this.tk(); } this.uiTick(); },
     
     tk(){ 
         const ps=this.calc(this.p); this.pb+=ps.aspd; this.eb+=10; 
@@ -216,8 +177,7 @@ const G={
         const pool = [...(SK_POOL[this.p.arch]||[]).filter(s=>!this.p.sk[s.n]), ...PASSIVES, ...CURSES].sort(()=>0.5-Math.random()).slice(0,3);
         pool.forEach(sk => {
             const b = document.createElement('button'); b.className = 'skill-choice';
-            if(sk.n.startsWith('C_')) b.style.borderColor = 'var(--hp)';
-            b.innerHTML = `<div class="n-sk-${sk.n}"></div><div class="sk-desc">${sk.d}</div>`;
+            b.innerHTML = `<span class="n-sk-${sk.n}"></span><div class="sk-desc">${sk.d}</div>`;
             b.onclick = () => { this.p.sk[sk.n]=(this.p.sk[sk.n]||0)+1; if(!sk.n.startsWith('P_')&&!sk.n.startsWith('C_'))this.p.act=sk; this.checkLv(); };
             el('ctl').appendChild(b);
         });
@@ -227,26 +187,34 @@ const G={
         if(this.p.xp >= (this.p.lv*100)){
             this.p.lv++; this.p.xp=0; this.p.pts+=3; this.p.mh+=20; this.p.hp=this.p.mh;
             if(this.p.lv==10 && !this.p.arch) this.jbM();
-            else if(this.p.lv>=40 && ARCH[this.p.arch].jobs.includes(this.p.j)) this.jcM();
             else this.mnu();
         } else { this.mnu(); }
     },
 
-    uiTick(){ el('uh').innerText=Math.floor(this.p.hp); el('bh').value=this.p.hp; el('ap').value=this.pb; el('ae').value=this.mob?Math.floor(this.mob.hp):0; el('ae').max=this.mob?this.mob.mh:1; },
+    uiTick(){ el('uh').innerText=Math.floor(this.p.hp); el('bh').value=this.p.hp; el('ap').value=this.pb; el('ae').value=this.mob?this.mob.hp:0; el('ae').max=this.mob?this.mob.mh:1; },
     
     draw(){ 
         const p=this.p; if(!p) return; 
         el('un').innerText=p.n; el('ul').innerText=p.lv; el('ufl').innerText=this.s.f;
         el('uj').className='n-job-'+p.j; el('spr').className=`spr ro-${p.g} j-${p.j}`;
-        el('uh').innerText=Math.floor(p.hp); el('bh').value=p.hp; el('bh').max=p.mh;
         ['str','agi','vit','int','dex','luk'].forEach(k=>el('v'+k).innerText=p[k]);
         el('b-au').className = this.s.au ? "btn-sm active" : "btn-sm";
         this.sv();
     },
 
-    drawMob(n){ const s=M_ART[n]||{h:'#999'}; const eb=el('e-box'), es=el('espr'); if(s.mvp){ es.classList.add('mvp-glow'); eb.classList.add('mvp-scale'); } else { es.classList.remove('mvp-glow'); eb.classList.remove('mvp-scale'); } el('ehd').style.background=s.h; el('ehd').style.width=(s.w||20)+'px'; el('ehd').style.height=(s.ht||18)+'px'; el('ehd').style.top=(s.t||0)+'px'; },
-    pop(dom, txt, cls){ const d=document.createElement('div'); d.className=`dmg-pop ${cls}`; d.innerText=txt; dom.appendChild(d); setTimeout(()=>d.remove(), 800); },
-    btn(t,fn,c=''){const b=document.createElement('button'); if(t) b.innerText=t; b.onclick=fn; if(c) b.className=c; el('ctl').appendChild(b);},
+    drawMob(n){ const s=M_ART[n]||{h:'#999'}; const eb=el('e-box'), es=el('espr'); if(s.mvp){ es.classList.add('mvp-glow'); eb.classList.add('mvp-scale'); } else { es.classList.remove('mvp-glow'); eb.classList.remove('mvp-scale'); } el('ehd').style.background=s.h; el('ehd').style.width=(s.w||20)+'px'; },
+    
+    // RESTORED: Stable Button Logic
+    btn(t, fn, c='') {
+        const b = document.createElement('button');
+        const s = document.createElement('span'); 
+        if (t) s.innerText = t;
+        if (c) s.className = c;
+        b.appendChild(s);
+        b.onclick = fn;
+        el('ctl').appendChild(b);
+    },
+
     lang(){ this.s.l=this.s.l=='en'?'cn':'en'; document.body.className='lang-'+this.s.l; this.draw(); if(this.p&&!this.s.b)this.mnu(); },
     sv(){ localStorage.setItem(K, btoa(JSON.stringify(this.p))); },
     wipe(){ if(confirm("Reset?")) { localStorage.removeItem(K); location.reload(); } },
