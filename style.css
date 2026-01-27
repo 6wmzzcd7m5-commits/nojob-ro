@@ -1,11 +1,15 @@
+/* =========================================
+   STYLE.CSS: UNIFIED VISUAL ENGINE v1.1.6
+   ========================================= */
+
 :root { 
     --bg:#050505; --p:#0a0a0a; --bd:#39ff14; 
     --n:#39ff14; --t:#ffffff; --d:#aaaaaa; 
     --hp:#ff4444; --sp:#4488ff; --r:#ffff00; 
-    --font:'Tahoma', 'Arial', sans-serif; 
+    --font:'Tahoma', sans-serif; 
 }
 
-/* --- 1. CORE ARCHITECTURE --- */
+/* --- 1. CORE LAYOUT & STABILITY --- */
 * { box-sizing:border-box; user-select:none; -webkit-tap-highlight-color:transparent; }
 input { user-select: text !important; background:#000; color:var(--n); border:1px solid var(--bd); padding:5px; width: 100%; text-align: center; }
 
@@ -21,51 +25,82 @@ body {
     border: 1px solid var(--bd); position: relative; background: var(--bg);
 }
 
-/* --- 2. THE TWIN-LABEL STABILITY PATCH --- */
-/* This handles translation by toggling visibility of hardcoded HTML spans */
+/* Twin-Label Translation Toggle */
 .lang-en .cn, .lang-cn .en { display: none !important; }
 
-
-
-/* --- 3. NEON BRANDING & BUTTONS --- */
+/* --- 2. NEON UI COMPONENTS --- */
 button {
     background: #000; color: var(--n); border: 1px solid var(--bd);
     padding: 10px; font: inherit; font-weight: bold; cursor: pointer; 
     text-transform: uppercase; display: flex; align-items: center; justify-content: center;
     min-height: 38px; position: relative;
 }
-
 button:active, button.active { background: var(--n); color:#000; box-shadow: 0 0 10px var(--n); }
 
 .btn-sm { padding:4px 8px; font-size:10px; min-height: 22px; }
 .btn-red { border-color:var(--hp); color:var(--hp); }
 .btn-neon { border: 2px solid var(--bd) !important; box-shadow: 0 0 15px rgba(57, 255, 20, 0.4); }
 
-/* --- 4. PROGRESS BARS (Engineered for High-Speed) --- */
-progress { width:100%; height:8px; appearance:none; border:none; background:#1a1a1a; margin-top:2px; }
-progress::-webkit-progress-bar { background:#1a1a1a; }
-#bh::-webkit-progress-value { background:var(--hp); }
-#bs::-webkit-progress-value { background:var(--sp); }
-#ap::-webkit-progress-value { background:var(--n); }
-#ae::-webkit-progress-value { background:var(--hp); }
-
-/* --- 5. PANEL & GRID LAYOUTS --- */
-.panel { border:1px solid var(--bd); background:var(--p); padding:6px; position: relative; }
+.panel { border:1px solid var(--bd); background:var(--p); padding:6px; }
 .flex { display:flex; justify-content:space-between; align-items:center; }
 .grid { display:grid; gap:4px; } 
 .g-2 { grid-template-columns:1fr 1fr; } 
 .g-6 { grid-template-columns:repeat(6,1fr); }
+.g-5 { grid-template-columns:repeat(5,1fr); }
 
-.stat-cell { text-align:center; font-size:9px; color:#666; border-right:1px solid #222; padding: 2px 0; }
-.stv { color: #fff; font-weight: bold; display: block; font-size: 11px; margin-top: 1px; }
+.stat-cell { text-align:center; font-size:8px; color:#666; border-right:1px solid #222; }
+.stv { color: #fff; font-weight: bold; display: block; font-size: 10px; }
 
-/* --- 6. UTILITY CLASSES --- */
+progress { width:100%; height:8px; appearance:none; border:none; background:#222; margin-top:2px; }
+#bh::-webkit-progress-value, #ae::-webkit-progress-value { background:var(--hp); }
+#ap::-webkit-progress-value { background:var(--n); }
+
+/* --- 3. SPRITE & MONSTER ENGINE --- */
+#stage { 
+    height: 120px; background: #111; border-bottom: 1px dashed var(--bd); 
+    display: flex; justify-content: space-between; align-items: flex-end; 
+    padding: 20px 40px; position: relative; 
+}
+.avatar-box { width: 40px; height: 60px; position: relative; display: flex; justify-content: center; align-items: flex-end; }
+.spr { width:30px; height:40px; position:absolute; bottom:0; animation: idle 1.2s infinite steps(2); }
+.hd { width:20px; height:18px; background:#fca; position:absolute; left:5px; top:0; z-index:5; border-radius:4px; }
+.bd { width:18px; height:16px; background:#eee; position:absolute; left:6px; top:16px; z-index:3; border-radius:2px; }
+.hr { background:#853; position:absolute; }
+
+/* Hair Variations */
+.ro-m .hr { width:24px; height:10px; left:3px; top:-2px; z-index:6; border-radius:4px 4px 0 0; } 
+.ro-f .hr { width: 28px; height: 26px; left: 1px; top: -3px; z-index: 2; border-radius: 12px; }
+
+/* Monster Geometry Mapping */
+[data-mob="Poring"] .hd { background: #fca; border-radius: 50%; width: 24px; height: 20px; top: 15px; }
+[data-mob="Angeling"] .hd { background: #fff; border-radius: 50%; width: 32px; height: 28px; top: 5px; box-shadow: 0 0 10px #fff; }
+[data-mob="Baphomet"] .hd { background: #333; border-radius: 5px; width: 42px; height: 52px; top: -18px; }
+
+/* MVP/Boss Scaling */
+[data-mvp="true"] { transform: scale(1.3); transform-origin: bottom; }
+[data-mvp="true"] .spr { filter: drop-shadow(0 0 10px var(--r)); }
+
+/* --- 4. JOB CLASS COLORS --- */
+.j-0 .bd { background: linear-gradient(#fff, #dca); } /* Novice */
+.j-1 .bd { background: linear-gradient(#d84, #468); } /* Swordman */
+.j-2 .bd { background: linear-gradient(90deg, #348, #eee); } /* Mage */
+.j-3 .bd { background: linear-gradient(#637, #fca); } /* Thief */
+.j-9 .bd { background: #222; border: 1px solid #444; } /* Assassin */
+
+/* --- 5. ANIMATIONS & COMBAT FX --- */
+@keyframes idle { 0%,100%{transform:translateY(0)} 50%{transform:translateY(2px)} }
+@keyframes shake { 0%,100%{transform:translate(0)} 25%{transform:translate(-3px,1px)} 75%{transform:translate(3px,-1px)} }
+
+.anim-shake { animation: shake 0.4s; }
+
+.dmg-pop { 
+    position: absolute; font-weight: bold; font-size: 16px; text-shadow: 2px 2px 0 #000; 
+    animation: floatUp 0.8s forwards; color: #fff; z-index: 99; pointer-events: none;
+}
+@keyframes floatUp { 0%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(-40px)} }
+
+/* --- 6. MISC --- */
+#log { flex:1; overflow-y:auto; font-size:10px; border-top:1px solid #222; padding-top:5px; font-family:monospace; color:var(--d); }
 .hide { display:none !important; }
 .c-n { color: var(--n); }
-.c-r { color: var(--hp); }
 .c-d { color: var(--d); }
-
-#log { 
-    flex:1; overflow-y:auto; font-size:10px; border-top:1px solid #222; 
-    padding-top:5px; font-family:monospace; color:var(--d); 
-}
