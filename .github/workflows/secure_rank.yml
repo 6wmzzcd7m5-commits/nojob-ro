@@ -1,0 +1,134 @@
+name: Secure Leaderboard
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  process-score:
+    if: startsWith(github.event.issue.title, 'SCORE:')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Validate & Update
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            
+            // --- CONFIGURATION ---
+            const MIN_AGE_DAYS = 7; 
+            const SALT = "SECRET_KEY_999"; // MUST MATCH CLIENT JS
+            
+            // 1. GET USER INFO
+            const username = context.actor;
+            const { data: user } = await github.rest.users.getByUsername({ username });
+            
+            // 2. CHECK ACCOUNT AGE
+            const created = new Date(user.created_at);
+            const now = new Date();
+            const diffTime = Math.abs(now - created);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays < MIN_AGE_DAYS) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: "❌ **Rejected:** Account too new (Anti-Bot)."
+              });
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                state: 'closed'
+              });
+              return;
+            }
+
+            // 3. PARSE DATA
+            const body = context.payload.issue.body;
+            let sub;
+            try {
+              // Strip code blocks
+              const clean = body.replace(/```json/g, '').replace(/```/g, '').trim();
+              sub = JSON.parse(clean);
+            } catch (e) { return; }
+
+            // 4. VERIFY SIGNATURE (HASH CHECK)
+            const raw = `${sub.n}-${sub.j}-${sub.f}-${SALT}`;
+            let hash = 0;
+            for (let i = 0; i < raw.length; i++) {
+                hash = ((hash << 5) - hash) + raw.charCodeAt(i);
+                hash |= 0;
+            }
+
+            if (sub.h !== hash.toString()) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: "❌ **Rejected:** Data integrity check failed."
+              });
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                state: 'closed'
+              });
+              return;
+            }
+
+            // 5. UPDATE DATABASE
+            const entry = {
+              u: username, 
+              n: sub.n.substring(0, 12).replace(/[^a-zA-Z0-9 ]/g, ""), 
+              j: sub.j,
+              f: parseInt(sub.f),
+              d: new Date().toISOString().split('T')[0]
+            };
+
+            const dbPath = 'leaderboard.json';
+            let board = fs.existsSync(dbPath) ? JSON.parse(fs.readFileSync(dbPath)) : [];
+
+            // Update if better score
+            const idx = board.findIndex(x => x.u === entry.u);
+            if (idx !== -1) {
+              if (entry.f > board[idx].f) board[idx] = entry; 
+            } else {
+              board.push(entry);
+            }
+
+            // Sort & Save Top 20
+            board.sort((a, b) => b.f - a.f);
+            if (board.length > 20) board = board.slice(0, 20);
+            fs.writeFileSync(dbPath, JSON.stringify(board, null, 2));
+
+            // 6. SUCCESS MESSAGE
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `✅ **Accepted!** Rank #${board.findIndex(x => x.u === entry.u) + 1} updated.`
+            });
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              state: 'closed'
+            });
+
+      - name: Push Changes
+        run: |
+          git config --global user.name "RankBot"
+          git config --global user.email "bot@noreply.github.com"
+          if [[ -n $(git status -s) ]]; then
+            git add leaderboard.json
+            git commit -m "Rank Update: ${{ github.actor }}"
+            git push
+          fi
