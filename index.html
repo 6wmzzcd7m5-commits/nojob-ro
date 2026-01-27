@@ -17,7 +17,7 @@
                 <div class="flex" style="gap:5px">
                     <button class="btn-sm" id="btn-save" onclick="G.exp()">SAVE</button>
                     <button class="btn-sm btn-red" id="btn-reset" onclick="G.reset()">RESET</button>
-                    <button class="btn-sm" id="btn-rank" onclick="G.rank()" style="color:var(--zeny)">RANK</button>
+                    <button class="btn-sm" id="btn-rank" onclick="G.loadRank()" style="color:var(--zeny)">RANK</button>
                     <button class="btn-sm" onclick="G.toggleLang()">EN/繁</button>
                 </div>
                 <button class="btn-sm" id="btn-speed" onclick="G.cycleSpd()" style="min-width:40px;">1x</button>
@@ -107,6 +107,7 @@
 
     <script src="db.js"></script>
     <script src="items.js"></script>
+    <script src="stat.js"></script>
     <script src="scenes.js"></script>
     <script src="ui.js"></script>
 
@@ -160,7 +161,11 @@
                 if (this.s.pvw) clearInterval(this.s.pvw);
                 const n = el('pname').value || "Novice";
                 const d = parseFloat(el('pdiff').value) || 1.0;
-                this.p = { n, gender: this.s.tmpG || 'm', diff: d, job: 'Novice', lvl: 1, str: 5, agi: 5, vit: 5, int: 5, dex: 5, luk: 5, hp: 100, mh: 100, floor: 1, items: {}, wpn: null, arm: null, skills: [] };
+                const skills = ['First Aid', 'Basic Skill'];
+                this.p = { n, gender: this.s.tmpG || 'm', diff: d, job: 'Novice', lvl: 1, str: 5, agi: 5, vit: 5, int: 5, dex: 5, luk: 5, hp: 1, mh: 1, floor: 1, items: {}, wpn: null, arm: null, skills, pts: 0 };
+                const base = DB.getJob('Novice');
+                this.p.mh = base.hp + (this.p.vit * 2);
+                this.p.hp = this.p.mh;
                 this.sv(); UI.render(this.p, this.s); UI.loadScene('mnu', this.p, this.s);
             },
 
@@ -322,8 +327,12 @@
                     events[Math.floor(Math.random() * events.length)].effect();
                 }
 
+                // NEW: Every floor, level up + Generate 1-3 Stat Points
                 this.p.lvl++;
-                if (this.p.lvl === 30) this.grantSkill();
+                const newPts = STATS.genPoints();
+                this.p.pts = (this.p.pts || 0) + newPts;
+                UI.log(`${DB.txt('level_up')} (+${newPts} ${DB.txt('stats')})`, "c-yel");
+
                 this.s.f++; this.p.floor = this.s.f;
                 this.p.hp = this.p.mh;
 
@@ -333,8 +342,62 @@
                     this.s.subAt = this.s.f; // Only submit once per run
                 }
 
-                UI.loadScene((this.p.lvl === 10 || this.p.lvl === 50) ? 'job' : 'mnu', this.p, this.s);
+                // Logic: 1 of 3 Skill Draft every 5 levels
+                if (this.p.lvl % 5 === 0) {
+                    this.triggerDraft();
+                } else if (this.p.lvl === 10 || this.p.lvl === 40) {
+                    UI.loadScene('job', this.p, this.s);
+                } else {
+                    UI.loadScene('mnu', this.p, this.s);
+                }
+
                 this.sv(); UI.render(this.p, this.s);
+            },
+
+            triggerDraft() {
+                const jobType = DB.getJob(this.p.job).type || 'melee';
+                const tier = this.p.lvl >= 40 ? 2 : 1;
+
+                const skillPool = [];
+                for (let category in DB.skills) {
+                    for (let sName in DB.skills[category]) {
+                        const sData = DB.skills[category][sName];
+                        if (sData.tier <= tier && !this.p.skills.includes(sName)) {
+                            skillPool.push(sName);
+                        }
+                    }
+                }
+
+                // Randomly pick 3 from pool
+                const draft = [];
+                while (draft.length < 3 && skillPool.length > 0) {
+                    const idx = Math.floor(Math.random() * skillPool.length);
+                    draft.push(skillPool.splice(idx, 1)[0]);
+                }
+
+                UI.loadScene('draft', draft);
+            },
+
+            addStat(key) {
+                if (STATS.allocate(this.p, key)) {
+                    this.sv();
+                    UI.render(this.p, this.s);
+                    UI.loadScene('stats', this.p, this.s);
+                }
+            },
+
+            learnSkill(sn) {
+                if (!this.p.skills) this.p.skills = [];
+                this.p.skills.push(sn);
+                UI.log(`${DB.txt('skill')} ${DB.getName('skills', sn)}!`, "c-blu");
+
+                // If this draft happened at Lvl 10 or 40, follow up with job change
+                if (this.p.lvl === 10 || this.p.lvl === 40) {
+                    UI.loadScene('job', this.p, this.s);
+                } else {
+                    UI.loadScene('mnu', this.p, this.s);
+                }
+                this.sv();
             },
 
             async loadRank() {

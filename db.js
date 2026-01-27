@@ -18,7 +18,8 @@ window.DB = {
                 retry: "RETRY", back: "BACK", legends: "🏆 TOP 10 LEGENDS",
                 ended: "YOUR ADVENTURE ENDS HERE...", reached: "FLOOR REACHED:", mobile_ed: "ULTIMATE MOBILE EDITION",
                 atk: "ATK", matk: "MATK", cri: "CRI", hit: "HIT", flee: "FLEE", def: "DEF",
-                str: "STR", agi: "AGI", vit: "VIT", int: "INT", dex: "DEX", luk: "LUK"
+                str: "STR", agi: "AGI", vit: "VIT", int: "INT", dex: "DEX", luk: "LUK",
+                pts: "PTS:", pick_skill: "PICK A SKILL", level_up: "LEVEL UP!"
             },
             maps: {
                 "Prontera Field": "Prontera Field", "Payon Cave": "Payon Cave", "Prontera Culvert": "Prontera Culvert",
@@ -47,7 +48,8 @@ window.DB = {
                 'Turn Undead': 'Turn Undead', 'Envenom': 'Envenom', 'Double Strafe': 'Double Strafe',
                 'Owl\'s Eye': 'Owl\'s Eye', 'Vulture\'s Eye': 'Vulture\'s Eye', 'Improve Concentration': 'Improve Concentration',
                 'Sonic Blow': 'Sonic Blow', 'Falcon Assault': 'Falcon Assault', 'Venom Splasher': 'Venom Splasher',
-                'Back Stab': 'Back Stab', 'Slasher': 'Slasher'
+                'Back Stab': 'Back Stab', 'Slasher': 'Slasher',
+                'First Aid': 'First Aid', 'Basic Skill': 'Basic Skill'
             }
         },
         tc: { // Traditional Chinese
@@ -66,7 +68,8 @@ window.DB = {
                 retry: "重試", back: "返回", legends: "🏆 前10名傳奇",
                 ended: "你的冒險結束了...", reached: "到達樓層:", mobile_ed: "究極行動版",
                 atk: "攻擊", matk: "魔攻", cri: "爆擊", hit: "命中", flee: "迴避", def: "防禦",
-                str: "力量", agi: "敏捷", vit: "體質", int: "智力", dex: "靈巧", luk: "幸運"
+                str: "力量", agi: "敏捷", vit: "體質", int: "智力", dex: "靈巧", luk: "幸運",
+                pts: "剩餘點數:", pick_skill: "請選擇一項技能", level_up: "等級提升!"
             },
             maps: {
                 "Prontera Field": "普隆德拉 原野", "Payon Cave": "斐揚 洞窟", "Prontera Culvert": "普隆德拉 地下水道",
@@ -126,20 +129,30 @@ window.DB = {
     },
 
     // 3. TIERED JOB SYSTEM
+    getJob(id) {
+        for (let c in this.jobs) {
+            if (this.jobs[c][id]) return { ...this.jobs[c][id], type: this.jobs[c].type };
+        }
+        return this.jobs.base['Novice'];
+    },
+
     jobs: {
         melee: {
+            type: 'melee',
             'Swordman': { hp: 400, aspd: 170, stats: [12, 5, 10, 2, 8, 2], next: ['Knight'] },
             'Merchant': { hp: 350, aspd: 155, stats: [15, 8, 12, 2, 10, 15], next: ['Blacksmith'] },
             'Knight': { hp: 1200, aspd: 175, stats: [30, 15, 25, 5, 15, 10], next: [] },
             'Blacksmith': { hp: 1000, aspd: 180, stats: [35, 10, 20, 5, 20, 20], next: [] }
         },
         magical: {
+            type: 'magical',
             'Mage': { hp: 180, aspd: 140, stats: [2, 10, 4, 25, 12, 2], next: ['Wizard'] },
             'Acolyte': { hp: 300, aspd: 145, stats: [5, 5, 12, 20, 10, 8], next: ['Priest'] },
             'Wizard': { hp: 500, aspd: 145, stats: [5, 15, 10, 50, 25, 5], next: [] },
             'Priest': { hp: 800, aspd: 150, stats: [10, 10, 25, 40, 20, 15], next: [] }
         },
         rogue: {
+            type: 'rogue',
             'Thief': { hp: 220, aspd: 190, stats: [8, 22, 5, 5, 15, 10], next: ['Assassin'] },
             'Archer': { hp: 250, aspd: 165, stats: [4, 15, 6, 5, 25, 5], next: ['Hunter'] },
             'Assassin': { hp: 750, aspd: 195, stats: [25, 45, 15, 10, 20, 20], next: [] },
@@ -187,6 +200,10 @@ window.DB = {
             'Venom Splasher': { mode: 'act', mult: 6.0, hits: 1, tier: 2, element: 'poison' },
             'Back Stab': { mode: 'act', mult: 5.5, hits: 1, tier: 2 },
             'Slasher': { mode: 'pas', stats: { agi: 15 }, tier: 2 }
+        },
+        novice: {
+            'First Aid': { mode: 'act', mult: 1.0, hits: 1, tier: 0, effect: 'heal' },
+            'Basic Skill': { mode: 'pas', stats: { str: 1, agi: 1, vit: 1, int: 1, dex: 1, luk: 1 }, tier: 0 }
         }
     },
 

@@ -106,6 +106,7 @@ button:active {
     display: grid;
     align-content: start;
     flex-shrink: 0;
+    overflow-y: auto;
 }
 
 #log {
@@ -191,4 +192,23 @@ button:active {
 
 .c-ora {
     color: #ffa500;
+}
+
+/* Custom Scrollbar for Terminal Feel */
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--bd);
+    border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--neon);
 }

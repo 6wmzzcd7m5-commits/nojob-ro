@@ -31,11 +31,58 @@ window.SCENES = {
         </div>`,
 
     // 2. Ported: Main Menu / Dungeon Warp
-    mnu: (p, s) => `
-        <div class="grid g-1">
-            <button onclick="G.startBattle()" class="panel" style="width:100%; padding:20px; border-color:var(--neon);">${DB.txt('warp_to')} ${DB.getLocation(s.f)}</button>
-            <button onclick="G.loadRank()" class="panel" style="width:100%; font-size:10px; border-color:var(--sp); color:var(--sp); padding:8px;">${DB.txt('rank')}</button>
-        </div>`,
+    mnu: (p, s) => {
+        const hasPts = p.pts > 0;
+        return `
+            <div class="grid g-1">
+                <button onclick="G.startBattle()" class="panel" style="width:100%; padding:20px; border-color:var(--neon);">${DB.txt('warp_to')} ${DB.getLocation(s.f)}</button>
+                <div class="flex" style="gap:5px;">
+                    <button onclick="UI.loadScene('stats', G.p, G.s)" class="panel" style="flex:1; font-size:10px; border-color:${hasPts ? 'var(--neon)' : 'var(--sp)'}; color:${hasPts ? 'var(--neon)' : 'var(--sp)'}; padding:8px;">${DB.txt('stats')}${hasPts ? ' (!)' : ''}</button>
+                    <button onclick="G.loadRank()" class="panel" style="flex:1; font-size:10px; border-color:var(--sp); color:var(--sp); padding:8px;">${DB.txt('rank')}</button>
+                </div>
+            </div>`;
+    },
+
+    // 2.1 NEW: Stat Allocation Scene
+    stats: (p, s) => {
+        const stats = ['str', 'agi', 'vit', 'int', 'dex', 'luk'];
+        const rows = stats.map(k => `
+            <div class="flex" style="justify-content:space-between; padding:5px; border-bottom:1px solid #222;">
+                <span style="text-transform:uppercase; color:var(--neon);">${DB.txt(k)}: ${p[k]}</span>
+                <button class="btn-sm" onclick="G.addStat('${k}')" ${p.pts <= 0 ? 'disabled' : ''} style="width:30px; height:20px; line-height:10px;">+</button>
+            </div>
+        `).join('');
+
+        return `
+            <div class="panel grid g-1" style="border-color:var(--neon);">
+                <div style="text-align:center; color:var(--neon); font-weight:bold; margin-bottom:5px;">${DB.txt('stats')}</div>
+                <div style="font-size:10px; text-align:center; margin-bottom:10px;">${DB.txt('pts')} <b class="c-yel">${p.pts || 0}</b></div>
+                <div style="background:rgba(0,0,0,0.5); padding:5px;">${rows}</div>
+                <button onclick="UI.loadScene('mnu', G.p, G.s)" style="width:100%; font-size:10px; border-color:var(--neon); margin-top:10px; padding:10px;">${DB.txt('back')}</button>
+            </div>`;
+    },
+
+    // 2.2 NEW: Skill Draft Scene
+    draft: (list) => {
+        const btns = list.map(sn => {
+            let sd = null;
+            for (let c in DB.skills) if (DB.skills[c][sn]) sd = DB.skills[c][sn];
+            const typeLabel = sd.mode === 'act' ? '[A]' : '[P]';
+            return `<button onclick="G.learnSkill('${sn}')" class="panel" style="text-align:left; padding:10px; border-color:var(--sp); font-size:9px;">
+                <div class="flex" style="justify-content:space-between;">
+                    <b style="color:var(--sp);">${DB.getName('skills', sn)}</b>
+                    <span style="color:#666;">${typeLabel}</span>
+                </div>
+                <div style="font-size:8px; color:#888; margin-top:2px;">Tier ${sd.tier}</div>
+            </button>`;
+        }).join('');
+
+        return `
+            <div class="panel grid g-1" style="border-color:var(--sp);">
+                <div style="text-align:center; color:var(--sp); font-weight:bold; font-size:11px; margin-bottom:10px;">${DB.txt('pick_skill')}</div>
+                ${btns}
+            </div>`;
+    },
 
     // 3. Ported: Active Combat Status
     btl: () => `<div class="panel" style="text-align:center; color:var(--hp); border:1px dotted var(--neon); background:#000;">${DB.txt('combat')}</div>`,
