@@ -1,0 +1,78 @@
+<div class="panel grid" style="grid-column: span 2; gap: 15px; text-align: center;">
+    <h2 class="c-yel" style="margin: 0;">
+        <span class="en">CHOOSE YOUR PATH</span>
+        <span class="cn">選擇你的職業</span>
+    </h2>
+
+    <p id="job-lore" style="font-size: 0.85rem; color: #aaa; min-height: 40px;">
+        <span class="en">A new destiny awaits...</span>
+        <span class="cn">新的宿命正在等待...</span>
+    </p>
+
+    <div id="job-options" class="grid g-1" style="gap: 10px;">
+        </div>
+</div>
+
+<script>
+/**
+ * JOB CHANGE LOGIC
+ * Manages Archetype branching and stat growth.
+ */
+const jc = {
+    init() {
+        const container = document.getElementById('job-options');
+        const currentJob = DB.jobs[G.p.job];
+        
+        // Filter next available jobs
+        currentJob.next.forEach(jobKey => {
+            const data = DB.jobs[jobKey];
+            const btn = document.createElement('button');
+            btn.className = "btn-neon";
+            btn.innerHTML = `
+                <b style="font-size:1.1rem;">${jobKey}</b><br>
+                <small style="opacity:0.7;">
+                    HP+${data.hp} | SP+${data.sp}
+                </small>
+            `;
+            
+            btn.onclick = () => this.change(jobKey, data);
+            container.appendChild(btn);
+        });
+    },
+
+    change(name, data) {
+        if (!confirm(`Become a ${name}?`)) return;
+
+        // 1. Update Identity
+        G.p.job = name;
+        
+        // 2. Apply Stat Growth
+        // [Str, Agi, Vit, Int, Dex, Luk]
+        G.p.str += data.stats[0];
+        G.p.agi += data.stats[1];
+        G.p.vit += data.stats[2];
+        G.p.int += data.stats[3];
+        G.p.dex += data.stats[4];
+        G.p.luk += data.stats[5];
+
+        // 3. Expand Vitals
+        G.p.mh += data.hp;
+        G.p.msp += data.sp;
+        G.p.hp = G.p.mh; // Full heal on promotion
+        G.p.sp = G.p.msp;
+
+        // 4. Grant Initial Job Skill
+        if (data.pool && data.pool[0]) {
+            G.p.sk[data.pool[0]] = 1;
+            G.log(`Promoted to ${name}! Learned ${data.pool[0]}.`, 'c-n');
+        }
+
+        // 5. Finalize
+        G.render(); // Update HUD and Sprite
+        G.sv();     // Save progress
+        G.loadScene('mnu');
+    }
+};
+
+jc.init();
+</script>
