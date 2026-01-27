@@ -1,41 +1,140 @@
-/* --- CORE RESET & VARIABLES --- */
+/* --- 1. CORE VARIABLES & RESET --- */
 :root {
-    /* Colors derived from the v3 engine */
-    --bg: #0a0a0a; 
-    --panel: #161616; 
-    --border: #333; 
+    --bg: #050505; 
+    --panel: #0d0d0d; 
+    --neon: #39ff14; /* Pure Neon Green */
+    --neon-glow: rgba(57, 255, 20, 0.3);
     --text: #e0e0e0;
-    --hp: #ff4444; 
-    --sp: #44aaff; 
-    --c-n: #33ff33; 
-    --bd: #444;
+    --hp: #ff3131; 
+    --sp: #00d2ff; 
     --r: #ffd700;
 }
 
 * { box-sizing: border-box; }
 
 body {
-    background: var(--bg); 
+    background: var(--bg);
     color: var(--text);
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    margin: 0; 
-    padding: 10px;
-    display: flex; 
-    flex-direction: column; 
-    gap: 12px; 
-    max-width: 500px; /* Optimized for mobile-first view */
+    font-family: 'Courier New', Courier, monospace; /* Matrix/Hacker aesthetic */
+    margin: 0; padding: 10px;
+    max-width: 500px; 
     margin: 0 auto;
     overflow-x: hidden;
 }
 
-/* --- LAYOUT CONTAINERS --- */
+/* --- 2. COMPONENT OVERHAUL (NEON BORDERS) --- */
+
+/* All UI containers now have the glowing green frame */
 .panel {
-    background: var(--panel); 
-    border: 1px solid var(--border);
-    padding: 12px; 
-    border-radius: 4px; /* Classic sharp RPG panel look */
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    background: var(--panel);
+    border: 1px solid var(--neon);
+    padding: 12px;
+    border-radius: 2px;
+    box-shadow: 0 0 10px var(--neon-glow);
+    margin-bottom: 5px;
 }
+
+/* Primary buttons: Hollow black with neon green accents */
+button {
+    background: #000;
+    color: var(--neon);
+    border: 1px solid var(--neon);
+    padding: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: inset 0 0 5px var(--neon-glow);
+    transition: all 0.2s ease;
+}
+
+button:hover {
+    background: var(--neon);
+    color: #000;
+    box-shadow: 0 0 15px var(--neon);
+}
+
+button:active {
+    transform: translateY(2px);
+    box-shadow: 0 0 5px var(--neon);
+}
+
+/* Small system buttons */
+.btn-sm { padding: 4px 8px; font-size: 0.7rem; }
+.btn-red { border-color: var(--hp); color: var(--hp); box-shadow: 0 0 5px var(--hp); }
+
+/* Inputs and Textareas */
+input {
+    background: #000;
+    color: var(--neon);
+    border: 1px solid var(--neon);
+    padding: 8px;
+    font-family: inherit;
+    width: 100%;
+}
+
+/* --- 3. VITALS & ATB (PROGRESS BARS) --- */
+
+progress { 
+    width: 100%; 
+    height: 10px; 
+    appearance: none; 
+    border: 1px solid var(--neon); /* Neon frame for bars */
+    background: #000;
+    margin: 2px 0;
+}
+
+/* Webkit specific styles for bar colors */
+progress::-webkit-progress-bar { background: #000; }
+progress::-webkit-progress-value { transition: width 0.3s; }
+
+#hp-bar::-webkit-progress-value { background: var(--hp); }
+#sp-bar::-webkit-progress-value { background: var(--sp); }
+#atb-p::-webkit-progress-value { background: var(--neon); }
+#atb-e::-webkit-progress-value { background: var(--hp); }
+
+/* --- 4. HUD STAT GRID --- */
+
+.stat-cell {
+    text-align: center;
+    font-size: 0.65rem;
+    color: #888;
+    background: #000;
+    padding: 6px 2px;
+    border: 1px solid var(--neon); /* Grid cells now have neon borders */
+}
+
+.stat-cell b, .stat-cell span {
+    font-size: 0.85rem;
+    display: block;
+    color: var(--neon);
+    margin-top: 2px;
+}
+
+/* --- 5. LOG SYSTEM --- */
+
+#log {
+    height: 120px;
+    overflow-y: hidden;
+    font-size: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--neon);
+    padding-top: 5px;
+}
+
+.entry {
+    padding: 4px 0;
+    border-bottom: 1px solid #1a1a1a;
+    animation: fadeIn 0.3s ease;
+}
+
+.entry:first-child { 
+    color: var(--neon); 
+    border-left: 2px solid var(--neon); 
+    padding-left: 8px; 
+}
+
+/* --- 6. UTILITY CLASSES --- */
 
 .flex { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .flex-col { display: flex; flex-direction: column; gap: 8px; }
@@ -43,84 +142,11 @@ body {
 .grid { display: grid; gap: 8px; }
 .g-1 { grid-template-columns: 1fr; }
 .g-2 { grid-template-columns: 1fr 1fr; }
-.g-3 { grid-template-columns: repeat(3, 1fr); }
-.g-6 { grid-template-columns: repeat(6, 1fr); }
 .g-5 { grid-template-columns: repeat(5, 1fr); }
+.g-6 { grid-template-columns: repeat(6, 1fr); }
 
-/* --- HUD COMPONENTS --- */
-.stat-cell {
-    text-align: center;
-    font-size: 0.65rem;
-    color: #888;
-    background: rgba(0,0,0,0.2);
-    padding: 4px 2px;
-    border: 1px solid #222;
-}
-
-.stat-cell b, .stat-cell span {
-    font-size: 0.85rem;
-    display: block;
-    margin-top: 2px;
-}
-
-/* --- BUTTONS & INPUTS --- */
-button {
-    background: #222;
-    color: #fff;
-    border: 1px solid #444;
-    padding: 10px;
-    font-size: 0.9rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.1s ease;
-    text-transform: uppercase;
-}
-
-button:active { transform: translateY(2px); background: #333; }
-
-.btn-neon {
-    border-color: var(--c-n);
-    color: var(--c-n);
-    background: rgba(51, 255, 51, 0.05);
-}
-
-.btn-neon:hover { background: rgba(51, 255, 51, 0.1); box-shadow: 0 0 8px var(--c-n); }
-
-.btn-sm { padding: 4px 8px; font-size: 0.7rem; }
-.btn-red { border-color: var(--hp); color: var(--hp); }
-
-/* --- LOG SYSTEM --- */
-#log {
-    height: 120px;
-    overflow-y: hidden;
-    font-size: 0.8rem;
-    color: #aaa;
-    display: flex;
-    flex-direction: column;
-}
-
-.entry {
-    padding: 3px 0;
-    border-bottom: 1px solid #222;
-    animation: fadeIn 0.3s ease;
-}
-
-.entry:first-child { 
-    color: #fff; 
-    border-left: 3px solid var(--c-n); 
-    padding-left: 8px; 
-}
-
-/* --- UTILS --- */
-[hidden] { display: none !important; }
-.c-n { color: var(--c-n); text-shadow: 0 0 5px rgba(51,255,51,0.3); }
+.c-n { color: var(--neon); text-shadow: 0 0 5px var(--neon-glow); }
 .c-red { color: var(--hp); }
 .c-yel { color: var(--r); }
 
 @keyframes fadeIn { from { opacity: 0; transform: translateX(-5px); } to { opacity: 1; transform: translateX(0); } }
-
-@keyframes pulse {
-    0% { box-shadow: 0 0 0px rgba(255, 215, 0, 0.4); }
-    50% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.6); }
-    100% { box-shadow: 0 0 0px rgba(255, 215, 0, 0.4); }
-}
