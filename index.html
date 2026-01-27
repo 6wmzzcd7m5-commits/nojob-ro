@@ -3,419 +3,357 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Jobless RO: Gender Update</title>
+<title>Jobless RO: Balanced</title>
 <style>
-    :root {
-        --bg: #050505; --panel: #0a0f0a; --border: #333; --neon: #39ff14; 
-        --text: #eef; --dim: #686; --hp: #f44; --sp: #4af; --rare: #fd4;
-        --male: #4af; --female: #f4a;
-        --font: 'Courier New', monospace;
-    }
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
-    body {
-        background: var(--bg); color: var(--text); font-family: var(--font);
-        margin: 0 auto; padding: 10px; max-width: 500px; height: 100vh;
-        display: flex; flex-direction: column; gap: 8px; overflow: hidden;
-    }
-    /* Utils */
-    .flex { display: flex; justify-content: space-between; align-items: center; }
-    .grid { display: grid; gap: 5px; } .g-2 { grid-template-columns: 1fr 1fr; } .g-6 { grid-template-columns: repeat(6, 1fr); }
-    .c-neon { color: var(--neon); } .c-hp { color: var(--hp); } .c-sp { color: var(--sp); } .c-dim { color: var(--dim); }
-    .hide { display: none !important; } .panel { border: 1px solid var(--border); background: var(--panel); padding: 8px; border-radius: 4px; }
-    
-    /* UI Elements */
-    button {
-        background: #0d1a0d; color: var(--neon); border: 1px solid #141; padding: 10px; 
-        font: inherit; font-weight: bold; cursor: pointer; border-radius: 2px;
-    }
-    button:active, button.active { background: #163016; color: #fff; border-color: #fff; }
-    button:disabled { opacity: 0.5; pointer-events: none; }
-    .btn-sm { padding: 4px 8px; font-size: 10px; }
-    .btn-red { border-color: #522; color: #f55; background: #211; }
-    .btn-blue { border-color: #225; color: #55f; background: #112; }
-    
-    input { background: #000; border: 1px solid var(--neon); color: #fff; padding: 8px; width: 100%; text-align: left; font: inherit; }
-
-    /* Gender Toggle Tags */
-    .g-tag { 
-        padding: 8px 12px; border: 1px solid #333; cursor: pointer; color: #555; font-weight: bold; 
-        background: #000; transition: 0.2s;
-    }
-    .g-tag.m.active { color: var(--male); border-color: var(--male); text-shadow: 0 0 5px var(--male); }
-    .g-tag.f.active { color: var(--female); border-color: var(--female); text-shadow: 0 0 5px var(--female); }
-
-    /* Bars */
-    progress { width: 100%; height: 6px; appearance: none; border: none; background: #111; display: block; }
-    progress::-webkit-progress-bar { background: #111; }
-    progress::-webkit-progress-value { transition: width 0.1s linear; }
-    #bar-hp::-webkit-progress-value { background: var(--hp); }
-    #bar-sp::-webkit-progress-value { background: var(--sp); }
-    #atb-p::-webkit-progress-value { background: var(--neon); }
-    #atb-e::-webkit-progress-value { background: var(--hp); }
-
-    /* Log */
-    #log { flex: 1; overflow-y: auto; font-size: 11px; border-top: 1px solid var(--border); padding-top: 5px; display: flex; flex-direction: column-reverse; }
-    .log-row { border-bottom: 1px solid #111; padding: 2px 0; }
-    .l-win { color: var(--neon); } .l-loot { color: var(--rare); }
-
-    /* --- SPRITE ENGINE --- */
-    .char-frame { width: 40px; height: 40px; position: relative; overflow: hidden; border: 1px solid #242; background: #000; border-radius: 4px; margin-right: 10px; flex-shrink: 0; }
-    .ro-sprite { position: absolute; top: 8px; left: 10px; width: 20px; height: 30px; animation: idle 1s infinite steps(2); }
-    .ro-head { width: 14px; height: 12px; background: #fca; position: absolute; left: 3px; top: 0; z-index: 5; border-radius: 2px; }
-    .ro-head::after { content: ''; position: absolute; top: 5px; left: 3px; width: 2px; height: 2px; background: #000; box-shadow: 6px 0 0 #000; }
-    .ro-hair { width: 16px; height: 7px; background: #853; position: absolute; left: 2px; top: -2px; z-index: 6; }
-    .ro-m .ro-hair { border-radius: 4px 4px 0 0; } 
-    .ro-f .ro-hair { width: 18px; left: 1px; border-radius: 8px 8px 0 0; height:8px; }
-    .ro-f .ro-hair::after { content:''; position:absolute; top:5px; left:-2px; width:3px; height:12px; background: inherit; box-shadow: 19px 0 0 inherit; }
-    
-    .ro-body { width: 12px; height: 11px; background: #eee; position: absolute; left: 4px; top: 11px; z-index: 2; border-radius: 3px 3px 0 0; }
-    .ro-body::after { content: ''; position: absolute; top: 11px; left: 1px; width: 4px; height: 4px; background: #fca; box-shadow: 6px 0 0 #fca; }
-    
-    @keyframes idle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(1px); } }
-
-    /* Job Costumes */
-    .job-Novice .ro-body { background: linear-gradient(to bottom, #fff 60%, #dca 60%); }
-    .job-Novice .ro-body::after { background: #a86; box-shadow: 6px 0 0 #a86; }
-    .job-Swordman .ro-body { background: linear-gradient(to bottom, #d84 50%, #468 50%); border-top: 2px solid #b62; width: 14px; left: 3px; }
-    .job-Mage .ro-body { background: linear-gradient(90deg, #348 20%, #eee 20%, #eee 80%, #348 80%); border-bottom: 3px solid #642; }
-    .job-Archer .ro-body { background: linear-gradient(to bottom, #473 60%, #db9 60%); border-left: 2px solid #fca; border-right: 2px solid #fca; width: 14px; left: 3px; }
-    .job-Merchant .ro-body { background: linear-gradient(90deg, #eee 30%, #a44 30%, #a44 70%, #eee 70%); border-bottom: 2px solid #334; }
-    .job-Thief .ro-body { background: linear-gradient(to bottom, #637 40%, #fca 40%, #fca 60%, #543 60%); }
-    .job-Acolyte .ro-body { background: linear-gradient(90deg, #fff 40%, #d44 40%, #d44 60%, #fff 60%); border-bottom: 2px solid #b86; }
-    .job-Knight .ro-body { background: #567; width:14px; left:3px; border: 1px solid #345; }
-    .job-Wizard .ro-body { background: linear-gradient(to bottom, #237 0%, #237 80%, #fb0 80%); width: 14px; left: 3px; height: 14px; }
-    .job-Wizard .ro-body::after { display:none; }
-    .job-Assassin .ro-body { background: #223; border-left: 1px solid #557; border-right: 1px solid #557; }
-    .job-Assassin .ro-head::before { content:''; position:absolute; bottom:0; left:2px; width:10px; height:4px; background:#eee; z-index:7; }
-    
-    .stat-cell { text-align: center; font-size: 10px; border-top: 1px dashed #242; padding-top: 4px; }
+    :root { --bg:#050505; --p:#0a0f0a; --bd:#333; --n:#39ff14; --t:#eef; --d:#686; --hp:#f44; --sp:#4af; --r:#fd4; --font:'Courier New',mono; --m:#4af; --f:#f4a; }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
+    body{background:var(--bg);color:var(--t);font-family:var(--font);margin:0 auto;padding:10px;max-width:500px;height:100vh;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+    .flex{display:flex;justify-content:space-between;align-items:center}.grid{display:grid;gap:5px}.g-2{grid-template-columns:1fr 1fr}.g-6{grid-template-columns:repeat(6,1fr)}
+    .c-n{color:var(--n)}.c-h{color:var(--hp)}.c-s{color:var(--sp)}.c-d{color:var(--d)}
+    .panel{border:1px solid var(--bd);background:var(--p);padding:8px;border-radius:4px}.hide{display:none!important}
+    button{background:#0d1a0d;color:var(--n);border:1px solid #141;padding:10px;font:inherit;font-weight:bold;cursor:pointer;border-radius:2px}
+    button:active,button.active{background:#163016;color:#fff;border-color:#fff}
+    .btn-sm{padding:4px 8px;font-size:10px}.btn-red{border-color:#522;color:#f55;background:#211}.btn-blue{border-color:#225;color:#55f;background:#112}
+    input{background:#000;border:1px solid var(--n);color:#fff;padding:8px;width:100%;font:inherit}
+    .g-tag{padding:8px 12px;border:1px solid #333;cursor:pointer;color:#555;font-weight:bold;background:#000;transition:0.2s}
+    .g-tag.m.active{color:var(--m);border-color:var(--m);text-shadow:0 0 5px var(--m)}.g-tag.f.active{color:var(--f);border-color:var(--f);text-shadow:0 0 5px var(--f)}
+    progress{width:100%;height:6px;appearance:none;border:none;background:#111;display:block}
+    progress::-webkit-progress-bar{background:#111}progress::-webkit-progress-value{transition:width 0.1s linear}
+    #bh::-webkit-progress-value{background:var(--hp)}#bs::-webkit-progress-value{background:var(--sp)}#ap::-webkit-progress-value{background:var(--n)}#ae::-webkit-progress-value{background:var(--hp)}
+    #log{flex:1;overflow-y:auto;font-size:11px;border-top:1px solid var(--bd);padding-top:5px;display:flex;flex-direction:column-reverse}
+    .lr{border-bottom:1px solid #111;padding:2px 0}.l-w{color:var(--n)}.l-l{color:var(--r)}
+    /* Pixel Engine */
+    .cf{width:40px;height:40px;position:relative;overflow:hidden;border:1px solid #242;background:#000;border-radius:4px;margin-right:10px;flex-shrink:0}
+    .spr{position:absolute;top:8px;left:10px;width:20px;height:30px;animation:i 1s infinite steps(2)}
+    .hd{width:14px;height:12px;background:#fca;position:absolute;left:3px;top:0;z-index:5;border-radius:2px}
+    .hd::after{content:'';position:absolute;top:5px;left:3px;width:2px;height:2px;background:#000;box-shadow:6px 0 0 #000}
+    .hr{width:16px;height:7px;background:#853;position:absolute;left:2px;top:-2px;z-index:6}
+    .ro-m .hr{border-radius:4px 4px 0 0}.ro-f .hr{width:18px;left:1px;border-radius:8px 8px 0 0;height:8px}
+    .ro-f .hr::after{content:'';position:absolute;top:5px;left:-2px;width:3px;height:12px;background:inherit;box-shadow:19px 0 0 inherit}
+    .bd{width:12px;height:11px;background:#eee;position:absolute;left:4px;top:11px;z-index:2;border-radius:3px 3px 0 0}
+    .bd::after{content:'';position:absolute;top:11px;left:1px;width:4px;height:4px;background:#fca;box-shadow:6px 0 0 #fca}
+    @keyframes i{0%,100%{transform:translateY(0)}50%{transform:translateY(1px)}}
+    .j-0 .bd{background:linear-gradient(to bottom,#fff 60%,#dca 60%)}.j-0 .bd::after{background:#a86;box-shadow:6px 0 0 #a86}
+    .j-1 .bd{background:linear-gradient(to bottom,#d84 50%,#468 50%);border-top:2px solid #b62;width:14px;left:3px}.j-1 .bd::after{background:#532;box-shadow:6px 0 0 #532}
+    .j-2 .bd{background:linear-gradient(90deg,#348 20%,#eee 20%,#eee 80%,#348 80%);border-bottom:3px solid #642}.j-2 .bd::after{background:#333;box-shadow:6px 0 0 #333}
+    .j-3 .bd{background:linear-gradient(to bottom,#637 40%,#fca 40%,#fca 60%,#543 60%)}.j-3 .bd::after{background:#543;box-shadow:6px 0 0 #543}
+    .j-4 .bd{background:linear-gradient(to bottom,#473 60%,#db9 60%);border-left:2px solid #fca;border-right:2px solid #fca;width:14px;left:3px}.j-4 .bd::after{background:#432;box-shadow:6px 0 0 #432}
+    .j-5 .bd{background:linear-gradient(90deg,#fff 40%,#d44 40%,#d44 60%,#fff 60%);border-bottom:2px solid #b86}.j-5 .bd::after{background:#333;box-shadow:6px 0 0 #333}
+    .j-6 .bd{background:linear-gradient(90deg,#eee 30%,#a44 30%,#a44 70%,#eee 70%);border-bottom:2px solid #334}.j-6 .bd::after{background:#eee;box-shadow:6px 0 0 #eee;height:5px}
+    .stc{text-align:center;font-size:10px;border-top:1px dashed #242;padding-top:4px}.stv{font-size:12px;font-weight:bold;color:#fff;display:block}
 </style>
 </head>
 <body>
-
 <header class="panel grid">
-    <div class="flex" style="border-bottom:1px dashed #242; padding-bottom:5px;">
+    <div class="flex" style="border-bottom:1px dashed #242;padding-bottom:5px">
         <div class="flex" style="gap:5px">
-            <button class="btn-sm btn-red" onclick="game.hardReset()">[R]</button>
-            <button class="btn-sm btn-blue" onclick="game.exp()">[S]</button>
-            <button class="btn-sm btn-blue" onclick="document.getElementById('f-in').click()">[L]</button>
-            <input type="file" id="f-in" style="display:none" onchange="game.imp(this)">
-            <button class="btn-sm" onclick="game.toggleLang()">EN/中</button>
-            <button id="btn-auto" class="btn-sm" onclick="game.toggleAuto()">AUTO</button>
+            <button class="btn-sm btn-red" onclick="G.wipe()">[R]</button>
+            <button class="btn-sm btn-blue" onclick="G.save()">[S]</button>
+            <button class="btn-sm" onclick="G.lang()">EN/中</button>
+            <button id="b-au" class="btn-sm" onclick="G.tAu()">AUTO</button>
         </div>
-        <div class="flex" style="gap:2px">
-            <button class="btn-sm" id="s-10" onclick="game.spd(10)">1X</button>
-            <button class="btn-sm" id="s-30" onclick="game.spd(30)">3X</button>
-            <button class="btn-sm" id="s-100" onclick="game.spd(100)">MAX</button>
-        </div>
+        <div class="flex" style="gap:2px"><button class="btn-sm" id="s10" onclick="G.spd(10)">1X</button><button class="btn-sm" id="s30" onclick="G.spd(30)">3X</button><button class="btn-sm" id="s99" onclick="G.spd(99)">MAX</button></div>
     </div>
-
-    <div class="flex" style="justify-content: flex-start;">
-        <div class="char-frame">
-            <div id="spr" class="ro-sprite ro-m">
-                <div class="ro-hair"></div><div class="ro-head"></div><div class="ro-body"></div>
-            </div>
-        </div>
+    <div class="flex" style="justify-content:flex-start">
+        <div class="cf"><div id="spr" class="spr ro-m"><div class="hr"></div><div class="hd"></div><div class="bd"></div></div></div>
         <div style="flex-grow:1">
-            <div class="flex">
-                <div><b id="u-name" class="c-neon"></b> <span id="u-job" class="c-dim" style="font-size:10px"></span></div>
-                <div style="font-size:11px"><span id="l-lv">LV</span> <span id="u-lvl" class="c-rare">1</span></div>
-            </div>
-            <div class="c-neon" style="font-size:10px; margin-top:2px;" id="u-loc"></div>
+            <div class="flex"><div><b id="un" class="c-n"></b> <span id="uj" class="c-d" style="font-size:10px"></span></div><div style="font-size:11px">LV <span id="ul" class="c-r">1</span></div></div>
+            <div class="c-n" style="font-size:10px;margin-top:2px" id="ulo"></div>
         </div>
     </div>
-
     <div class="grid g-2">
-        <div style="font-size:10px">
-            <div class="flex"><span>HP</span> <span id="u-hp"></span></div>
-            <progress id="bar-hp" value="100" max="100"></progress>
-        </div>
-        <div style="font-size:10px">
-            <div class="flex"><span>SP</span> <span id="u-sp"></span></div>
-            <progress id="bar-sp" value="20" max="20"></progress>
-        </div>
+        <div style="font-size:10px"><div class="flex"><span>HP</span> <span id="uh"></span></div><progress id="bh" value="100" max="100"></progress></div>
+        <div style="font-size:10px"><div class="flex"><span>SP</span> <span id="us"></span></div><progress id="bs" value="20" max="20"></progress></div>
     </div>
-
-    <div class="flex c-dim" style="font-size:10px;">
-        <span><span id="l-w">W</span>: <b id="u-w" class="c-neon">-</b></span>
-        <span><span id="l-a">A</span>: <b id="u-a" class="c-neon">-</b></span>
-    </div>
-
+    <div class="flex c-d" style="font-size:10px"><span>W: <b id="uw" class="c-n">-</b></span><span>A: <b id="ua" class="c-n">-</b></span></div>
     <div class="grid g-6">
-        <div class="stat-cell"><span class="c-dim">STR</span><span id="v-str" class="stat-val">1</span></div>
-        <div class="stat-cell"><span class="c-dim">AGI</span><span id="v-agi" class="stat-val">1</span></div>
-        <div class="stat-cell"><span class="c-dim">VIT</span><span id="v-vit" class="stat-val">1</span></div>
-        <div class="stat-cell"><span class="c-dim">INT</span><span id="v-int" class="stat-val">1</span></div>
-        <div class="stat-cell"><span class="c-dim">DEX</span><span id="v-dex" class="stat-val">1</span></div>
-        <div class="stat-cell"><span class="c-dim">LUK</span><span id="v-luk" class="stat-val">1</span></div>
+        <div class="stc"><span class="c-d">STR</span><span id="vstr" class="stv">1</span></div><div class="stc"><span class="c-d">AGI</span><span id="vagi" class="stv">1</span></div><div class="stc"><span class="c-d">VIT</span><span id="vvit" class="stv">1</span></div>
+        <div class="stc"><span class="c-d">INT</span><span id="vint" class="stv">1</span></div><div class="stc"><span class="c-d">DEX</span><span id="vdex" class="stv">1</span></div><div class="stc"><span class="c-d">LUK</span><span id="vluk" class="stv">1</span></div>
     </div>
 </header>
-
 <section id="btl" class="panel hide">
-    <div class="flex"><span id="e-n" style="font-weight:bold; color:var(--hp)">TARGET</span> <span id="e-h" class="c-dim" style="font-size:10px"></span></div>
-    <div class="grid" style="margin-top:5px;">
-        <div class="flex" style="font-size:10px"><span class="c-neon">ATB</span> <progress id="atb-p" value="0" max="1000" style="width:85%"></progress></div>
-        <div class="flex" style="font-size:10px"><span class="c-hp" id="l-foe">FOE</span> <progress id="atb-e" value="0" max="1000" style="width:85%"></progress></div>
+    <div class="flex"><span id="en" style="font-weight:bold;color:var(--hp)">TARGET</span> <span id="eh" class="c-d" style="font-size:10px"></span></div>
+    <div class="grid" style="margin-top:5px">
+        <div class="flex" style="font-size:10px"><span class="c-n">ATB</span> <progress id="ap" value="0" max="1000" style="width:85%"></progress></div>
+        <div class="flex" style="font-size:10px"><span class="c-h">FOE</span> <progress id="ae" value="0" max="1000" style="width:85%"></progress></div>
     </div>
 </section>
-
-<nav id="ctrl" class="grid g-2" style="min-height:60px"></nav>
-
+<nav id="ctl" class="grid g-2" style="min-height:60px"></nav>
 <main id="log"></main>
-
 <script>
-/* --- DATABASE --- */
-const DB={
-    jobs:{Novice:{n:'初心者',nx:['Swordman','Mage','Archer','Merchant','Thief','Acolyte'],hp:60,sp:20,as:50},Swordman:{n:'劍士',nx:['Knight','Crusader'],hp:150,sp:40,as:45},Mage:{n:'法師',nx:['Wizard','Sage'],hp:80,sp:120,as:60},Archer:{n:'弓箭手',nx:['Hunter','Bard'],hp:100,sp:60,as:40},Merchant:{n:'商人',nx:['Blacksmith','Alchemist'],hp:120,sp:50,as:50},Thief:{n:'盜賊',nx:['Assassin','Rogue'],hp:110,sp:50,as:35},Acolyte:{n:'服事',nx:['Priest','Monk'],hp:90,sp:100,as:55},Knight:{n:'騎士',nx:[],hp:400,sp:80,as:40},Crusader:{n:'十字軍',nx:[],hp:450,sp:100,as:45},Wizard:{n:'巫師',nx:[],hp:200,sp:250,as:60},Sage:{n:'賢者',nx:[],hp:250,sp:200,as:55},Hunter:{n:'獵人',nx:[],hp:280,sp:120,as:30},Bard:{n:'吟遊詩人',nx:[],hp:300,sp:150,as:40},Blacksmith:{n:'鐵匠',nx:[],hp:350,sp:100,as:45},Alchemist:{n:'鍊金術師',nx:[],hp:320,sp:150,as:50},Assassin:{n:'刺客',nx:[],hp:250,sp:80,as:25},Rogue:{n:'流氓',nx:[],hp:280,sp:90,as:30},Priest:{n:'牧師',nx:[],hp:220,sp:250,as:55},Monk:{n:'武道家',nx:[],hp:380,sp:100,as:35}},
-    sk0:[{n:'First Aid',c:'緊急治療',v:20,t:'h'},{n:'Bash',c:'狂擊',v:1.2,t:'p'},{n:'Napalm Beat',c:'心靈爆破',v:1.2,t:'m'}],
-    skJ:{Swordman:[{n:'Bash',c:'狂擊',v:1.5},{n:'Magnum Break',c:'怒爆',v:1.2},{n:'Auto Berserk',c:'狂暴狀態',t:'a'}],Mage:[{n:'Fire Bolt',c:'火箭術',v:1.8},{n:'Cold Bolt',c:'冰箭術',v:1.8},{n:'Lightning Bolt',c:'雷擊術',v:1.8}],Thief:[{n:'Envenom',c:'施毒',v:1.2},{n:'Double Attack',c:'二刀連擊',t:'a'},{n:'Hiding',c:'偽裝',t:'a'}],Acolyte:[{n:'Holy Light',c:'神聖之光',v:1.5},{n:'Heal',c:'治癒術',v:50,t:'h'},{n:'Divine Protection',c:'天使之護',t:'a'}],Knight:[{n:'Bowling Bash',c:'怪物互擊',v:3.0},{n:'Pierce',c:'連刺攻擊',v:2.0},{n:'Two-Hand Quicken',c:'雙手劍加速',t:'a'}],Wizard:[{n:'Storm Gust',c:'暴風雪',v:4.0},{n:'Meteor Storm',c:'隕石術',v:4.0},{n:'Lord of Vermilion',c:'怒雷強擊',v:4.5}],Assassin:[{n:'Sonic Blow',c:'音速投擲',v:3.5},{n:'Grimtooth',c:'無影之牙',v:2.5},{n:'Katar Mastery',c:'拳刃修練',t:'a'}]},
-    xp:{a:1,b:2,c:3,d:4,e:5},maps:{1:"Prontera",2:"Payon",3:"Orc Dungeon",4:"Glast Heim",5:"Clock Tower"},cn:{1:"普隆德拉",2:"斐揚",3:"獸人洞穴",4:"古城",5:"鐘塔"},
-    mobs:{1:[{n:'Poring',c:'波利',h:30,a:8,x:10},{n:'Fabre',c:'綠棉蟲',h:40,a:10,x:12},{n:'Lunatic',c:'瘋兔',h:45,a:12,x:15},{n:'Picky',c:'小雞',h:50,a:15,x:18}],2:[{n:'Wolf',c:'狼',h:150,a:30,x:50},{n:'Spore',c:'蘑菇',h:140,a:25,x:45},{n:'Skeleton',c:'骷髏',h:180,a:35,x:60},{n:'Boa',c:'蛇',h:160,a:40,x:55}],3:[{n:'Orc Warrior',c:'獸人戰士',h:600,a:70,x:200},{n:'Munak',c:'僵屍',h:500,a:60,x:180},{n:'Sohee',c:'鬼女',h:550,a:65,x:190},{n:'Bigfoot',c:'大腳熊',h:700,a:80,x:220}],4:[{n:'Raydric',c:'深淵騎士',h:1000,a:120,x:350},{n:'High Orc',c:'獸人長',h:1200,a:130,x:400},{n:'Argiope',c:'艾吉歐蜈蚣',h:1100,a:110,x:380},{n:'Mantis',c:'螳螂',h:900,a:140,x:360}],5:[{n:'Alarm',c:'朽魔',h:1500,a:160,x:500},{n:'Minorous',c:'米諾斯',h:1600,a:170,x:550},{n:'Majoruros',c:'牛頭人',h:1700,a:180,x:600},{n:'Wanderer',c:'流浪之狼',h:1400,a:200,x:580}]},
-    boss:[{n:'Angeling',c:'天使波利',h:800,a:40,x:1000},{n:'Golden Thief Bug',c:'黃金蟲',h:2000,a:80,x:3000},{n:'Eddga',c:'虎王',h:5000,a:150,x:8000},{n:'Osiris',c:'歐西里斯',h:10000,a:250,x:15000},{n:'Baphomet',c:'巴風特',h:25000,a:500,x:30000}],
-    items:{w:[{n:'Knife',c:'短劍',v:5},{n:'Main Gauche',c:'笨拙短劍',v:10},{n:'Blade',c:'厚刃劍',v:25},{n:'Katana',c:'武士刀',v:35},{n:'Saber',c:'軍刀',v:50},{n:'Muramasa',c:'村正',v:80},{n:'Excalibur',c:'石中劍',v:120}],a:[{n:'Shirt',c:'棉襯衫',v:10},{n:'Jacket',c:'皮夾克',v:20},{n:'Coat',c:'大衣',v:60},{n:'Mink Coat',c:'毛皮大衣',v:100},{n:'Plate',c:'鋼鐵鎧甲',v:250},{n:'Lord Clothes',c:'領主衣服',v:400}]}
+// --- DATABASE ---
+const J=[{n:'Novice',c:'初心者',hp:60,sp:20,as:50},{n:'Swordman',c:'劍士',hp:150,sp:40,as:45},{n:'Mage',c:'法師',hp:80,sp:120,as:60},{n:'Thief',c:'盜賊',hp:110,sp:50,as:35},{n:'Archer',c:'弓箭手',hp:100,sp:60,as:40},{n:'Acolyte',c:'服事',hp:90,sp:100,as:55},{n:'Merchant',c:'商人',hp:120,sp:50,as:50}];
+const B=[{n:'Angeling',c:'天使波利',hp:1500,a:50,x:1000},{n:'GT Bug',c:'黃金蟲',hp:5000,a:120,x:3500},{n:'Eddga',c:'虎王',hp:12000,a:250,x:12000},{n:'Osiris',c:'歐西里斯',hp:30000,a:600,x:40000},{n:'Baphomet',c:'巴風特',hp:99999,a:1500,x:99999}];
+const LOC_EN=["Prontera","Payon","Orc Dungeon","Glast Heim","Clock Tower","Thanatos"];
+const LOC_CN=["普隆德拉","斐揚","獸人洞穴","古城","鐘塔","塔納托斯"];
+const MON_EN=["Poring","Wolf","Orc","Raydric","Alarm","Thanatos"];
+const MON_CN=["波利","狼","獸人","深淵騎士","朽魔","塔納托斯"];
+
+// Skill Types: p=phys, m=mag, h=heal, a=passive
+// Balanced: Magic has higher multipliers (no crit), Phys has lower (has crit)
+const SK0=[{n:'First Aid',c:'緊急治療',v:20,t:'h'},{n:'Bash',c:'狂擊',v:1.4,t:'p'},{n:'Napalm',c:'心靈爆破',v:1.5,t:'m'}];
+const SKJ={
+    Swordman:[{n:'Bash',c:'狂擊',v:1.5,t:'p'},{n:'Magnum',c:'怒爆',v:1.2,t:'p'},{n:'Berserk',c:'狂暴',t:'a'}],
+    Mage:[{n:'FireBolt',c:'火箭術',v:2.0,t:'m'},{n:'ColdBolt',c:'冰箭術',v:2.0,t:'m'},{n:'Lightning',c:'雷擊術',v:2.0,t:'m'}],
+    Thief:[{n:'Envenom',c:'施毒',v:1.5,t:'p'},{n:'Double',c:'二刀連擊',t:'a'},{n:'Hiding',c:'偽裝',t:'a'}],
+    Acolyte:[{n:'HolyLight',c:'神聖之光',v:1.8,t:'m'},{n:'Heal',c:'治癒術',v:50,t:'h'},{n:'Divine',c:'天使之護',t:'a'}],
+    // 2nd Jobs simulated via high multipliers
+    Knight:[{n:'BowlBash',c:'怪物互擊',v:3.5,t:'p'},{n:'Pierce',c:'連刺',v:2.5,t:'p'},{n:'Quicken',c:'加速',t:'a'}],
+    Wizard:[{n:'StormGust',c:'暴風雪',v:4.5,t:'m'},{n:'Meteor',c:'隕石術',v:4.5,t:'m'},{n:'Vermilion',c:'怒雷',v:5.0,t:'m'}],
+    Assassin:[{n:'SonicBlow',c:'音速投擲',v:3.0,t:'p'},{n:'Grimtooth',c:'無影之牙',v:2.5,t:'p'},{n:'Katar',c:'拳刃修練',t:'a'}]
 };
 
-const T={en:{st:"IDENTITY REGISTRATION",ph:"NAME",pr:"PROTOCOL",ea:"EASY",ha:"HARD",mi:"MISSION: 打爆機睇AB食雞子相",on:"AUTO:ON",off:"AUTO:OFF",lv:"LV",w:"W",a:"A",foe:"FOE",pts:"PTS",ok:"OK",stb:"START",mvp:"MVP DETECTED!",fi:"FIGHT",re:"REST",nx:"NEXT FLOOR",win:"CLEARED",lo:"LOOT",eq:"Equipped!",vic:"MISSION ACCOMPLISHED",go:"MISSION FAILED",rs:"RESTART",wipe:"WIPE SAVE?",sel:"Select Skill:",jc:"Job Change!",ref:"Refined",bl:"Blessed",gd:"GENDER",m:"MALE",f:"FEMALE",sv:"Saved",ld:"Loaded",err:"Corrupt"},
-cn:{st:"身分登錄",ph:"名稱",pr:"選擇難度",ea:"簡單",ha:"困難",mi:"任務: 打爆機睇AB食雞子相",on:"自動:開",off:"自動:關",lv:"等級",w:"武",a:"防",foe:"敵",pts:"點數",ok:"確認",stb:"開始",mvp:"MVP出現!",fi:"戰鬥",re:"休息",nx:"下一層",win:"區域清除",lo:"掉落",eq:"已裝備!",vic:"任務完成",go:"任務失敗",rs:"重來",wipe:"刪除存檔?",sel:"選擇技能:",jc:"可轉職!",ref:"精煉",bl:"祝福",gd:"性別",m:"男",f:"女",sv:"已存檔",ld:"讀取成功",err:"存檔損毀"}};
+const T={en:{st:"ID REGISTRATION",ph:"NAME",ea:"EASY",ha:"HARD",mi:"MISSION: 打爆機睇AB食雞子相",on:"AUTO:ON",off:"AUTO:OFF",lv:"LV",w:"W",a:"A",foe:"FOE",pts:"PTS",ok:"OK",stb:"START",mvp:"MVP DETECTED!",fi:"FIGHT",re:"REST",nx:"NEXT FLOOR",win:"CLEARED",lo:"LOOT",eq:"Equipped!",vic:"VICTORY",go:"GAME OVER",rs:"RESTART",wipe:"WIPE?",sel:"Select Skill:",jc:"Job Change!",ref:"Refined",bl:"Blessed",gd:"GENDER",m:"MALE",f:"FEMALE",sv:"Saved",ld:"Loaded",err:"Corrupt"},
+cn:{st:"身分登錄",ph:"名稱",ea:"簡單",ha:"困難",mi:"任務: 打爆機睇AB食雞子相",on:"自動:開",off:"自動:關",lv:"等級",w:"武",a:"防",foe:"敵",pts:"點數",ok:"確認",stb:"開始",mvp:"MVP出現!",fi:"戰鬥",re:"休息",nx:"下一層",win:"區域清除",lo:"掉落",eq:"已裝備!",vic:"任務完成",go:"任務失敗",rs:"重來",wipe:"刪除存檔?",sel:"選擇技能:",jc:"可轉職!",ref:"精煉",bl:"祝福",gd:"性別",m:"男",f:"女",sv:"已存檔",ld:"讀取成功",err:"存檔損毀"}};
 
-const K='jro_secure_v3', S='RO_SALT'; 
-const el=(i)=>document.getElementById(i);
-const H=(t)=>{let h=0;for(let i=0;i<t.length;i++)h=Math.imul(31,h)+t.charCodeAt(i)|0;return h.toString(16);}
+const K='jro_bal_v1', S='ROX'; 
+const el=i=>document.getElementById(i);
+const rnd=m=>Math.floor(Math.random()*m);
+const H=t=>{let h=0;for(let i=0;i<t.length;i++)h=Math.imul(31,h)+t.charCodeAt(i)|0;return h.toString(16);}
 
-const game={
-    p:null, sys:{f:1,b:false,tm:null,d:'easy',spd:10,au:false,fk:0,l:'en'}, tmp:{n:"",g:"m"},
-    txt(k){return T[this.sys.l][k]||k},
-    dn(o){if(!o)return"-";return this.sys.l=='cn'?(o.c||o.n_cn||o.n):o.n},
-    dm(id){return this.sys.l=='cn'?DB.cn[id]:DB.maps[id]},
+const G={
+    p:null, s:{f:1,b:false,tm:null,spd:10,au:false,fk:0,l:'en'}, tmp:{n:"",g:"m"},
+    txt(k){return T[this.s.l][k]||k},
+    dn(o){if(!o)return"-";return this.s.l=='cn'?(o.c||o.n_cn||o.n):o.n},
+    dm(id){return this.s.l=='cn'?LOC_CN[id]:LOC_EN[id]},
 
     init(){
-        this.ld();
-        if(this.p){
-            this.sys.b=false; clearInterval(this.sys.tm);
-            if(!this.p.eq)this.p.eq={w:null,a:null}; if(!this.p.gender)this.p.gender='m';
-            this.spd(this.sys.spd||10); this.draw();
-            if(this.sys.ps)return this.skM();
-            if(this.p.pts>0&&!this.sys.au)return this.stM(this.sys.f==1);
-            if(this.sys.pj)return this.jbM();
-            this.mnu();
+        const r=localStorage.getItem(K);
+        if(r){
+            try{ const [d,h]=r.split('|'); if(H(d+S)!=h)throw new Error();
+                const o=JSON.parse(atob(d)); this.p=o.p; this.s=o.s;
+                this.s.b=false; clearInterval(this.s.tm);
+                this.spd(this.s.spd); this.draw();
+                if(this.p.pts>0&&!this.s.au) return this.stM(this.s.f==1);
+                this.mnu();
+            }catch(e){this.spd(10);this.scr();}
         }else{this.spd(10);this.scr();}
     },
-    hardReset(){if(confirm(this.txt('wipe'))){localStorage.removeItem(K);location.reload();}},
-    sv(){
-        const j=JSON.stringify({p:this.p,s:this.sys});
-        const d=btoa(encodeURIComponent(j)), h=H(d+S);
-        localStorage.setItem(K,d+"|"+h); this.log(this.txt('sv'));
-    },
-    ld(){
-        const r=localStorage.getItem(K); if(!r)return;
-        try{
-            const [d,h]=r.split('|'); if(H(d+S)!==h)throw new Error();
-            const o=JSON.parse(decodeURIComponent(atob(d))); this.p=o.p; this.sys=o.s;
-        }catch(e){console.log("Save Err");}
-    },
-    exp(){
-        this.sv();
-        const a=document.createElement('a'); a.href="data:text/plain;charset=utf-8,"+encodeURIComponent(localStorage.getItem(K));
-        a.download=`JRO_${this.p.n}.sav`; document.body.appendChild(a); a.click(); a.remove();
-    },
-    imp(el){
-        const f=el.files[0]; if(!f)return;
-        const r=new FileReader(); r.onload=e=>{
-            try{
-                const raw=e.target.result; const [d,h]=raw.split('|');
-                if(H(d+S)!==h)throw new Error();
-                localStorage.setItem(K,raw); location.reload();
-            }catch(e){alert(this.txt('err'))}
-        };
-        r.readAsText(f);
-    },
-
-    toggleLang(){this.sys.l=this.sys.l=='en'?'cn':'en';this.draw();if(!this.p)this.scr();else if(!this.sys.b&&el('e-n').innerText=='TARGET')this.mnu();},
-    toggleAuto(){this.sys.au=!this.sys.au;this.draw();if(this.sys.au&&this.p.pts>0){this.dist();this.draw();if(el('ctrl').innerText.includes(this.txt('pts')))this.mnu();}},
-    spd(x){this.sys.spd=x;document.querySelectorAll('.flex button').forEach(b=>b.classList.remove('active'));const b=el('s-'+x);if(b)b.classList.add('active');},
+    sv(){const d=btoa(JSON.stringify({p:this.p,s:this.s}));localStorage.setItem(K,d+"|"+H(d+S));},
+    wipe(){if(confirm(this.txt('wipe'))){localStorage.removeItem(K);location.reload();}},
     
+    // --- CORE STATS ---
     calc(c){
-        const j=DB.jobs[c.j], b=c.b, eq=c.eq.w?.v||0;
-        let pa=0, pas=0, pc=0, pf=0;
-        if(c.sk['Hiding'])pf+=10; if(c.sk['Katar Mastery'])pc+=10;
-        if(c.sk['Two-Hand Quicken']||c.sk['Adrenaline Rush'])pas+=5;
-        if(c.sk['Auto Berserk']&&(c.hp/c.mh)<0.25)pa+=c.lv*2;
-        if(c.sk['Double Attack']||c.sk['Double Strafe'])pc+=5;
-        return {
-            atk: c.str+Math.floor(c.dex/5)+Math.floor(c.luk/3)+Math.floor(c.lv*2)+b.atk+eq+pa,
-            aspd: Math.floor(j.as+(c.agi*0.8)+(c.dex*0.2)+b.atk+pas),
-            hit: c.dex+c.lv+b.hit, flee: c.agi+c.lv+b.flee+pf,
-            crit: 1+(c.luk*0.3)+pc, def: Math.floor(c.vit/2)+Math.floor(c.lv/2)
-        };
+        const j=J[c.j], b=c.b, eq=c.eq.w?.v||0;
+        // Base Stats
+        let atk = c.str + Math.floor(c.dex/5) + Math.floor(c.luk/3) + Math.floor(c.lv*2) + b.atk + eq;
+        let matk = c.int + Math.floor(c.int/2) + Math.floor(c.dex/5) + Math.floor(c.lv*2) + b.matk + eq;
+        let aspd = Math.floor(j.as + (c.agi*0.8) + (c.dex*0.2) + b.atk); // DEX helps cast/aspd
+        let hit = c.dex + c.lv + b.hit;
+        let flee = c.agi + c.lv + b.flee;
+        let crit = 1 + (c.luk*0.3);
+        let def = Math.floor(c.vit/2) + Math.floor(c.lv/2);
+        
+        // Passives
+        if(c.sk['Hiding']||c.sk['Quicken']) flee+=15;
+        if(c.sk['Katar']) crit+=10;
+        if(c.sk['Quicken']) aspd+=5;
+        if(c.sk['Berserk'] && c.hp<c.mh*0.25) atk+=c.lv*2;
+        if(c.sk['Double']) crit+=5; // Simulates double hit dps increase via crit chance
+
+        return {atk, matk, aspd, hit, flee, crit, def};
     },
     
-    dist(){
-        while(this.p.pts>0){
-            const k=['str','agi','vit','int','dex','luk'][Math.floor(Math.random()*6)];
-            this.p[k]++;this.p.pts--;
-            if(k=='vit'){this.p.mh=Math.floor((DB.jobs[this.p.j].hp+this.p.lv*20)*(1+this.p.vit*0.01)+(this.p.eq.a?.v||0));this.p.hp=this.p.mh;}
-            if(k=='int'){this.p.ms=Math.floor((DB.jobs[this.p.j].sp+this.p.lv*5)*(1+this.p.int*0.01));this.p.sp=this.p.ms;}
-        }
-    },
-
-    log(t,c=''){const l=el('log');l.insertAdjacentHTML('afterbegin',`<div class="log-row ${c}">${t}</div>`);if(l.children.length>20)l.lastChild.remove();},
-    draw(){
-        el('l-lv').innerText=this.txt('lv'); el('l-w').innerText=this.txt('w'); el('l-a').innerText=this.txt('a'); el('l-foe').innerText=this.txt('foe');
-        const b=el('btn-auto'); b.innerText=this.txt(this.sys.au?'on':'off'); b.classList.toggle('active',this.sys.au);
-        const s=el('spr'); s.className='ro-sprite'; const src=this.p||this.tmp; const j=this.p?this.p.j:'Novice'; s.classList.add(`ro-${src.gender}`,`job-${j}`);
-        if(!this.p)return;
-        ['str','agi','vit','int','dex','luk'].forEach(k=>el('v-'+k).innerText=this.p[k]);
-        el('u-name').innerText=this.p.n;
-        const jd=DB.jobs[this.p.j]; el('u-job').innerText=this.sys.l=='cn'?(jd.n_cn||jd.n):this.p.j;
-        el('u-lvl').innerText=this.p.lv;
-        const tr=Math.ceil(this.sys.f/10), lf=((this.sys.f-1)%10)+1; el('u-loc').innerText=`${this.dm(tr)||'?'} ${lf}F`;
-        el('u-w').innerText=this.p.eq.w?`+${this.p.eq.w.v} ${this.dn(this.p.eq.w)}`:'-'; el('u-a').innerText=this.p.eq.a?`+${this.p.eq.a.v} ${this.dn(this.p.eq.a)}`:'-';
-        el('bar-hp').value=this.p.hp; el('bar-hp').max=this.p.mh; el('u-hp').innerText=Math.floor(this.p.hp);
-        el('bar-sp').value=this.p.sp; el('bar-sp').max=this.p.ms; el('u-sp').innerText=Math.floor(this.p.sp);
-    },
-    btn(t,fn,c=''){const b=document.createElement('button');b.innerHTML=t;b.onclick=fn;if(c)b.className=c;el('ctrl').appendChild(b);},
-
-    scr(){
-        const c=el('ctrl'); c.className='grid';
-        window.setG=(g)=>{
-            this.tmp.gender=g;
-            el('b-m').className=g=='m'?'g-tag m active':'g-tag';
-            el('b-f').className=g=='f'?'g-tag f active':'g-tag';
-            this.draw();
-        };
-        c.innerHTML=`<div class="panel" style="grid-column:span 2;text-align:center"><div class="c-neon" style="font-weight:bold">${this.txt('st')}</div>
+    // --- BATTLE LOGIC ---
+    act(src, tgt, st, isP){
+        // 1. Determine Attack Type (Skill or Normal)
+        let skill = null;
+        if(isP && this.p.activeSkill) skill = this.p.activeSkill; // Currently equipped active skill
         
-        <div class="flex" style="justify-content:center; gap:5px; margin: 15px 0;">
-            <div class="char-frame"><div id="spr" class="ro-sprite ro-m"><div class="ro-hair"></div><div class="ro-head"></div><div class="ro-body"></div></div></div>
-            <div style="flex-grow:1"><input id="in" placeholder="${this.txt('ph')}" maxlength="10" style="margin:0"></div>
-            <div id="b-m" class="g-tag m active" onclick="setG('m')">_m</div>
-            <div id="b-f" class="g-tag f" onclick="setG('f')">_f</div>
-        </div>
+        const type = skill ? skill.t : 'p'; // Default to phys
+        const mult = skill ? skill.v : 1.0;
 
-        <div class="grid g-2"><button onclick="game.ng(document.getElementById('in').value,'easy')">${this.txt('ea')}<br><small>0.8x</small></button><button class="btn-red" onclick="game.ng(document.getElementById('in').value,'hard')">${this.txt('ha')}<br><small>1.5x</small></button></div><div style="font-size:9px;margin-top:10px;color:#464">${this.txt('mi')}</div></div>`;
-        this.tmp.gender='m'; this.draw();
-    },
-    ng(n,d){
-        this.p={n:n.trim()||"Novice",j:'Novice',lv:1,xp:0,nx:10,hp:60,mh:60,sp:20,ms:20,str:1,agi:1,vit:1,int:1,dex:1,luk:1,pts:9,pots:3,b:{atk:0,matk:0,hit:0,flee:0},eq:{w:null,a:null},sk:{},gender:this.tmp.gender};
-        this.sys={f:1,b:false,d:d,spd:10,au:false,ps:true,fk:0,l:this.sys.l};
-        this.spd(10); this.skM();
-    },
-    skM(){
-        this.sv(); el('ctrl').innerHTML=''; this.log(this.txt('sel'),'l-win');
-        DB.sk0.forEach(s=>{ this.btn(`${this.sys.l=='cn'?s.c:s.n}`,()=>{this.p.sk[s.n]=1;this.sys.ps=false;this.stM(true);},'btn-blue'); });
-    },
-    stM(st){
-        const c=el('ctrl'); c.innerHTML=''; c.className='grid g-2';
-        const d=document.createElement('div'); d.style.gridColumn='span 2'; d.className='c-neon'; d.style.textAlign='center'; d.innerText=`${this.txt('pts')}: ${this.p.pts}`; c.appendChild(d);
-        ['str','agi','vit','int','dex','luk'].forEach(k=>{
-            this.btn(`${k.toUpperCase()} <span class="c-neon">${this.p[k]}</span> +`,()=>{
-                if(this.p.pts>0){
-                    this.p[k]++;this.p.pts--;
-                    if(k=='vit'){this.p.mh=Math.floor((DB.jobs[this.p.j].hp+this.p.lv*20)*(1+this.p.vit*0.01)+(this.p.eq.a?.v||0));this.p.hp+=20;}
-                    if(k=='int'){this.p.ms=Math.floor((DB.jobs[this.p.j].sp+this.p.lv*5)*(1+this.p.int*0.01));this.p.sp+=5;}
-                    this.draw();this.stM(st);
-                }
-            },'btn-sm');
-        });
-        const b=document.createElement('button'); b.style.gridColumn='span 2'; b.innerText=st?this.txt('stb'):this.txt('ok');
-        b.onclick=()=>{if(this.p.pts>0&&st)return; 
-            const jd=DB.jobs[this.p.j]; 
-            const r=(this.p.lv>=10&&jd.nx.length&&this.p.j=='Novice')||(this.p.lv>=40&&jd.nx.length&&this.p.j!='Novice');
-            if(r)this.jbM();else{if(!this.sys.ps)this.mnu();}
-        }; c.appendChild(b);
-    },
-    req(f){ if(f<=9)return 1; if(f<=19)return 2; if(f<=29)return 3; if(f<=39)return 4; return 5; },
-    mnu(){
-        this.sv(); el('ctrl').innerHTML=''; el('btl').classList.add('hide'); this.draw();
-        if(this.sys.f>50)return this.vic();
-        if(this.sys.f%10==0){ this.log(this.txt('mvp'),'c-hp'); this.btn(this.txt('mvp'),()=>this.bt(DB.boss[(this.sys.f/10)-1],true),'btn-red'); return; }
-        const r=this.req(this.sys.f), c=this.sys.fk||0;
-        if(c>=r){ this.log(this.txt('win'),'l-win'); this.btn(this.txt('nx'),()=>{this.sys.f++;this.sys.fk=0;this.mnu();}); }
-        else{
-            let t=Math.floor((this.sys.f-1)/10)+1; if(t>5)t=5; const p=DB.mobs[t];
-            let m=(this.sys.f<=5&&Math.random()<0.8)?p[0]:p[Math.floor(Math.random()*p.length)];
-            this.log(`${this.txt('f')}${this.sys.f} (${c+1}/${r}): ${this.dn(m)}`);
-            this.btn(this.txt('fi'),()=>this.bt(m));
-            if(Math.random()<0.2)this.btn(this.txt('re'),()=>{this.p.hp=this.p.mh;this.log(this.txt('re'));this.draw();});
+        // 2. Hit Check
+        // Magic always hits. Phys checks HIT vs FLEE (80% base)
+        let hitChance = (type=='m') ? 100 : (80 + st.hit - tgt.agi);
+        if(Math.random()*100 > hitChance){ if(this.s.spd<20)this.log("Miss!"); return; }
+
+        // 3. Damage Calc
+        let dmg = 0;
+        let isCrit = false;
+
+        if(type === 'm') {
+            // Magic: Uses MATK, Ignores DEF (Pierce)
+            dmg = st.matk * mult;
+        } else {
+            // Phys: Uses ATK, Checks DEF, Can Crit
+            isCrit = (Math.random()*100 < st.crit);
+            dmg = st.atk * mult;
+            if(isCrit) dmg = Math.floor(dmg * 1.5);
+            else dmg = Math.max(1, dmg - (isP ? (tgt.vit/2) : st.def)); // Simple DEF deduction
         }
+
+        // 4. Apply Damage
+        dmg = Math.floor(dmg * (Math.random()*0.2 + 0.9)); // Variance
+        tgt.hp -= dmg;
+
+        // 5. Log
+        if(this.s.spd<20 || isCrit || tgt.hp<=0){
+            let sName = skill ? (this.s.l=='cn'?skill.c:skill.n) : "";
+            this.log(`${sName} ${dmg} ${isCrit?'CRIT!':''}`);
+        }
+
+        // 6. Potion / Win Condition
+        if(isP && this.p.hp < this.p.mh*0.3 && this.p.pots>0){
+            this.p.pots--; this.p.hp+=Math.floor(this.p.mh*0.5); this.log("Potion!",'c-s');
+        } else if(!isP) this.draw();
+
+        if(tgt.hp<=0){ if(isP) this.win(); else this.over(); }
     },
-    bt(md,isB){
-        let m=(this.sys.d=='easy')?0.8:1.5, xm=(this.sys.d=='hard')?1.5:1.0, nf=isB?0.15:0.40;
-        this.sys.b=true; this.mob={...md, mh:Math.floor(Math.max(1,md.h*m*nf)), a:Math.floor(Math.max(1,md.a*m*nf)), x:Math.floor(md.x*xm), agi:Math.floor(10*nf), dex:Math.floor(10*nf), vit:1, lv:this.sys.f};
-        this.mob.hp=this.mob.mh; if(isB)this.mob.x=Math.max(this.mob.x,this.p.nx*1.5);
-        this.pb=0; this.eb=0;
-        el('btl').classList.remove('hide'); el('ctrl').innerHTML='<button disabled class="btn-sm" style="width:100%">...</button>';
-        el('e-n').innerText=this.dn(this.mob);
-        if(this.sys.tm)clearInterval(this.sys.tm); this.sys.tm=setInterval(()=>this.loop(),30);
-    },
-    loop(){
-        if(!this.sys.b)return; for(let i=0;i<this.sys.spd;i++){if(!this.sys.b)break;this.tick();}
-        if(this.sys.b){el('atb-p').value=this.pb;el('atb-e').value=this.eb;el('e-h').innerText=this.mob.hp;}
-    },
+
+    // --- GAME LOOP ---
     tick(){
-        const ps=this.calc(this.p); const es=3+(this.mob.agi||1)*0.1;
+        const ps=this.calc(this.p); const es=3+(this.mob.agi*0.1);
         this.pb+=ps.aspd; this.eb+=es;
         if(this.pb>=1000){this.pb=0;this.act(this.p,this.mob,ps,true);}
-        if(this.eb>=1000){this.eb=0;this.act(this.mob,this.p,{hit:999,crit:0,atk:this.mob.a},false);}
+        if(this.eb>=1000){this.eb=0;this.act(this.mob,this.p,{hit:999,crit:0,atk:this.mob.a,matk:0},false);}
+        if(this.s.b){el('ap').value=this.pb;el('ae').value=this.eb;el('eh').innerText=this.mob.hp;}
     },
-    act(s,t,st,p){
-        let h=p?(80+st.hit-(t.agi||0)):80;
-        if(Math.random()*100>h){if(this.sys.spd<=10)this.log(this.txt('miss'));return;}
-        let c=p?(Math.random()*100<st.crit):false, d=st.atk;
-        if(c)d=Math.floor(d*1.5); else d=Math.max(1,d-(p?0:(st.def||0)));
-        if(p&&(this.p.sk['Double Attack']||this.p.sk['Double Strafe'])&&Math.random()<0.2)d*=2;
-        t.hp-=d;
-        if(this.sys.spd<=10||c||t.hp<=0)this.log(`${p?this.p.n:this.dn(s)}: ${d} ${c?this.txt('crit'):''}`);
-        if(p&&this.p.hp<this.p.mh*0.3&&this.p.pots>0){this.p.pots--;this.p.hp+=50;this.log(this.txt('potion'),'c-sp');}else if(!p)this.draw();
-        if(t.hp<=0){if(p)this.win(t);else this.go();}
+    
+    // --- MOBS & ITEMS ---
+    genMob(f,isB){
+        if(isB){
+            const i=(f/10)-1; const b=B[i];
+            return { n:this.s.l=='cn'?b.c:b.n, hp:b.hp, max:b.hp, atk:b.a, xp:b.x, agi:f*2, dex:f*2, vit:f*5 };
+        }
+        const t=Math.min(5,Math.ceil(f/10)-1);
+        const name=this.s.l=='cn'?MON_CN[t]:MON_EN[t];
+        return { n:name, hp:f*25, max:f*25, atk:f*3+5, xp:f*10, agi:f, dex:f, vit:f };
     },
-    win(m){
-        clearInterval(this.sys.tm); this.sys.b=false; el('btl').classList.add('hide');
-        this.p.xp+=m.x; this.sys.fk=(this.sys.fk||0)+1; this.log(`${this.txt('win')} +${m.x} XP`,'l-win');
-        if(Math.random()<0.3){
-            const r=Math.random();
-            if(r<0.33){this.p.b.atk++;this.log(`${this.txt('ref')} +1 ATK`,'c-neon');}
-            else if(r<0.66){this.p.b.matk++;this.log(`${this.txt('ref')} +1 MATK`,'c-neon');}
-            else{this.p.mh++;this.p.hp++;this.log(`${this.txt('bl')} +1 HP`,'c-neon');}
-        }
-        if(Math.random()<(0.01+this.p.luk*0.001+this.p.lv*0.001)){
-            const ty=Math.random()<0.5?'w':'a', pl=DB.items[ty], tr=Math.min(pl.length-1,Math.floor(this.sys.f/8)), it=pl[tr], cu=this.p.eq[ty];
-            if(!cu||it.v>cu.v){
-                if(ty=='a'){if(cu)this.p.mh-=cu.v;this.p.mh+=it.v;this.p.hp=this.p.mh;}
-                this.p.eq[ty]=it; this.log(`${this.txt('lo')}: ${this.dn(it)} ${this.txt('eq')}`,'l-loot');
-            }
-        }
-        if(this.p.xp>=this.p.nx){
-            this.p.lv++; this.p.xp=0; this.p.mh=Math.floor((DB.jobs[this.p.j].hp+this.p.lv*20)*(1+this.p.vit*0.01)+(this.p.eq.a?.v||0));
-            this.p.ms=Math.floor((DB.jobs[this.p.j].sp+this.p.lv*5)*(1+this.p.int*0.01)); this.p.hp=this.p.mh; this.p.sp=this.p.ms;
-            this.p.nx=m.x*this.req(this.sys.f); this.p.pts+=Math.floor(Math.random()*4)+1;
-            if(this.sys.au){this.dist();this.mnu();}else this.stM(false);
-        } else {
-            if(this.sys.f%10==0){this.sys.f++;this.sys.fk=0;} this.mnu();
-        }
+    
+    // --- SCREENS ---
+    scr(){
+        const c=el('ctl'); c.className='grid';
+        window.setG=(g)=>{this.tmp.g=g;el('bm').className=g=='m'?'g-tag m active':'g-tag';el('bf').className=g=='f'?'g-tag f active':'g-tag';this.draw();};
+        c.innerHTML=`<div class="panel" style="grid-column:span 2;text-align:center"><div class="c-n" style="font-weight:bold">${this.txt('st')}</div>
+        <div class="flex" style="justify-content:center;gap:10px;margin:15px 0"><div class="cf"><div id="spr" class="spr ro-m"><div class="hr"></div><div class="hd"></div><div class="bd"></div></div></div><div style="flex:1"><input id="in" placeholder="${this.txt('ph')}" maxlength="10" style="margin:0"></div><div id="bm" class="g-tag m active" onclick="setG('m')">_m</div><div id="bf" class="g-tag f" onclick="setG('f')">_f</div></div>
+        <div class="grid g-2"><button onclick="G.ng(0)">EASY</button><button class="btn-red" onclick="G.ng(1)">HARD</button></div></div>`;
+        this.tmp.g='m'; this.draw();
     },
-    go(){clearInterval(this.sys.tm);this.sys.b=false;localStorage.removeItem(K);el('ctrl').innerHTML=`<div class="panel" style="text-align:center"><div class="c-hp">${this.txt('go')}</div><div>F${this.sys.f}</div><button onclick="game.scr()">${this.txt('rs')}</button></div>`;},
-    vic(){el('ctrl').innerHTML=`<div class="panel" style="text-align:center"><div class="l-crit">${this.txt('vic')}</div><div style="margin:10px">${this.sys.d=='easy'?'打爆 HARD MODE 先有 AB 食雞子相睇':'SECRET: MESSAGE 會長拎相'}</div><button onclick="game.scr()">${this.txt('stb')}</button></div>`;},
-    jbM(){
-        const c=el('ctrl');c.innerHTML='';c.className='grid';this.log(this.txt('jc'),'l-win');
-        DB.jobs[this.p.j].nx.forEach(j=>{
-            this.btn(this.sys.l=='cn'?(DB.jobs[j].n_cn||DB.jobs[j].n):j,()=>{
-                this.p.j=j; let inv=0; ['str','agi','vit','int','dex','luk'].forEach(s=>{inv+=this.p[s]-1;this.p[s]=1;}); this.p.pts+=inv;
-                this.p.mh=Math.floor((DB.jobs[j].hp+this.p.lv*20)*(1+this.p.vit*0.01)+(this.p.eq.a?.v||0)); this.p.hp=this.p.mh; 
-                this.p.ms=Math.floor((DB.jobs[j].sp+this.p.lv*5)*(1+this.p.int*0.01)); this.p.sp=this.p.ms;
-                this.sel(j);
-            });
+    ng(d){
+        const n=el('in').value||"Novice";
+        this.p={n:n,j:0,lv:1,xp:0,nx:50,hp:60,mh:60,sp:20,ms:20,str:1,agi:1,vit:1,int:1,dex:1,luk:1,pts:5,pots:3,b:{atk:0,matk:0,hit:0,flee:0},eq:{w:null,a:null},sk:{},activeSkill:null,g:this.tmp.g};
+        this.s={f:1,b:false,d:d,spd:10,au:false,l:this.s.l};
+        this.skM();
+    },
+    skM(){
+        this.sv(); el('ctl').innerHTML=''; this.log(this.txt('sel'),'l-w');
+        SK0.forEach(s=>{ this.btn(`${this.s.l=='cn'?s.c:s.n}`,()=>{
+            if(s.t!='h') this.p.activeSkill = s; // Set active attack skill
+            this.p.sk[s.n]=1; this.stM(true);
+        },'btn-blue'); });
+    },
+    stM(st){
+        const c=el('ctl'); c.innerHTML=''; c.className='grid g-2';
+        const d=document.createElement('div'); d.style.gridColumn='span 2'; d.className='c-n'; d.style.textAlign='center'; d.innerText=`PTS: ${this.p.pts}`; c.appendChild(d);
+        ['str','agi','vit','int','dex','luk'].forEach(k=>{
+            this.btn(`${k.toUpperCase()} <span class="c-n">${this.p[k]}</span>`,()=>{
+                if(this.p.pts>0){ this.p[k]++; this.p.pts--; this.draw(); this.stM(st); }
+            },'btn-sm');
         });
+        const b=document.createElement('button'); b.style.gridColumn='span 2'; b.innerText=st?'START':'OK';
+        b.onclick=()=>{ if(this.p.pts==0 || !st){ 
+            if(this.p.lv>=10 && this.p.j==0) this.jobM(); else if(this.p.lv>=40 && this.p.j>0 && this.p.j<=6) this.jobM(); else this.mnu();
+        }}; c.appendChild(b);
     },
-    sel(j){
-        const c=el('ctrl');c.innerHTML=''; const op=DB.skJ[j];
-        if(op){
-            this.log(this.txt('sel'));
-            op.forEach(s=>{ this.btn(`${this.sys.l=='cn'?s.c:s.n}`,()=>{ this.p.sk[s.n]=1;this.sys.pj=false;this.sys.f++;this.sys.fk=0;this.mnu(); },'btn-blue'); });
-        }else{this.sys.pj=false;this.mnu();}
-    }
+    jobM(){
+        const c=el('ctl'); c.innerHTML=''; c.className='grid';
+        this.log("Job Change!");
+        // If Novice (0), show 1st jobs (1-6). If 1st job, show specific 2nd job.
+        if(this.p.j==0){
+            for(let i=1;i<=6;i++) this.btn(this.s.l=='cn'?J[i].c:J[i].n,()=>this.setJob(i));
+        } else {
+            // Simplified: 1->7(Knight), 2->9(Wizard), 3->15(Assassin) etc based on DB order
+            // Mapping: Sword(1)->Knight(7), Mage(2)->Wiz(9), Thief(3)->Ass(15), Archer(4)->Hunt(11), Aco(5)->Priest(17), Merch(6)->BS(13)
+            const map={1:7,2:9,3:15,4:11,5:17,6:13};
+            const nid = map[this.p.j];
+            this.btn(this.s.l=='cn'?J[nid].c:J[nid].n,()=>this.setJob(nid));
+        }
+    },
+    setJob(id){
+        this.p.j=id; this.p.pts+=5; 
+        this.p.mh=J[id].hp+this.p.lv*20; this.p.hp=this.p.mh;
+        // Select Skill for new job
+        const jobName = J[id].n; 
+        // Note: Array mapping for SKJ needs direct name lookup or simple case
+        // Simple hack for this procedural version:
+        let list = SKJ[jobName] || [];
+        if(list.length>0){
+            el('ctl').innerHTML='';
+            list.forEach(s=>{ this.btn(`${this.s.l=='cn'?s.c:s.n}`,()=>{
+                if(s.t!='h' && s.t!='a') this.p.activeSkill = s;
+                this.p.sk[s.n]=1; this.mnu();
+            },'btn-blue'); });
+        } else { this.mnu(); }
+    },
+    win(){
+        clearInterval(this.s.tm); this.s.b=false; el('btl').classList.add('hide');
+        this.p.xp += this.mob.xp;
+        if(Math.random()<0.3){ 
+            if(Math.random()<0.5) this.p.b.atk++; else this.p.mh++;
+            this.log("Bonus Stat",'c-n');
+        }
+        if(this.p.xp >= this.p.nx){
+            this.p.lv++; this.p.xp=0; this.p.nx=Math.floor(this.p.nx*1.5);
+            this.p.pts+=3; this.p.mh+=20; this.p.hp=this.p.mh;
+            this.log("LEVEL UP!",'l-w');
+            if(this.s.au){ this.autoDist(); this.mnu(); } else { this.stM(false); }
+        } else {
+            if(this.s.f%10==0) this.s.f++; this.mnu();
+        }
+    },
+    mnu(){
+        this.sv(); el('ctl').innerHTML=''; el('btl').classList.add('hide'); this.draw();
+        if(this.s.f>50){ this.vic(); return; }
+        if(this.s.f%10==0){
+            this.log("BOSS!",'c-h'); this.btn("BOSS",()=>this.battle(true),'btn-red');
+        } else {
+            const loc=Math.min(5,Math.ceil(this.s.f/10)-1);
+            this.log(`${this.s.l=='cn'?LOC_CN[loc]:LOC_EN[loc]} F${this.s.f}`);
+            this.btn("FIGHT",()=>this.battle(false));
+            if(Math.random()<0.3) this.btn("REST",()=>{this.p.hp=this.p.mh;this.draw();});
+        }
+    },
+    battle(isB){
+        this.s.b=true; this.mob=this.genMob(this.s.f, isB);
+        this.pb=0; this.eb=0;
+        el('btl').classList.remove('hide'); el('ctl').innerHTML='';
+        el('en').innerText=this.mob.n;
+        if(this.s.tm)clearInterval(this.s.tm); this.s.tm=setInterval(()=>this.tick(),30);
+    },
+    over(){
+        clearInterval(this.s.tm); this.s.b=false; localStorage.removeItem(K);
+        el('ctl').innerHTML=`<div class="panel" style="text-align:center"><div class="c-h">GAME OVER</div><button onclick="G.scr()">RESTART</button></div>`;
+    },
+    vic(){el('ctl').innerHTML=`<div class="panel" style="text-align:center"><div class="l-w">VICTORY</div><button onclick="G.scr()">NEW GAME</button></div>`;},
+    
+    // --- HELPERS ---
+    log(t,c=''){const l=el('log');l.insertAdjacentHTML('afterbegin',`<div class="lr ${c}">${t}</div>`);if(l.children.length>20)l.lastChild.remove();},
+    btn(t,fn,c=''){const b=document.createElement('button');b.innerHTML=t;b.onclick=fn;if(c)b.className=c;el('ctl').appendChild(b);},
+    draw(){
+        const p=this.p, s=el('spr'), src=p||this.tmp;
+        s.className='spr'; s.classList.add(`ro-${src.g}`, `j-${p?Math.min(6,p.j):0}`);
+        if(!p)return;
+        el('un').innerText=p.n; el('uj').innerText=this.s.l=='cn'?J[p.j].c:J[p.j].n; el('ul').innerText=p.lv;
+        const loc=Math.min(5,Math.ceil(this.s.f/10)-1); el('ulo').innerText=`${this.s.l=='cn'?LOC_CN[loc]:LOC_EN[loc]} ${this.s.f}F`;
+        ['str','agi','vit','int','dex','luk'].forEach(k=>el('v'+k).innerText=p[k]);
+        el('bh').value=p.hp; el('bh').max=p.mh; el('uh').innerText=p.hp;
+        el('bs').value=p.sp; el('bs').max=p.ms; el('us').innerText=p.sp;
+        el('b-au').innerText=this.s.au?(this.s.l=='cn'?'自動:開':'AUTO:ON'):(this.s.l=='cn'?'自動:關':'AUTO:OFF');
+        el('b-au').classList.toggle('active',this.s.au);
+    },
+    autoDist(){
+        while(this.p.pts>0){
+            const k=['str','agi','vit','int','dex','luk'][rnd(6)];
+            this.p[k]++; this.p.pts--;
+            if(k=='vit'){this.p.mh+=20;this.p.hp+=20;}
+        }
+    },
+    tAu(){this.s.au=!this.s.au;this.draw();if(this.s.au&&this.p.pts>0){this.autoDist();this.draw();if(el('ctl').innerText.includes('PTS'))this.mnu();}},
+    lang(){this.s.l=this.s.l=='en'?'cn':'en';this.draw();if(!this.p)this.scr();},
+    spd(x){this.s.spd=x;document.querySelectorAll('.flex button').forEach(b=>b.classList.remove('active'));const b=el('s'+x);if(b)b.classList.add('active');},
 };
-game.init();
+G.init();
 </script>
 </body>
 </html>
