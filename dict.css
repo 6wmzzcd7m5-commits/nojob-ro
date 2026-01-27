@@ -1,6 +1,64 @@
 /* =========================================
-   DICT.CSS v1.0.5: UI VISIBILITY PATCH
+   DICT.CSS v1.0.7: FULL UI OFFLOAD
    ========================================= */
+
+/* GLOBAL Visibility Fix */
+[class^="lbl-"], [class^="n-job-"], [class^="n-sk-"] {
+    display: inline-block !important;
+}
+
+/* --- UI LABELS: SYSTEM --- */
+.lbl-rst::after   { content: "RESET"; }
+.lbl-save::after  { content: "SAVE"; }
+.lbl-load::after  { content: "LOAD"; }
+.lbl-rank::after  { content: "RANK"; }
+.lbl-auto::after  { content: "AUTO"; }
+.lbl-lang::after  { content: "EN/中"; }
+.lbl-spd1::after  { content: "1x"; }
+.lbl-spd3::after  { content: "3x"; }
+.lbl-max::after   { content: "MAX"; }
+
+/* --- UI LABELS: COMBAT & MENU --- */
+.lbl-fight::after { content: "FIGHT"; }
+.lbl-rest::after  { content: "REST"; }
+.lbl-boss::after  { content: "BOSS"; }
+.lbl-dead::after  { content: "DEAD"; }
+.lbl-start::after { content: "START ADVENTURE"; }
+.lbl-reg::after   { content: "ID REGISTRATION"; }
+.lbl-ok::after    { content: "OK"; }
+
+/* --- UI LABELS: ATTRIBUTES --- */
+.lbl-lv::after    { content: "Lv"; }
+.lbl-hp::after    { content: "HP"; }
+.lbl-sp::after    { content: "SP"; }
+.lbl-str::after   { content: "STR"; }
+.lbl-agi::after   { content: "AGI"; }
+.lbl-vit::after   { content: "VIT"; }
+.lbl-int::after   { content: "INT"; }
+.lbl-dex::after   { content: "DEX"; }
+.lbl-luk::after   { content: "LUK"; }
+
+/* =========================================
+   CHINESE LOCALIZATION (lang-cn)
+   ========================================= */
+.lang-cn .lbl-rst::after   { content: "重置"; }
+.lang-cn .lbl-save::after  { content: "存檔"; }
+.lang-cn .lbl-load::after  { content: "讀檔"; }
+.lang-cn .lbl-rank::after  { content: "排名"; }
+.lang-cn .lbl-auto::after  { content: "自動"; }
+.lang-cn .lbl-fight::after { content: "戰鬥"; }
+.lang-cn .lbl-rest::after  { content: "休息"; }
+.lang-cn .lbl-boss::after  { content: "首領戰"; }
+.lang-cn .lbl-dead::after  { content: "你死了"; }
+.lang-cn .lbl-start::after { content: "開始冒險"; }
+.lang-cn .lbl-reg::after   { content: "冒險者登錄"; }
+.lang-cn .lbl-ok::after    { content: "確定"; }
+.lang-cn .lbl-str::after   { content: "力量"; }
+.lang-cn .lbl-agi::after   { content: "敏捷"; }
+.lang-cn .lbl-vit::after   { content: "體質"; }
+.lang-cn .lbl-int::after   { content: "智力"; }
+.lang-cn .lbl-dex::after   { content: "靈巧"; }
+.lang-cn .lbl-luk::after   { content: "幸運"; }
 
 /* GLOBAL FIX: Force all dictionary labels to have dimensions */
 [class^="lbl-"], [class^="n-job-"], [class^="n-sk-"] {
