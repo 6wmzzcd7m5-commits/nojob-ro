@@ -1,13 +1,19 @@
 /* =========================================
-   DICT.CSS v1.0.7: FULL UI OFFLOAD
+   DICT.CSS v1.0.7: THE ROUGE EDITION
+   Handles all UI, Jobs, Skills, and Curses
    ========================================= */
 
-/* GLOBAL Visibility Fix */
+/* --- GLOBAL VISIBILITY FIX --- */
 [class^="lbl-"], [class^="n-job-"], [class^="n-sk-"] {
     display: inline-block !important;
+    pointer-events: none;
 }
 
-/* --- UI LABELS: SYSTEM --- */
+/* =========================================
+   1. SYSTEM & MENU LABELS (Bilingual)
+   ========================================= */
+
+/* Top Bar Buttons */
 .lbl-rst::after   { content: "RESET"; }
 .lbl-save::after  { content: "SAVE"; }
 .lbl-load::after  { content: "LOAD"; }
@@ -18,16 +24,18 @@
 .lbl-spd3::after  { content: "3x"; }
 .lbl-max::after   { content: "MAX"; }
 
-/* --- UI LABELS: COMBAT & MENU --- */
+/* Main Menu Actions */
 .lbl-fight::after { content: "FIGHT"; }
 .lbl-rest::after  { content: "REST"; }
-.lbl-boss::after  { content: "BOSS"; }
-.lbl-dead::after  { content: "DEAD"; }
-.lbl-start::after { content: "START ADVENTURE"; }
-.lbl-reg::after   { content: "ID REGISTRATION"; }
+.lbl-boss::after  { content: "BOSS FIGHT"; }
+.lbl-dead::after  { content: "REBORN"; }
 .lbl-ok::after    { content: "OK"; }
 
-/* --- UI LABELS: ATTRIBUTES --- */
+/* Character Creation */
+.lbl-start::after { content: "START ADVENTURE"; }
+.lbl-reg::after   { content: "ID REGISTRATION"; }
+
+/* Attribute Labels */
 .lbl-lv::after    { content: "Lv"; }
 .lbl-hp::after    { content: "HP"; }
 .lbl-sp::after    { content: "SP"; }
@@ -38,91 +46,121 @@
 .lbl-dex::after   { content: "DEX"; }
 .lbl-luk::after   { content: "LUK"; }
 
-/* =========================================
-   CHINESE LOCALIZATION (lang-cn)
-   ========================================= */
+/* Archetype Names */
+.Melee::after     { content: "Melee"; }
+.Magical::after   { content: "Magical"; }
+.Rouge::after     { content: "Rouge"; }
+
+/* --- CHINESE SYSTEM OVERRIDES --- */
 .lang-cn .lbl-rst::after   { content: "重置"; }
 .lang-cn .lbl-save::after  { content: "存檔"; }
 .lang-cn .lbl-load::after  { content: "讀檔"; }
 .lang-cn .lbl-rank::after  { content: "排名"; }
 .lang-cn .lbl-auto::after  { content: "自動"; }
-.lang-cn .lbl-fight::after { content: "戰鬥"; }
+.lang-cn .lbl-fight::after { content: "出擊"; }
 .lang-cn .lbl-rest::after  { content: "休息"; }
-.lang-cn .lbl-boss::after  { content: "首領戰"; }
-.lang-cn .lbl-dead::after  { content: "你死了"; }
-.lang-cn .lbl-start::after { content: "開始冒險"; }
-.lang-cn .lbl-reg::after   { content: "冒險者登錄"; }
+.lang-cn .lbl-boss::after  { content: "挑戰首領"; }
+.lang-cn .lbl-dead::after  { content: "重新開始"; }
 .lang-cn .lbl-ok::after    { content: "確定"; }
+.lang-cn .lbl-start::after { content: "開始冒險"; }
+.lang-cn .lbl-reg::after   { content: "冒險者註冊"; }
 .lang-cn .lbl-str::after   { content: "力量"; }
 .lang-cn .lbl-agi::after   { content: "敏捷"; }
 .lang-cn .lbl-vit::after   { content: "體質"; }
 .lang-cn .lbl-int::after   { content: "智力"; }
 .lang-cn .lbl-dex::after   { content: "靈巧"; }
 .lang-cn .lbl-luk::after   { content: "幸運"; }
+.lang-cn .Melee::after     { content: "近戰系"; }
+.lang-cn .Magical::after   { content: "魔法系"; }
+.lang-cn .Rouge::after     { content: "刺客系"; }
 
-/* GLOBAL FIX: Force all dictionary labels to have dimensions */
-[class^="lbl-"], [class^="n-job-"], [class^="n-sk-"] {
-    display: inline-block !important;
-    min-width: 10px;
-    min-height: 12px;
-}
+/* =========================================
+   2. JOB CLASSES (0-12)
+   ========================================= */
 
-/* --- UI LABELS --- */
-.lbl-rst::after   { content: "RST"; }
-.lbl-save::after  { content: "SAV"; }
-.lbl-load::after  { content: "LOD"; }
-.lbl-rank::after  { content: "RANK"; }
-.lbl-auto::after  { content: "AUTO"; }
-.lbl-lang::after  { content: "EN/中"; }
-.lbl-spd1::after  { content: "1x"; }
-.lbl-spd3::after  { content: "3x"; }
-.lbl-max::after   { content: "MAX"; }
-.lbl-lv::after    { content: "Lv"; }
-.lbl-hp::after    { content: "HP"; }
-.lbl-sp::after    { content: "SP"; }
-.lbl-str::after   { content: "STR"; }
-.lbl-agi::after   { content: "AGI"; }
-.lbl-vit::after   { content: "VIT"; }
-.lbl-int::after   { content: "INT"; }
-.lbl-dex::after   { content: "DEX"; }
-.lbl-luk::after   { content: "LUK"; }
-.lbl-start::after { content: "START ADVENTURE"; }
-.lbl-reg::after   { content: "REGISTRATION"; }
-
-/* --- JOB CLASSES --- */
-.n-job-0::after { content: "Novice"; }
-.n-job-1::after { content: "Swordman"; }
-.n-job-2::after { content: "Mage"; }
-.n-job-3::after { content: "Thief"; }
-.n-job-4::after { content: "Archer"; }
-.n-job-5::after { content: "Acolyte"; }
-.n-job-6::after { content: "Merchant"; }
-.n-job-7::after { content: "Knight"; }
-.n-job-8::after { content: "Wizard"; }
-.n-job-9::after { content: "Assassin"; }
+.n-job-0::after  { content: "Novice"; }
+.n-job-1::after  { content: "Swordman"; }
+.n-job-2::after  { content: "Mage"; }
+.n-job-3::after  { content: "Thief"; }
+.n-job-4::after  { content: "Archer"; }
+.n-job-5::after  { content: "Acolyte"; }
+.n-job-6::after  { content: "Merchant"; }
+.n-job-7::after  { content: "Knight"; }
+.n-job-8::after  { content: "Wizard"; }
+.n-job-9::after  { content: "Assassin"; }
 .n-job-10::after { content: "Hunter"; }
 .n-job-11::after { content: "Priest"; }
 .n-job-12::after { content: "Blacksmith"; }
 
-/* Chinese Translations */
-.lang-cn .lbl-str::after { content: "力量"; }
-.lang-cn .lbl-agi::after { content: "敏捷"; }
-.lang-cn .lbl-vit::after { content: "體質"; }
-.lang-cn .lbl-int::after { content: "智力"; }
-.lang-cn .lbl-dex::after { content: "靈巧"; }
-.lang-cn .lbl-luk::after { content: "幸運"; }
-.lang-cn .lbl-start::after { content: "開始冒險"; }
-.lang-cn .n-job-0::after { content: "初心者"; }
-/* ... (Continue with other Chinese translations as needed) */
+.lang-cn .n-job-0::after  { content: "初心者"; }
+.lang-cn .n-job-1::after  { content: "劍士"; }
+.lang-cn .n-job-2::after  { content: "法師"; }
+.lang-cn .n-job-3::after  { content: "盜賊"; }
+.lang-cn .n-job-4::after  { content: "弓箭手"; }
+.lang-cn .n-job-5::after  { content: "服事"; }
+.lang-cn .n-job-6::after  { content: "商人"; }
+.lang-cn .n-job-7::after  { content: "騎士"; }
+.lang-cn .n-job-8::after  { content: "巫師"; }
+.lang-cn .n-job-9::after  { content: "刺客"; }
+.lang-cn .n-job-10::after { content: "獵人"; }
+.lang-cn .n-job-11::after { content: "牧師"; }
+.lang-cn .n-job-12::after { content: "鐵匠"; }
 
-/* --- SKILLS & PASSIVES --- */
-.n-sk-FirstAid::after { content: "First Aid"; }
-.n-sk-Bash::after     { content: "Bash"; }
-.n-sk-Napalm::after   { content: "Napalm Beat"; }
-.n-sk-P_ATK::after    { content: "Divine Might"; }
-.n-sk-P_MATK::after   { content: "Arcane Lore"; }
-.n-sk-P_FLEE::after   { content: "Ghost Walk"; }
-.n-sk-P_LIFE::after   { content: "Life Stream"; }
-.n-sk-C_STR::after    { content: "Berserker's Blood"; }
-.n-sk-C_INT::after    { content: "Forbidden Knowledge"; }
-.n-sk-C_AGI::after    { content: "Weightless Soul"; }
+/* =========================================
+   3. SKILLS, PASSIVES & CURSES
+   ========================================= */
+
+/* Melee Skills */
+.n-sk-Bash::after        { content: "Bash"; }
+.n-sk-Magnum::after      { content: "Magnum Break"; }
+.n-sk-BowlingBash::after { content: "Bowling Bash"; }
+
+/* Magical Skills */
+.n-sk-FirstAid::after    { content: "First Aid"; }
+.n-sk-Napalm::after      { content: "Napalm Beat"; }
+.n-sk-FireBolt::after    { content: "Fire Bolt"; }
+.n-sk-ColdBolt::after    { content: "Cold Bolt"; }
+.n-sk-Heal::after        { content: "Heal"; }
+.n-sk-StormGust::after   { content: "Storm Gust"; }
+.n-sk-Magnus::after      { content: "Magnus Exorcismus"; }
+
+/* Rouge Skills */
+.n-sk-Double::after      { content: "Double Attack"; }
+.n-sk-Hiding::after      { content: "Hiding"; }
+.n-sk-SonicBlow::after   { content: "Sonic Blow"; }
+.n-sk-ArrowShower::after { content: "Arrow Shower"; }
+
+/* Roguelike Passives (Buffs) */
+.n-sk-P_ATK::after   { content: "Divine Might"; }
+.n-sk-P_MATK::after  { content: "Arcane Lore"; }
+.n-sk-P_FLEE::after  { content: "Ghost Walk"; }
+.n-sk-P_LIFE::after  { content: "Life Stream"; }
+
+/* Roguelike Curses (High Risk) */
+.n-sk-C_STR::after   { content: "Berserker's Blood"; }
+.n-sk-C_INT::after   { content: "Forbidden Knowledge"; }
+.n-sk-C_AGI::after   { content: "Weightless Soul"; }
+
+/* --- CHINESE SKILL NAMES --- */
+.lang-cn .n-sk-Bash::after        { content: "狂擊"; }
+.lang-cn .n-sk-Magnum::after      { content: "怒爆"; }
+.lang-cn .n-sk-BowlingBash::after { content: "保齡球擊"; }
+.lang-cn .n-sk-FirstAid::after    { content: "緊急治療"; }
+.lang-cn .n-sk-Napalm::after      { content: "心靈爆破"; }
+.lang-cn .n-sk-FireBolt::after    { content: "火箭術"; }
+.lang-cn .n-sk-ColdBolt::after    { content: "冰箭術"; }
+.lang-cn .n-sk-Heal::after        { content: "治癒術"; }
+.lang-cn .n-sk-StormGust::after   { content: "暴風雪"; }
+.lang-cn .n-sk-Magnus::after      { content: "十字驅魔攻擊"; }
+.lang-cn .n-sk-Double::after      { content: "二刀連擊"; }
+.lang-cn .n-sk-Hiding::after      { content: "偽裝"; }
+.lang-cn .n-sk-SonicBlow::after   { content: "音速投擲"; }
+.lang-cn .n-sk-ArrowShower::after { content: "箭雨"; }
+
+.lang-cn .n-sk-P_ATK::after  { content: "神力庇護"; }
+.lang-cn .n-sk-P_MATK::after { content: "秘法傳承"; }
+.lang-cn .n-sk-P_FLEE::after { content: "殘影"; }
+.lang-cn .n-sk-P_LIFE::after { content: "生命洪流"; }
+.lang-cn .n-sk-C_STR::after  { content: "狂戰士之血"; }
+.lang-cn .n-sk-C_INT::after  { content: "禁忌知識"; }
+.lang-cn .n-sk-C_AGI::after  { content: "失重靈魂"; }
