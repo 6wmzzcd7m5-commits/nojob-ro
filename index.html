@@ -5,98 +5,164 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Jobless RO: Final</title>
 <style>
-    :root { --bg:#050505; --p:#0a0f0a; --bd:#333; --n:#39ff14; --t:#eef; --d:#686; --hp:#f44; --sp:#4af; --r:#fd4; --m:#4af; --f:#f4a; --font:'Courier New',mono; }
-    *{box-sizing:border-box;user-select:none;-webkit-tap-highlight-color:transparent}
-    body{background:var(--bg);color:var(--t);font-family:var(--font);margin:0 auto;padding:10px;max-width:500px;height:100vh;display:flex;flex-direction:column;gap:8px;overflow:hidden}
-    .flex{display:flex;justify-content:space-between;align-items:center}.grid{display:grid;gap:5px}.g-2{grid-template-columns:1fr 1fr}.g-6{grid-template-columns:repeat(6,1fr)}
-    .c-n{color:var(--n)}.c-h{color:var(--hp)}.c-d{color:var(--d)}.panel{border:1px solid var(--bd);background:var(--p);padding:8px;border-radius:4px}.hide{display:none!important}
-    button{background:#0d1a0d;color:var(--n);border:1px solid #141;padding:10px;font:inherit;font-weight:bold;cursor:pointer}
-    button:active{background:#163016;color:#fff}.btn-sm{padding:4px 8px;font-size:10px}.btn-red{border-color:#522;color:#f55;background:#211}.btn-blue{border-color:#225;color:#55f;background:#112}
-    input{background:#000;border:1px solid var(--n);color:#fff;padding:8px;width:100%;font:inherit}
+    :root { 
+        --bg:#050505; --p:#0a0f0a; --bd:#333; --n:#39ff14; 
+        --t:#eef; --d:#686; --hp:#f44; --sp:#4af; --r:#fd4; 
+        --m:#4af; --f:#f4a; --font:'Courier New',mono; 
+    }
+    * { box-sizing:border-box; user-select:none; -webkit-tap-highlight-color:transparent; }
     
-    /* Start Screen Tags */
-    .g-tag{padding:8px 12px;border:1px solid #333;cursor:pointer;color:#555;font-weight:bold;background:#000;transition:0.2s}
-    .g-tag.m.active{color:var(--m);border-color:var(--m);box-shadow:0 0 5px var(--m)}
-    .g-tag.f.active{color:var(--f);border-color:var(--f);box-shadow:0 0 5px var(--f)}
+    body {
+        background: var(--bg); color: var(--t); font-family: var(--font);
+        margin: 0; padding: 0; width: 100vw; height: 100dvh;
+        display: flex; justify-content: center; align-items: center; overflow: hidden;
+    }
 
-    /* Rank UI */
-    #rank-ui{position:absolute;top:20px;left:20px;right:20px;bottom:20px;background:rgba(0,0,0,0.95);border:1px solid var(--n);z-index:99;padding:20px;overflow-y:auto}
-    .rank-row{display:flex;justify-content:space-between;border-bottom:1px solid #333;padding:5px 0;font-size:12px}
+    /* Main App Container - Fixes Layout Issues */
+    #app {
+        width: 100%; max-width: 500px; height: 100%; 
+        display: flex; flex-direction: column; gap: 5px; padding: 10px;
+        background: var(--bg); position: relative;
+    }
+
+    /* Utils */
+    .flex { display:flex; justify-content:space-between; align-items:center; }
+    .grid { display:grid; gap:5px; } .g-2 { grid-template-columns:1fr 1fr; } .g-6 { grid-template-columns:repeat(6,1fr); }
+    .c-n { color:var(--n); } .c-h { color:var(--hp); } .c-d { color:var(--d); }
+    .panel { border:1px solid var(--bd); background:var(--p); padding:8px; border-radius:4px; }
+    .hide { display:none!important; }
+    
+    /* Interactive */
+    button {
+        background:#0d1a0d; color:var(--n); border:1px solid #141; padding:12px; 
+        font:inherit; font-weight:bold; cursor:pointer; text-transform: uppercase;
+    }
+    button:active { background:#163016; color:#fff; }
+    button:disabled { opacity:0.5; pointer-events:none; }
+    .btn-sm { padding:4px 8px; font-size:10px; }
+    .btn-red { border-color:#522; color:#f55; background:#211; }
+    .btn-blue { border-color:#225; color:#55f; background:#112; }
+    
+    input { 
+        background:#000; border:1px solid var(--n); color:#fff; padding:10px; 
+        width:100%; font:inherit; text-transform:uppercase; 
+    }
+    
+    /* Start Screen Gender Tags */
+    .g-tag {
+        padding:10px 15px; border:1px solid #333; cursor:pointer; 
+        color:#555; font-weight:bold; background:#000; transition:0.2s;
+    }
+    .g-tag.m.active { color:var(--m); border-color:var(--m); box-shadow:0 0 8px var(--m); }
+    .g-tag.f.active { color:var(--f); border-color:var(--f); box-shadow:0 0 8px var(--f); }
+
+    /* Rank UI Overlay */
+    #rank-ui {
+        position:absolute; top:0; left:0; right:0; bottom:0; 
+        background:rgba(0,0,0,0.95); z-index:99; padding:20px; 
+        display:flex; flex-direction:column; justify-content:center; align-items:center;
+    }
+    #rank-box {
+        width:100%; max-width:400px; border:1px solid var(--n); background:#000; 
+        padding:15px; max-height:80%; overflow-y:auto;
+    }
+    .rank-row { 
+        display:flex; justify-content:space-between; border-bottom:1px solid #333; 
+        padding:5px 0; font-size:12px; 
+    }
     
     /* Sprite Engine */
-    .cf{width:40px;height:40px;position:relative;overflow:hidden;border:1px solid #242;background:#000;border-radius:4px;margin-right:10px;flex-shrink:0}
-    .spr{position:absolute;top:8px;left:10px;width:20px;height:30px;animation:i 1s infinite steps(2)}
-    .hd{width:14px;height:12px;background:#fca;position:absolute;left:3px;top:0;z-index:5}
-    .hd::after{content:'';position:absolute;top:5px;left:3px;width:2px;height:2px;background:#000;box-shadow:6px 0 0 #000}
-    .hr{width:16px;height:7px;background:#853;position:absolute;left:2px;top:-2px;z-index:6}
-    .ro-m .hr{border-radius:4px 4px 0 0}.ro-f .hr{width:18px;left:1px;border-radius:8px 8px 0 0}
-    .ro-f .hr::after{content:'';position:absolute;top:5px;left:-2px;width:3px;height:12px;background:inherit;box-shadow:19px 0 0 inherit}
-    .bd{width:12px;height:11px;background:#eee;position:absolute;left:4px;top:11px;z-index:2}
-    .bd::after{content:'';position:absolute;top:11px;left:1px;width:4px;height:4px;background:#fca;box-shadow:6px 0 0 #fca}
-    @keyframes i{0%,100%{transform:translateY(0)}50%{transform:translateY(1px)}}
+    .cf { width:40px; height:40px; position:relative; overflow:hidden; border:1px solid #242; background:#000; border-radius:4px; margin-right:10px; flex-shrink:0; }
+    .spr { position:absolute; top:8px; left:10px; width:20px; height:30px; animation:i 1s infinite steps(2); }
+    .hd { width:14px; height:12px; background:#fca; position:absolute; left:3px; top:0; z-index:5; }
+    .hd::after { content:''; position:absolute; top:5px; left:3px; width:2px; height:2px; background:#000; box-shadow:6px 0 0 #000; }
+    .hr { width:16px; height:7px; background:#853; position:absolute; left:2px; top:-2px; z-index:6; }
+    .ro-m .hr { border-radius:4px 4px 0 0; } 
+    .ro-f .hr { width:18px; left:1px; border-radius:8px 8px 0 0; }
+    .ro-f .hr::after { content:''; position:absolute; top:5px; left:-2px; width:3px; height:12px; background:inherit; box-shadow:19px 0 0 inherit; }
+    .bd { width:12px; height:11px; background:#eee; position:absolute; left:4px; top:11px; z-index:2; }
+    .bd::after { content:''; position:absolute; top:11px; left:1px; width:4px; height:4px; background:#fca; box-shadow:6px 0 0 #fca; }
+    @keyframes i { 0%,100%{transform:translateY(0)} 50%{transform:translateY(1px)} }
     
-    /* Job Colors */
+    /* Job Costumes */
     .j-1 .bd{background:linear-gradient(to bottom,#d84 50%,#468 50%);border-top:2px solid #b62}.j-1 .bd::after{background:#532}
     .j-2 .bd{background:linear-gradient(90deg,#348 20%,#eee 20%,#eee 80%,#348 80%);border-bottom:3px solid #642}.j-2 .bd::after{background:#333}
     .j-3 .bd{background:linear-gradient(to bottom,#637 40%,#fca 40%,#fca 60%,#543 60%)}.j-3 .bd::after{background:#543}
     .j-4 .bd{background:linear-gradient(to bottom,#473 60%,#db9 60%);border-left:2px solid #fca}.j-4 .bd::after{background:#432}
     .j-5 .bd{background:linear-gradient(90deg,#fff 40%,#d44 40%,#d44 60%,#fff 60%)}.j-5 .bd::after{background:#333}
     
-    /* Bars */
-    progress{width:100%;height:6px;appearance:none;border:none;background:#111;display:block}
-    progress::-webkit-progress-bar{background:#111}progress::-webkit-progress-value{transition:width 0.1s linear}
-    #bh::-webkit-progress-value{background:var(--hp)}#bs::-webkit-progress-value{background:var(--sp)}#ap::-webkit-progress-value{background:var(--n)}#ae::-webkit-progress-value{background:var(--hp)}
-    #log{flex:1;overflow-y:auto;font-size:11px;border-top:1px solid var(--bd);padding-top:5px;display:flex;flex-direction:column-reverse}
-    .lr{border-bottom:1px solid #111;padding:2px 0}
-    .stat-cell{text-align:center;font-size:10px;border-top:1px dashed #242;padding-top:4px}
+    /* HUD Bars */
+    progress { width:100%; height:6px; appearance:none; border:none; background:#111; display:block; }
+    progress::-webkit-progress-bar { background:#111; }
+    progress::-webkit-progress-value { transition:width 0.1s linear; }
+    #bh::-webkit-progress-value { background:var(--hp); } #bs::-webkit-progress-value { background:var(--sp); }
+    #ap::-webkit-progress-value { background:var(--n); } #ae::-webkit-progress-value { background:var(--hp); }
+    
+    /* Layout Areas */
+    #log { flex:1; overflow-y:auto; font-size:11px; border-top:1px solid var(--bd); padding-top:5px; display:flex; flex-direction:column-reverse; }
+    .lr { border-bottom:1px solid #111; padding:2px 0; }
+    .stat-cell { text-align:center; font-size:10px; border-top:1px dashed #242; padding-top:4px; }
 </style>
 </head>
 <body>
 
-<div id="rank-ui" class="hide">
-    <div class="flex" style="border-bottom:2px solid var(--r);margin-bottom:10px;color:var(--r);font-weight:bold"><span>TOP 10</span> <button class="btn-sm btn-red" onclick="G.closeRank()">X</button></div>
-    <div id="rank-list">Loading...</div>
-    <div style="font-size:10px;color:#666;margin-top:10px">Anti-Spam: 60s cooldown. Anti-Bot: Account >7 days old.</div>
+<div id="app">
+    <div id="rank-ui" class="hide">
+        <div id="rank-box">
+            <div class="flex" style="border-bottom:2px solid var(--r); margin-bottom:10px; color:var(--r); font-weight:bold;">
+                <span>TOP 10</span> <button class="btn-sm btn-red" onclick="G.closeRank()">X</button>
+            </div>
+            <div id="rank-list">Loading...</div>
+            <div style="font-size:10px; color:#666; margin-top:10px; text-align:center;">Updates every 60s.</div>
+        </div>
+    </div>
+
+    <header class="panel grid">
+        <div class="flex" style="border-bottom:1px dashed #242; padding-bottom:5px;">
+            <div class="flex" style="gap:5px">
+                <button class="btn-sm btn-red" onclick="G.wipe()">[R]</button>
+                <button class="btn-sm btn-blue" onclick="G.exp()">[S]</button>
+                <button class="btn-sm btn-blue" onclick="document.getElementById('fi').click()">[L]</button>
+                <input type="file" id="fi" style="display:none" onchange="G.imp(this)">
+                <button class="btn-sm" onclick="G.tAu()">AUTO</button>
+            </div>
+            <div class="flex" style="gap:2px">
+                <button class="btn-sm" id="s10" onclick="G.spd(10)">1X</button>
+                <button class="btn-sm" id="s99" onclick="G.spd(99)">MAX</button>
+            </div>
+        </div>
+        <div class="flex" style="justify-content:flex-start;">
+            <div class="cf"><div id="spr" class="spr ro-m"><div class="hr"></div><div class="hd"></div><div class="bd"></div></div></div>
+            <div style="flex:1;">
+                <div class="flex"><div><b id="un" class="c-n"></b> <span id="uj" class="c-d" style="font-size:10px"></span></div><div style="font-size:11px">LV <span id="ul" class="c-r">1</span></div></div>
+                <div class="c-n" style="font-size:10px; margin-top:2px;" id="ulo"></div>
+            </div>
+        </div>
+        <div class="grid g-2">
+            <div style="font-size:10px"><div class="flex"><span>HP</span> <span id="uh"></span></div><progress id="bh" value="100" max="100"></progress></div>
+            <div style="font-size:10px"><div class="flex"><span>SP</span> <span id="us"></span></div><progress id="bs" value="20" max="20"></progress></div>
+        </div>
+        <div class="grid g-6">
+            <div class="stat-cell"><span class="c-d">STR</span><span id="vstr" style="color:#fff">1</span></div>
+            <div class="stat-cell"><span class="c-d">AGI</span><span id="vagi" style="color:#fff">1</span></div>
+            <div class="stat-cell"><span class="c-d">VIT</span><span id="vvit" style="color:#fff">1</span></div>
+            <div class="stat-cell"><span class="c-d">INT</span><span id="vint" style="color:#fff">1</span></div>
+            <div class="stat-cell"><span class="c-d">DEX</span><span id="vdex" style="color:#fff">1</span></div>
+            <div class="stat-cell"><span class="c-d">LUK</span><span id="vluk" style="color:#fff">1</span></div>
+        </div>
+    </header>
+
+    <section id="btl" class="panel hide">
+        <div class="flex"><span id="en" style="font-weight:bold; color:var(--hp)">TARGET</span> <span id="eh" class="c-d" style="font-size:10px"></span></div>
+        <div class="grid" style="margin-top:5px;">
+            <div class="flex" style="font-size:10px"><span class="c-n">ATB</span> <progress id="ap" value="0" max="1000" style="width:85%"></progress></div>
+            <div class="flex" style="font-size:10px"><span class="c-h">FOE</span> <progress id="ae" value="0" max="1000" style="width:85%"></progress></div>
+        </div>
+    </section>
+
+    <nav id="ctl" class="grid g-2" style="min-height:60px;"></nav>
+    <main id="log"></main>
 </div>
-
-<header class="panel grid">
-    <div class="flex" style="border-bottom:1px dashed #242;padding-bottom:5px">
-        <div class="flex" style="gap:5px">
-            <button class="btn-sm btn-red" onclick="G.wipe()">[R]</button>
-            <button class="btn-sm btn-blue" onclick="G.exp()">[S]</button>
-            <button class="btn-sm btn-blue" onclick="document.getElementById('fi').click()">[L]</button>
-            <input type="file" id="fi" style="display:none" onchange="G.imp(this)">
-            <button class="btn-sm" onclick="G.tAu()">AUTO</button>
-        </div>
-        <div class="flex" style="gap:2px"><button class="btn-sm" onclick="G.spd(10)">1X</button><button class="btn-sm" onclick="G.spd(99)">MAX</button></div>
-    </div>
-    <div class="flex" style="justify-content:flex-start">
-        <div class="cf"><div id="spr" class="spr ro-m"><div class="hr"></div><div class="hd"></div><div class="bd"></div></div></div>
-        <div style="flex:1">
-            <div class="flex"><div><b id="un" class="c-n"></b> <span id="uj" class="c-d" style="font-size:10px"></span></div><div style="font-size:11px">LV <span id="ul" class="c-r">1</span></div></div>
-            <div class="c-n" style="font-size:10px;margin-top:2px" id="ulo"></div>
-        </div>
-    </div>
-    <div class="grid g-2">
-        <div style="font-size:10px"><div class="flex"><span>HP</span> <span id="uh"></span></div><progress id="bh" value="100" max="100"></progress></div>
-        <div style="font-size:10px"><div class="flex"><span>SP</span> <span id="us"></span></div><progress id="bs" value="20" max="20"></progress></div>
-    </div>
-    <div class="grid g-6">
-        <div class="stat-cell"><span class="c-d">STR</span><span id="vstr" style="color:#fff">1</span></div><div class="stat-cell"><span class="c-d">AGI</span><span id="vagi" style="color:#fff">1</span></div><div class="stat-cell"><span class="c-d">VIT</span><span id="vvit" style="color:#fff">1</span></div>
-        <div class="stat-cell"><span class="c-d">INT</span><span id="vint" style="color:#fff">1</span></div><div class="stat-cell"><span class="c-d">DEX</span><span id="vdex" style="color:#fff">1</span></div><div class="stat-cell"><span class="c-d">LUK</span><span id="vluk" style="color:#fff">1</span></div>
-    </div>
-</header>
-
-<section id="btl" class="panel hide">
-    <div class="flex"><span id="en" style="font-weight:bold;color:var(--hp)">TARGET</span> <span id="eh" class="c-d" style="font-size:10px"></span></div>
-    <div class="grid" style="margin-top:5px">
-        <div class="flex" style="font-size:10px"><span class="c-n">ATB</span> <progress id="ap" value="0" max="1000" style="width:85%"></progress></div>
-        <div class="flex" style="font-size:10px"><span class="c-h">FOE</span> <progress id="ae" value="0" max="1000" style="width:85%"></progress></div>
-    </div>
-</section>
-
-<nav id="ctl" class="grid g-2" style="min-height:60px"></nav>
-<main id="log"></main>
 
 <script>
 // --- CONFIGURATION ---
@@ -105,11 +171,10 @@ const GH_REPO = "nojob-ro";
 const RAW_URL = `https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/main/leaderboard.json`;
 const SALT = "SECRET_KEY_999"; 
 
-// --- DATABASE (Procedural + Fixed Bosses) ---
+// --- DATABASE ---
 const J=[{n:'Novice',c:'初心者',hp:60,sp:20,as:50},{n:'Swordman',c:'劍士',hp:150,sp:40,as:45},{n:'Mage',c:'法師',hp:80,sp:120,as:60},{n:'Thief',c:'盜賊',hp:110,sp:50,as:35},{n:'Archer',c:'弓箭手',hp:100,sp:60,as:40},{n:'Acolyte',c:'服事',hp:90,sp:100,as:55},{n:'Merchant',c:'商人',hp:120,sp:50,as:50}];
 const B=[{n:'Angeling',c:'天使波利',h:1500,a:50,x:1000},{n:'GT Bug',c:'黃金蟲',h:5000,a:120,x:3500},{n:'Eddga',c:'虎王',h:12000,a:250,x:12000},{n:'Osiris',c:'歐西里斯',h:30000,a:600,x:40000},{n:'Baphomet',c:'巴風特',h:99999,a:1500,x:99999}];
 const SK0=[{n:'First Aid',c:'緊急治療',v:20,t:'h'},{n:'Bash',c:'狂擊',v:1.4,t:'p'},{n:'Napalm',c:'心靈爆破',v:1.5,t:'m'}];
-// Job Skills (Simplified Mapping)
 const SKJ={
     Swordman:[{n:'Bash',c:'狂擊',v:1.5,t:'p'},{n:'Magnum',c:'怒爆',v:1.2,t:'p'},{n:'Berserk',c:'狂暴',t:'a'}],
     Mage:[{n:'FireBolt',c:'火箭術',v:2.0,t:'m'},{n:'ColdBolt',c:'冰箭術',v:2.0,t:'m'},{n:'Lightning',c:'雷擊術',v:2.0,t:'m'}],
@@ -121,10 +186,10 @@ const LOC_CN=["普隆德拉","斐揚","獸人洞穴","古城","鐘塔","塔納�
 const MON_EN=["Poring","Wolf","Orc","Raydric","Alarm","Thanatos"];
 const MON_CN=["波利","狼","獸人","深淵騎士","朽魔","塔納托斯"];
 
-const T={en:{st:"ID REGISTRATION",ph:"ENTER NAME",ea:"EASY",ha:"HARD",mi:"MISSION: Play to unlock secrets.",on:"AUTO:ON",off:"AUTO:OFF",lv:"LV",w:"W",a:"A",foe:"FOE",pts:"PTS",ok:"OK",stb:"START",mvp:"MVP DETECTED!",fi:"FIGHT",re:"REST",nx:"NEXT FLOOR",win:"CLEARED",lo:"LOOT",eq:"Equipped!",vic:"VICTORY",go:"GAME OVER",rs:"RESTART",wipe:"WIPE?",sel:"Select Skill:",jc:"Job Change!",ref:"Refined",bl:"Blessed",gd:"GENDER",m:"MALE",f:"FEMALE",sv:"Saved",ld:"Loaded",err:"Corrupt",rank:"RANKING",sub:"SUBMIT SCORE"},
-cn:{st:"身分登錄",ph:"輸入名稱",ea:"簡單",ha:"困難",mi:"任務: 遊玩以解鎖秘密",on:"自動:開",off:"自動:關",lv:"等級",w:"武",a:"防",foe:"敵",pts:"點數",ok:"確認",stb:"開始",mvp:"MVP出現!",fi:"戰鬥",re:"休息",nx:"下一層",win:"區域清除",lo:"掉落",eq:"已裝備!",vic:"任務完成",go:"任務失敗",rs:"重來",wipe:"刪除存檔?",sel:"選擇技能:",jc:"可轉職!",ref:"精煉",bl:"祝福",gd:"性別",m:"男",f:"女",sv:"已存檔",ld:"讀取成功",err:"存檔損毀",rank:"排行榜",sub:"上傳分數"}};
+const T={en:{st:"ID REGISTRATION",ph:"ENTER NAME",ea:"EASY",ha:"HARD",mi:"MISSION: Play to unlock secrets.",on:"AUTO:ON",off:"AUTO:OFF",lv:"LV",pts:"PTS",ok:"OK",stb:"START",mvp:"MVP DETECTED!",fi:"FIGHT",re:"REST",nx:"NEXT FLOOR",win:"CLEARED",vic:"VICTORY",go:"GAME OVER",rs:"RESTART",wipe:"WIPE?",sel:"Select Skill:",jc:"Job Change!",rank:"RANKING",sub:"SUBMIT SCORE"},
+cn:{st:"身分登錄",ph:"輸入名稱",ea:"簡單",ha:"困難",mi:"任務: 遊玩以解鎖秘密",on:"自動:開",off:"自動:關",lv:"等級",pts:"點數",ok:"確認",stb:"開始",mvp:"MVP出現!",fi:"戰鬥",re:"休息",nx:"下一層",win:"區域清除",vic:"任務完成",go:"任務失敗",rs:"重來",wipe:"刪除存檔?",sel:"選擇技能:",jc:"可轉職!",rank:"排行榜",sub:"上傳分數"}};
 
-const K='jro_final_v1';
+const K='jro_final_v2';
 const el=i=>document.getElementById(i);
 const rnd=m=>Math.floor(Math.random()*m);
 const H=t=>{let h=0;for(let i=0;i<t.length;i++)h=Math.imul(31,h)+t.charCodeAt(i)|0;return h.toString(16);}
@@ -132,7 +197,6 @@ const H=t=>{let h=0;for(let i=0;i<t.length;i++)h=Math.imul(31,h)+t.charCodeAt(i)
 const G={
     p:null, s:{f:1,b:false,tm:null,spd:10,au:false,l:'en'}, tmp:{g:'m'},
     
-    // --- INIT ---
     init(){
         const r=localStorage.getItem(K);
         if(r){
@@ -146,7 +210,6 @@ const G={
         }else{this.spd(10);this.scr();}
     },
     
-    // --- RANKING ---
     openRank(){
         el('rank-ui').classList.remove('hide'); el('rank-list').innerHTML="Fetching...";
         fetch(RAW_URL + '?t=' + Date.now())
@@ -160,7 +223,6 @@ const G={
         const now=Date.now(), last=localStorage.getItem('last_sub')||0;
         if(now-last<60000){alert("Wait 60s.");return;}
         localStorage.setItem('last_sub',now);
-        // Hashing for security
         const raw=`${this.p.n}-${this.p.j}-${this.s.f}-${SALT}`;
         let hash=0; for(let i=0;i<raw.length;i++){hash=((hash<<5)-hash)+raw.charCodeAt(i);hash|=0;}
         const d=JSON.stringify({n:this.p.n,j:this.p.j,f:this.s.f,h:hash.toString()});
@@ -169,18 +231,19 @@ const G={
         window.open(`https://github.com/${GH_USER}/${GH_REPO}/issues/new?title=${title}&body=${body}`,'_blank');
     },
 
-    // --- SCREENS ---
     scr(){
         const c=el('ctl'); c.className='grid';
         window.setG=(g)=>{
-            this.tmp.g=g; el('bm').className=g=='m'?'g-tag m active':'g-tag m'; el('bf').className=g=='f'?'g-tag f active':'g-tag f';
-            el('spr').className=`spr ro-${g} j-0`; // Update Header Avatar immediately
+            this.tmp.g=g; 
+            el('bm').className=g=='m'?'g-tag m active':'g-tag m'; 
+            el('bf').className=g=='f'?'g-tag f active':'g-tag f';
+            el('spr').className=`spr ro-${g} j-0`; // Updates Header Avatar
         };
-        // Removed .char-frame from here, kept logic to update Header
+        // Clean Start Screen (No Avatar)
         c.innerHTML=`<div class="panel" style="grid-column:span 2;text-align:center">
         <div class="c-n" style="font-weight:bold;margin-bottom:10px">${this.txt('st')}</div>
         <div style="margin-bottom:10px;text-align:right"><button class="btn-sm" onclick="G.openRank()">🏆 ${this.txt('rank')}</button></div>
-        <div class="flex" style="justify-content:center;gap:10px;margin-bottom:15px;">
+        <div class="flex" style="justify-content:center;gap:5px;margin-bottom:15px;align-items:stretch">
             <input id="in" placeholder="${this.txt('ph')}" maxlength="10" style="flex-grow:1;text-align:left">
             <div id="bm" class="g-tag m active" onclick="setG('m')">_m</div>
             <div id="bf" class="g-tag f" onclick="setG('f')">_f</div>
@@ -188,6 +251,8 @@ const G={
         <div class="grid g-2"><button onclick="G.ng(0)">${this.txt('ea')}</button><button class="btn-red" onclick="G.ng(1)">${this.txt('ha')}</button></div>
         <div style="font-size:9px;margin-top:10px;color:#464">${this.txt('mi')}</div></div>`;
         this.tmp.g='m';
+        // Reset header to default novice
+        el('spr').className=`spr ro-m j-0`;
     },
     ng(d){
         const n=el('in').value||"Novice";
@@ -223,7 +288,6 @@ const G={
     },
     mnu(){
         this.sv(); el('ctl').innerHTML=''; el('btl').classList.add('hide'); this.draw();
-        // Check for Boss Floor
         if(this.s.f%10==0 && this.s.f<=50){
             this.log(this.txt('mvp'),'c-h'); this.btn("BOSS",()=>this.bt(true),'btn-red'); return;
         }
@@ -273,7 +337,7 @@ const G={
         if(Math.random()*100>hit){if(this.s.spd<20)this.log("Miss");return;}
         let d = type=='m' ? st.matk*mul : Math.max(1, (st.atk*mul*(cr?1.5:1)) - (p?0:st.def));
         t.hp -= Math.floor(d);
-        if(this.s.spd<20||cr||t.hp<=0) this.log(`${Math.floor(d)} ${cr?'!'':''}`);
+        if(this.s.spd<20||cr||t.hp<=0) this.log(`${Math.floor(d)} ${cr?'!':''}`);
         if(p&&this.p.hp<this.p.mh*0.3&&this.p.pots>0){this.p.pots--;this.p.hp+=Math.floor(this.p.mh*0.5);}else if(!p)this.draw();
         if(t.hp<=0){if(p)this.win();else this.over();}
     },
@@ -298,7 +362,7 @@ const G={
         el('un').innerText=p.n; el('uj').innerText=this.s.l=='cn'?J[p.j].c:J[p.j].n; el('ul').innerText=p.lv; el('ulo').innerText=`F${this.s.f}`;
         ['str','agi','vit','int','dex','luk'].forEach(k=>el('v'+k).innerText=p[k]);
         el('bh').value=p.hp; el('bh').max=p.mh; el('uh').innerText=p.hp;
-        el('bs').value=p.sp; el('bs').max=20; el('us').innerText=p.sp; // Simplified SP
+        el('bs').value=p.sp; el('bs').max=20; el('us').innerText=p.sp; 
         el('b-au').innerText=this.s.au?(this.s.l=='cn'?'自動:開':'AUTO:ON'):(this.s.l=='cn'?'自動:關':'AUTO:OFF');
         el('b-au').classList.toggle('active',this.s.au);
     },
@@ -307,7 +371,7 @@ const G={
     lang(){this.s.l=this.s.l=='en'?'cn':'en';this.draw();if(!this.p)this.scr();},
     sv(){const d=btoa(JSON.stringify({p:this.p,s:this.s}));localStorage.setItem(K,d+"|"+H(d+SALT));},
     wipe(){if(confirm(this.txt('wipe'))){localStorage.removeItem(K);location.reload();}},
-    spd(x){this.s.spd=x;},
+    spd(x){this.s.spd=x;document.querySelectorAll('.flex button').forEach(b=>b.classList.remove('active'));const b=el('s'+x);if(b)b.classList.add('active');},
     exp(){this.sv();const a=document.createElement('a');a.href="data:text/plain;charset=utf-8,"+encodeURIComponent(localStorage.getItem(K));a.download=`JRO_${this.p.n}.sav`;document.body.appendChild(a);a.click();a.remove();},
     imp(el){const f=el.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{const raw=e.target.result;const [d,h]=raw.split('|');if(H(d+SALT)!=h)throw new Error();localStorage.setItem(K,raw);location.reload();}catch(e){alert(this.txt('err'))}};r.readAsText(f);}
 };
