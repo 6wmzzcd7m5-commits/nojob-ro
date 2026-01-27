@@ -1,134 +1,106 @@
-name: Secure Leaderboard
+name: Secure Leaderboard Update
 on:
   issues:
     types: [opened]
 
-permissions:
-  contents: write
-  issues: write
-
 jobs:
-  process-score:
-    if: startsWith(github.event.issue.title, 'SCORE:')
+  update-leaderboard:
+    if: contains(github.event.issue.title, 'SCORE')
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+    permissions:
+      contents: write
+      issues: write
 
-      - name: Validate & Update
-        uses: actions/github-script@v6
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
+          node-version: '20'
+
+      - name: Process Score Submission
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
+            const issueBody = context.payload.issue.body;
+            const user = context.payload.issue.user.login;
             
-            // --- CONFIGURATION ---
-            const MIN_AGE_DAYS = 7; 
-            const SALT = "SECRET_KEY_999"; // MUST MATCH CLIENT JS
-            
-            // 1. GET USER INFO
-            const username = context.actor;
-            const { data: user } = await github.rest.users.getByUsername({ username });
-            
-            // 2. CHECK ACCOUNT AGE
-            const created = new Date(user.created_at);
+            [cite_start]// 1. Anti-Bot: Check account age (minimum 7 days) [cite: 33]
+            const userRes = await github.rest.users.getByUsername({ username: user });
+            const created = new Date(userRes.data.created_at);
             const now = new Date();
-            const diffTime = Math.abs(now - created);
-            const diffDays = Math.ceil(diffTime / (1000 * 60));
+            const ageDays = (now - created) / (1000 * 60 * 60 * 24);
             
-            if (diffDays < MIN_AGE_DAYS) {
+            if (ageDays < 7) {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body: "❌ **Rejected:** Account too new (Anti-Bot)."
+                issue_number: context.payload.issue.number,
+                body: "⚠️ Error: GitHub account must be at least 7 days old to submit scores."
               });
               await github.rest.issues.update({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: context.issue.number,
+                issue_number: context.payload.issue.number,
                 state: 'closed'
               });
               return;
             }
 
-            // 3. PARSE DATA
-            const body = context.payload.issue.body;
-            let sub;
-            try {
-              // Strip code blocks
-              const clean = body.replace(/```json/g, '').replace(/```/g, '').trim();
-              sub = JSON.parse(clean);
-            } catch (e) { return; }
-
-            // 4. VERIFY SIGNATURE (HASH CHECK)
-            const raw = `${sub.n}-${sub.j}-${sub.f}-${SALT}`;
-            let hash = 0;
+            // 2. Data Extraction
+            const jsonMatch = issueBody.match(/```json\n([\s\S]*?)\n```/);
+            if (!jsonMatch) return;
+            const data = JSON.parse(jsonMatch[1]);
+            
+            [cite_start]// 3. Anti-Tamper: Recalculate DJB2 Hash [cite: 31, 34]
+            const SALT = "SECRET_KEY_999"; 
+            const raw = `${data.n}-${data.j}-${data.f}-${SALT}`;
+            let serverHash = 0;
             for (let i = 0; i < raw.length; i++) {
-                hash = ((hash << 5) - hash) + raw.charCodeAt(i);
-                hash |= 0;
+              serverHash = ((serverHash << 5) - serverHash) + raw.charCodeAt(i);
+              serverHash |= 0;
             }
 
-            if (sub.h !== hash.toString()) {
+            if (serverHash.toString() !== data.h) {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body: "❌ **Rejected:** Data integrity check failed."
-              });
-              await github.rest.issues.update({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                state: 'closed'
+                issue_number: context.payload.issue.number,
+                body: "🚫 Security Error: Hash signature mismatch. Submission rejected."
               });
               return;
             }
 
-            // 5. UPDATE DATABASE
-            const entry = {
-              u: username, 
-              n: sub.n.substring(0, 12).replace(/[^a-zA-Z0-9 ]/g, ""), 
-              j: sub.j,
-              f: parseInt(sub.f),
-              d: new Date().toISOString().split('T')[0]
-            };
+            [cite_start]// 4. Sanitization & Update [cite: 14, 34]
+            const name = data.n.replace(/[^a-z0-9]/gi, '').substring(0, 10);
+            let leaderboard = JSON.parse(fs.readFileSync('leaderboard.json', 'utf8'));
+            
+            leaderboard.push({ n: name, j: data.j, f: data.f });
+            leaderboard.sort((a, b) => b.f - a.f);
+            leaderboard = leaderboard.slice(0, 10); // Keep Top 10
+            
+            fs.writeFileSync('leaderboard.json', JSON.stringify(leaderboard, null, 2));
 
-            const dbPath = 'leaderboard.json';
-            let board = fs.existsSync(dbPath) ? JSON.parse(fs.readFileSync(dbPath)) : [];
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add leaderboard.json
+          git commit -m "🏆 Leaderboard updated via Issue #${{ github.event.issue.number }}"
+          git push
 
-            // Update if better score
-            const idx = board.findIndex(x => x.u === entry.u);
-            if (idx !== -1) {
-              if (entry.f > board[idx].f) board[idx] = entry; 
-            } else {
-              board.push(entry);
-            }
-
-            // Sort & Save Top 20
-            board.sort((a, b) => b.f - a.f);
-            if (board.length > 20) board = board.slice(0, 20);
-            fs.writeFileSync(dbPath, JSON.stringify(board, null, 2));
-
-            // 6. SUCCESS MESSAGE
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: `✅ **Accepted!** Rank #${board.findIndex(x => x.u === entry.u) + 1} updated.`
-            });
+      - name: Close Issue
+        uses: actions/github-script@v7
+        with:
+          script: |
             await github.rest.issues.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.issue.number,
-              state: 'closed'
+              issue_number: context.payload.issue.number,
+              state: 'closed',
+              labels: ['processed']
             });
-
-      - name: Push Changes
-        run: |
-          git config --global user.name "RankBot"
-          git config --global user.email "bot@noreply.github.com"
-          if [[ -n $(git status -s) ]]; then
-            git add leaderboard.json
-            git commit -m "Rank Update: ${{ github.actor }}"
-            git push
-          fi
