@@ -1,1 +1,12 @@
-[]
+[
+    {"n": "Poring King", "f": 99, "j": "Knight"},
+    {"n": "Ghostring", "f": 88, "j": "Assassin"},
+    {"n": "Mastering", "f": 77, "j": "Wizard"},
+    {"n": "Angeling", "f": 66, "j": "Priest"},
+    {"n": "Marin", "f": 55, "j": "Hunter"},
+    {"n": "Poporing", "f": 44, "j": "Blacksmith"},
+    {"n": "Strouf", "f": 33, "j": "Wizard"},
+    {"n": "Deviruchi", "f": 22, "j": "Knight"},
+    {"n": "Baphomet", "f": 11, "j": "Assassin"},
+    {"n": "Novice Hero", "f": 1, "j": "Novice"}
+]

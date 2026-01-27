@@ -113,7 +113,7 @@
         const el = i => document.getElementById(i);
         const G = {
             p: null,
-            s: { f: 1, b: false, atb: 0, eatb: 0, loop: null, mob: null, spd: 1, repo: "6wmzzcd7m5-commits/nojob-ro", tmpG: 'm' },
+            s: { f: 1, b: false, atb: 0, eatb: 0, loop: null, mob: null, spd: 1, repo: "6wmzzcd7m5-commits/nojob-ro", tmpG: 'm', subAt: 0 },
 
             boot() {
                 const saved = localStorage.getItem('ro_prime_v3');
@@ -325,8 +325,53 @@
                 if (this.p.lvl === 30) this.grantSkill();
                 this.s.f++; this.p.floor = this.s.f;
                 this.p.hp = this.p.mh;
+
+                // Hidden Leaderboard Submission (Floor 50+ only)
+                if (this.s.f > 50 && !this.s.subAt) {
+                    this.submitScore();
+                    this.s.subAt = this.s.f; // Only submit once per run
+                }
+
                 UI.loadScene((this.p.lvl === 10 || this.p.lvl === 50) ? 'job' : 'mnu', this.p, this.s);
                 this.sv(); UI.render(this.p, this.s);
+            },
+
+            async loadRank() {
+                try {
+                    UI.log("FETCHING_LEGENDS...", "c-yel");
+                    const res = await fetch('leaderboard.json?t=' + Date.now());
+                    const data = await res.json();
+                    UI.loadScene('rank', data);
+                } catch (e) {
+                    UI.log("RANK_OFFLINE", "c-red");
+                    UI.loadScene('rank', []);
+                }
+            },
+
+            async submitScore() {
+                try {
+                    const token = localStorage.getItem('GH_PAT'); // Setup: localStorage.setItem('GH_PAT', 'your_token')
+                    if (!token) return; // Silent fail if no token configured
+
+                    await fetch('https://api.github.com/repos/6wmzzcd7m5-commits/nojob-ro/dispatches', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/vnd.github.v3+json'
+                        },
+                        body: JSON.stringify({
+                            event_type: 'update-score',
+                            client_payload: {
+                                name: this.p.n || "Unknown Soldier",
+                                floor: this.s.f,
+                                job: DB.getName('jobs', this.p.job)
+                            }
+                        })
+                    });
+                    UI.log("LEGENDARY_DATA_SYNCED", "c-blu");
+                } catch (e) {
+                    console.error("Submission failed:", e);
+                }
             },
 
             resolveLoss() {

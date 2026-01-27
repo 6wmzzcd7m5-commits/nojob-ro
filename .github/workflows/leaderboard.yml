@@ -1,0 +1,46 @@
+name: Update Leaderboard
+
+on:
+  repository_dispatch:
+    types: [update-score]
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Update JSON
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const payload = context.payload.client_payload;
+            const path = 'leaderboard.json';
+            
+            let data = JSON.parse(fs.readFileSync(path, 'utf8'));
+            
+            // Add new entry
+            data.push({
+              n: payload.name,
+              f: payload.floor,
+              j: payload.job
+            });
+            
+            // Sort by floor desc
+            data.sort((a, b) => b.f - a.f);
+            
+            // Keep top 10
+            data = data.slice(0, 10);
+            
+            fs.writeFileSync(path, JSON.stringify(data, null, 4));
+            
+      - name: Commit and Push
+        run: |
+          git config user.name "Robot-RO"
+          git config user.email "bot@ragnarok.com"
+          git add leaderboard.json
+          git commit -m "update: leaderboard score for ${{ github.event.client_payload.name }}" || exit 0
+          git push

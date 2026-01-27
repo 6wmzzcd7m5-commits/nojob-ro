@@ -31,7 +31,11 @@ window.SCENES = {
         </div>`,
 
     // 2. Ported: Main Menu / Dungeon Warp
-    mnu: (p, s) => `<button onclick="G.startBattle()" class="panel" style="width:100%; padding:20px; border-color:var(--neon);">${DB.txt('warp')} ${s.f}</button>`,
+    mnu: (p, s) => `
+        <div class="grid g-1">
+            <button onclick="G.startBattle()" class="panel" style="width:100%; padding:20px; border-color:var(--neon);">${DB.txt('warp')} ${s.f}</button>
+            <button onclick="G.loadRank()" class="panel" style="width:100%; font-size:10px; border-color:var(--sp); color:var(--sp); padding:8px;">${DB.txt('rank')}</button>
+        </div>`,
 
     // 3. Ported: Active Combat Status
     btl: () => `<div class="panel" style="text-align:center; color:var(--hp); border:1px dotted var(--neon); background:#000;">${DB.txt('combat')}</div>`,
@@ -50,5 +54,22 @@ window.SCENES = {
             <div style="font-size:10px; margin:10px 0;">FLOOR REACHED: ${s.f}</div>
             <div style="font-size:10px; color:#888; margin-bottom:10px;">YOUR ADVENTURE ENDS HERE... FOR NOW.</div>
             <button onclick="location.reload()" class="btn-red" style="width:100%;">RETRY</button>
-        </div>`
+        </div>`,
+
+    // 6. NEW: Leaderboard Scene
+    rank: (list) => {
+        const rows = (list || []).map((r, i) => `
+            <div class="flex" style="justify-content:space-between; font-size:9px; padding:3px 2px; border-bottom:1px solid #222;">
+                <span style="color:var(--zeny);">#${i + 1} ${r.n}</span>
+                <span class="c-yel">F${r.f}</span>
+                <span class="c-blu" style="font-size:8px;">${r.j}</span>
+            </div>
+        `).join('');
+        return `
+            <div class="panel grid g-1" style="border-color:var(--sp);">
+                <div style="text-align:center; color:var(--sp); font-weight:bold; margin-bottom:5px; font-size:11px;">🏆 TOP 10 LEGENDS</div>
+                <div style="max-height:140px; overflow-y:auto; background:rgba(0,0,0,0.5); padding:2px;">${rows || '<div style="text-align:center; color:#444;">NO DATA</div>'}</div>
+                <button onclick="UI.loadScene('mnu', G.p, G.s)" style="width:100%; font-size:9px; border-color:var(--sp); margin-top:5px; padding:10px;">BACK</button>
+            </div>`;
+    }
 };
