@@ -1,0 +1,94 @@
+<div class="panel grid" style="grid-column: span 2; gap: 12px; text-align: center;">
+    <div id="mnu-header" style="margin-bottom: 5px;">
+        <h3 class="c-n" style="margin: 0;">
+            <span class="en">FLOOR HUB</span><span class="cn">樓層中心</span>
+        </h3>
+        <small style="color: #888;">
+            <span class="en">Current Floor:</span><span class="cn">當前樓層：</span>
+            F<span id="mnu-floor-txt">1</span>
+        </small>
+    </div>
+
+    <div id="mnu-cmds" class="grid g-1" style="gap: 10px;">
+        <button class="btn-neon" onclick="mnu.explore()" style="padding: 20px; font-size: 1.2rem;">
+            <span class="en">EXPLORE NEXT</span><span class="cn">探索下一層</span>
+        </button>
+
+        <div class="grid g-2" style="gap: 10px;">
+            <button class="btn-neon" onclick="mnu.rest()" style="border-color: var(--sp);">
+                <span class="en">REST / HEAL</span><span class="cn">休息 / 恢復</span>
+            </button>
+            <button class="btn-neon" onclick="G.loadScene('stat')" style="border-color: #aaa;">
+                <span class="en">ATTRIBUTES</span><span class="cn">分配屬性</span>
+            </button>
+        </div>
+        
+        <button id="btn-job-change" class="btn-neon" onclick="G.loadScene('jobs')" 
+                style="display:none; border-color: gold; animation: pulse 1s infinite;">
+            <span class="en">JOB CHANGE AVAILABLE!</span><span class="cn">轉職啟動！</span>
+        </button>
+    </div>
+</div>
+
+<script>
+/**
+ * MAIN MENU LOGIC
+ * Coordinates exploration and floor events.
+ */
+const mnu = {
+    init() {
+        document.getElementById('mnu-floor-txt').innerText = G.s.f;
+        this.checkJobStatus();
+        G.render(); // Ensure HUD is current
+    },
+
+    checkJobStatus() {
+        // Job change requirements: Lv 10 for First Job, Lv 30 for Second Job
+        const jd = DB.jobs[G.p.job];
+        const req = jd.next.length > 1 ? 10 : 30;
+        
+        if (G.p.lvl >= req && jd.next.length > 0 && !G.p.arch) {
+            document.getElementById('btn-job-change').style.display = 'block';
+        }
+    },
+
+    explore() {
+        G.s.f++; // Advance floor
+        
+        // Every 10th floor is a Boss floor
+        if (G.s.f % 10 === 0) {
+            G.log("BOSS DETECTED!", 'c-red');
+            // Boss data parity from v3
+            G.bt({ n: 'Angeling', hp: 800, atk: 40, xp: 500 });
+            return;
+        }
+
+        // Random Event logic
+        const roll = Math.random();
+        if (roll < 0.25) {
+            // Safe Area / Free Healing event
+            G.log("Safe area found. HP/SP Restored.", 'c-n');
+            G.p.hp = G.p.mh;
+            G.p.sp = G.p.msp;
+            G.render();
+            document.getElementById('mnu-floor-txt').innerText = G.s.f;
+        } else {
+            // Standard Monster Encounter
+            const tier = Math.min(1, Math.floor(G.s.f / 10));
+            const pool = DB.mobs[tier] || DB.mobs[0];
+            const mob = pool[Math.floor(Math.random() * pool.length)];
+            G.bt(mob); 
+        }
+    },
+
+    rest() {
+        // Rest cost logic could be added here, but v3 is free healing
+        G.p.hp = G.p.mh;
+        G.p.sp = G.p.msp;
+        G.log("Rested and ready.", 'c-n');
+        G.render();
+    }
+};
+
+mnu.init();
+</script>
