@@ -1,9 +1,9 @@
-/* --- AEGIS_UI_ENGINE_V4.9 (Full Reg Scene & HUD Update) --- */
+/* --- AEGIS_UI_ENGINE_V5.0 (Full Feature Edition) --- */
 window.UI = {
     // 1. SCENE TEMPLATES
     // These functions generate the HTML for the control panel (#ctl)
     scenes: {
-        // Updated Registration Scene with Gender, Difficulty, and Start Button
+        // Registration Scene with Name, Gender, Difficulty, and Start Button
         reg: (p, s) => `
             <div class="panel grid g-1" style="border-color:var(--neon);">
                 <input id="pname" placeholder="${DB.txt('init')}" class="panel" style="background:#000; color:var(--neon); border-color:var(--neon); width:100%;">
@@ -44,7 +44,7 @@ window.UI = {
         if(!p) return;
 
         // Persistent HUD Elements
-        el('ui-name').innerText = p.n; // Permanent Name Field
+        el('ui-name').innerText = p.n; // Permanent Player Name Field
         el('btn-save').innerText = DB.txt('save');
         el('btn-rank').innerText = DB.txt('rank');
         el('ui-job').innerText = DB.getName('jobs', p.job);
@@ -55,7 +55,7 @@ window.UI = {
         // Primary Attributes
         ['str','agi','vit','int','dex','luk'].forEach(k => el('ui-'+k).innerText = p[k]);
 
-        // Derived Combat Stats (Ragnarok Online Formulas)
+        // Derived Combat Stats (RO Story Formulas)
         const atk = p.str + Math.floor(p.dex/5) + Math.floor(p.luk/3) + (p.lvl * 2);
         const matk = p.int + Math.floor(p.int/2) + Math.floor(p.dex/5) + (p.lvl * 2);
         
@@ -68,6 +68,7 @@ window.UI = {
 
         // Vitals & Gender-Aware Sprite Binding
         el('hp-fill').style.width = (p.hp / p.mh * 100) + "%";
+        // Dynamically apply job-specific and gender-specific classes
         el('p-spr').className = `spr j-${p.job} ${p.gender === 'f' ? 'ro-f' : 'ro-m'}`;
 
         // Inventory HUD (Items & Cards)
@@ -80,13 +81,13 @@ window.UI = {
     // 3. UI UTILITIES
     loadScene(name, p, s) { el('ctl').innerHTML = this.scenes[name](p, s); },
     
-    // Damage Popup
+    // Damage Popup Engine
     pop(amt, id, col = '') {
         const d = document.createElement('div'); d.className = 'dmg-pop ' + col; d.innerText = amt;
         el(id).appendChild(d); setTimeout(() => d.remove(), 800);
     },
     
-    // Terminal Log
+    // Terminal Logger
     log(m, c) {
         el('log').insertAdjacentHTML('afterbegin', `
             <div class="entry ${c}" style="color:var(--neon); border-bottom:1px solid #1a1a1a;">
@@ -95,4 +96,4 @@ window.UI = {
     }
 };
 
-console.log("AEGIS_UI: SYSTEM_READY_V4.9");
+console.log("AEGIS_UI: FULL_SYSTEM_READY_V5.0");
