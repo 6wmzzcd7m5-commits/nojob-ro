@@ -16,11 +16,11 @@
 body { 
     background: var(--bg); 
     color: var(--neon); 
-    font-family: 'Tahoma', 'Arial', sans-serif; /* Mimics RO UI [cite: 6] */
+    font-family: 'Tahoma', 'Arial', sans-serif; /* Mimics RO UI */
     font-size: 11px; 
     margin: 0 auto; 
     max-width: 500px; 
-    height: 100dvh; /* Dynamic Viewport Height [cite: 7] */
+    height: 100dvh; /* Dynamic Viewport Height for Mobile */
     overflow: hidden; 
     display: flex; 
     flex-direction: column; 
@@ -51,6 +51,7 @@ button:active { transform: scale(0.98); }
 
 .btn-sm { padding: 2px 6px; font-size: 9px; }
 .btn-red { border-color: var(--hp); color: var(--hp); }
+.active { background: var(--neon); color: #000; }
 
 /* --- 3. VITALS & ATB BARS --- */
 .bar-container { 
@@ -71,7 +72,7 @@ button:active { transform: scale(0.98); }
 #hp-fill { background: linear-gradient(to bottom, #ff5f5f, var(--hp)); }
 #sp-fill { background: linear-gradient(to bottom, #5fbfff, var(--sp)); }
 
-/* --- 4. CSS SPRITE ENGINE (Section 3) --- */
+/* --- 4. CSS SPRITE ENGINE (Jobs & Mobs) --- */
 .avatar-box { 
     width: 70px; 
     height: 80px; 
@@ -86,9 +87,10 @@ button:active { transform: scale(0.98); }
     height: 48px; 
     position: relative; 
     z-index: 5;
+    animation: idle 1.5s infinite ease-in-out; 
 }
 
-/* Base Body Parts [cite: 25] */
+/* Base Body Parts */
 .hd { 
     width: 22px; height: 20px; 
     background: #fca; /* Skin Tone */
@@ -108,21 +110,48 @@ button:active { transform: scale(0.98); }
     border-radius: 2px; 
 }
 
-/* Job-Specific Costume Gradients [cite: 27] */
+/* --- JOB SPECIFIC COSTUMES --- */
+/* 1st Jobs */
 .j-Novice .bd { background: linear-gradient(#fff, #ccc); }
 .j-Swordman .bd { background: linear-gradient(#d84, #842); }
 .j-Mage .bd { background: linear-gradient(#4af, #25a); }
 .j-Thief .bd { background: linear-gradient(#444, #111); }
+.j-Archer .bd { background: linear-gradient(#4a4, #151); }
+.j-Merchant .bd { background: linear-gradient(#84a, #415); }
+.j-Acolyte .bd { background: linear-gradient(#eee, #aaa); border-left: 4px solid #aaf; }
 
-/* --- 5. ANIMATIONS (Section 4) --- */
-/* Idle Bobbing [cite: 25] */
-.spr { animation: idle 1.5s infinite ease-in-out; }
+/* 2nd Jobs (Elite Gold Accents) */
+.j-Knight .bd { background: linear-gradient(#ffd700, #b8860b); border: 2px solid #fff; }
+.j-Wizard .bd { background: linear-gradient(#9370db, #4b0082); box-shadow: 0 0 5px #fff; }
+.j-Assassin .bd { background: linear-gradient(#222, #000); border-right: 5px solid #c00; }
+.j-Hunter .bd { background: linear-gradient(#556b2f, #228b22); border-top: 3px solid #8b4513; }
+.j-Blacksmith .bd { background: linear-gradient(#708090, #2f4f4f); border-bottom: 4px solid #ff4500; }
+.j-Priest .bd { background: linear-gradient(#f0f8ff, #add8e6); border: 2px solid #ffd700; }
+
+/* --- MONSTER SPECIFIC SPRITES --- */
+/* Regular Mobs by Floor Tier */
+#e-box[data-tier="1"] .bd { background: #8f8; border-radius: 50%; } 
+#e-box[data-tier="2"] .bd { background: #555; clip-path: polygon(50% 0%, 100% 100%, 0% 100%); } 
+#e-box[data-tier="3"] .bd { background: #a52a2a; border-radius: 10px 10px 0 0; } 
+#e-box[data-tier="4"] .bd { background: #483d8b; transform: skewY(10deg); } 
+
+/* MVP Special Effects */
+.spr-mvp {
+    filter: drop-shadow(0 0 8px #ffff00);
+    animation: boss-glow 2s infinite alternate;
+}
+
+@keyframes boss-glow {
+    from { transform: scale(1) translateY(0); filter: brightness(1) drop-shadow(0 0 5px #ff0); }
+    to { transform: scale(1.1) translateY(-5px); filter: brightness(1.3) drop-shadow(0 0 15px #ff0); }
+}
+
+/* --- 5. ANIMATIONS --- */
 @keyframes idle { 
     0%, 100% { transform: translateY(0); } 
     50% { transform: translateY(4px); } 
 }
 
-/* Lung: Physical Attack [cite: 29] */
 .lung { animation: lung-act 0.15s ease-in-out; }
 @keyframes lung-act {
     0% { transform: translateX(0); }
@@ -130,7 +159,6 @@ button:active { transform: scale(0.98); }
     100% { transform: translateX(0); }
 }
 
-/* Shake: Hit Reaction [cite: 28] */
 .shake { animation: shake-act 0.2s ease-in-out; }
 @keyframes shake-act {
     0%, 100% { transform: translateX(0); }
@@ -138,10 +166,9 @@ button:active { transform: scale(0.98); }
     75% { transform: translateX(5px); }
 }
 
-/* Damage Popup [cite: 29] */
 .dmg-pop { 
     position: absolute; 
-    font-family: var(--impact); /* Section 1.A [cite: 6] */
+    font-family: var(--impact); /* Impact font for Critical hits */
     font-size: 18px; 
     color: #fff; 
     text-shadow: 2px 2px #000; 
