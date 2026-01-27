@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jobless RO v4.7 | Ultimate Streamlined</title>
+    <title>Jobless RO v4.9 | Ultimate Edition</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="lang-en" style="background:#000;">
@@ -22,7 +22,13 @@
         
         <div class="flex">
             <div style="flex:1;">
-                <div class="flex"><b id="ui-job" class="c-n">Novice</b> <div style="font-size: 9px;"><span id="lbl-lv">Lv</span> <span id="ui-lvl">1</span></div></div>
+                <div class="flex">
+                    <div>
+                        <span id="ui-name" class="c-n" style="font-weight:bold; margin-right:5px;">Novice</span>
+                        <b id="ui-job" class="c-n">Novice</b> 
+                    </div>
+                    <div style="font-size: 9px;"><span id="lbl-lv">Lv</span> <span id="ui-lvl">1</span></div>
+                </div>
                 <div class="bar-container" style="border-color:var(--neon);"><div id="hp-fill" class="fill"></div></div>
                 <div class="bar-container" style="height:2px; margin-top:2px; border:none; background:transparent;">
                     <div id="atb-fill" style="width:0%; height:100%; background:var(--neon); opacity:0.4;"></div>
@@ -72,7 +78,7 @@
 const el = i => document.getElementById(i);
 const G = {
     p: null, 
-    s: { f:1, b:false, atb:0, eatb:0, loop:null, mob:null, spd: 1, repo: "6wmzzcd7m5-commits/nojob-ro" },
+    s: { f:1, b:false, atb:0, eatb:0, loop:null, mob:null, spd: 1, repo: "6wmzzcd7m5-commits/nojob-ro", tmpG: 'm' },
 
     boot() {
         const saved = localStorage.getItem('ro_prime_v3');
@@ -83,6 +89,16 @@ const G = {
             UI.loadScene('mnu', this.p, this.s);
         } else { UI.loadScene('reg', this.p, this.s); }
         UI.render(this.p, this.s);
+    },
+
+    // Registration State Helpers
+    setG(val) { this.s.tmpG = val; el('g-m').classList.toggle('active', val==='m'); el('g-f').classList.toggle('active', val==='f'); },
+
+    initChar() {
+        const n = el('pname').value || "Novice";
+        const d = parseFloat(el('pdiff').value) || 1.0;
+        this.p = { n, gender: this.s.tmpG, diff: d, job:'Novice', lvl:1, str:5, agi:5, vit:5, int:5, dex:5, luk:5, hp:100, mh:100, floor:1, inv:[] };
+        this.sv(); UI.render(this.p, this.s); UI.loadScene('mnu', this.p, this.s);
     },
 
     toggleLang() { 
@@ -105,11 +121,11 @@ const G = {
             if(!this.s.b) return;
             const job = DB.getJob(this.p.job);
             
-            // Player ATB logic
+            // Player Attack Bar Logic
             this.s.atb += ((job.aspd + (this.p.agi * 0.8) + (this.p.dex * 0.2)) / 10);
             el('atb-fill').style.width = Math.min(100, this.s.atb / 10) + "%";
 
-            // Enemy ATB logic
+            // Enemy Attack Bar Logic
             const eFill = 150 + (this.s.f * 2);
             this.s.eatb += (eFill / 10);
             el('e-atb-fill').style.width = Math.min(100, this.s.eatb / 10) + "%";
@@ -133,7 +149,7 @@ const G = {
         const dmg = Math.max(1, this.s.mob.atk - def);
         el('e-spr').classList.add('lung'); setTimeout(() => el('e-spr').classList.remove('lung'), 150);
         this.p.hp -= dmg;
-        UI.render(this.p, this.s); // Update player HP bar
+        UI.render(this.p, this.s); 
         UI.pop(dmg, 'p-box', 'c-red');
         if(this.p.hp <= 0) this.resolveLoss();
     },
@@ -150,14 +166,9 @@ const G = {
     resolveLoss() {
         this.s.b = false; clearInterval(this.s.loop);
         UI.log("DEFEATED! RETREAT TO TOWN.", "c-red");
-        this.p.hp = this.p.mh; // Restore HP for next attempt
+        this.p.hp = this.p.mh;
         UI.loadScene('mnu', this.p, this.s);
         UI.render(this.p, this.s);
-    },
-
-    initChar() {
-        this.p = { n: el('pname').value || "Novice", job:'Novice', lvl:1, str:5, agi:5, vit:5, int:5, dex:5, luk:5, hp:100, mh:100, floor:1, inv:[] };
-        this.sv(); UI.render(this.p, this.s); UI.loadScene('mnu', this.p, this.s);
     },
 
     changeJob(newJob) {
@@ -168,7 +179,24 @@ const G = {
     },
 
     startBattle() {
-        this.s.mob = DB.mobs.scaling(this.s.f); this.s.mob.mhp = this.s.mob.hp;
+        // Random Mob Selection Logic
+        const isBoss = (this.s.f % 10 === 0);
+        let mobIndex;
+        if (isBoss) {
+            const bossPool = DB.mobs.names.filter(n => n.includes('[MVP]'));
+            mobIndex = DB.mobs.names.indexOf(bossPool[Math.floor(Math.random() * bossPool.length)]);
+        } else {
+            const regularPool = DB.mobs.names.filter(n => !n.includes('[MVP]'));
+            mobIndex = DB.mobs.names.indexOf(regularPool[Math.floor(Math.random() * regularPool.length)]);
+        }
+
+        this.s.mob = DB.mobs.scaling(this.s.f);
+        this.s.mob.n = DB.mobs.names[mobIndex];
+        // Apply Difficulty Stat Multiplier
+        this.s.mob.hp *= (this.p.diff || 1.0); 
+        this.s.mob.atk *= (this.p.diff || 1.0); 
+        this.s.mob.mhp = this.s.mob.hp;
+
         el('e-box').setAttribute('data-tier', Math.ceil(this.s.f / 10));
         el('e-spr').className = `spr ${this.s.mob.n.includes('[MVP]') ? 'spr-mvp' : ''}`;
         el('e-name').innerText = this.s.mob.n; el('e-hp-fill').style.width = "100%";
