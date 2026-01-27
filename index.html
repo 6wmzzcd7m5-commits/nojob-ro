@@ -3,81 +3,90 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Jobless RO: Neon</title>
+<title>Jobless RO: Ultimate</title>
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="dict.css">
 </head>
-<body>
+<body class="lang-en">
 
 <div id="app">
     <div id="rank-ui" class="hide">
         <div id="rank-box">
             <div class="flex" style="border-bottom:1px solid var(--n); margin-bottom:10px; color:var(--n); font-weight:bold;">
-                <span>TOP 10</span> <button class="btn-sm btn-red" onclick="G.closeRank()">X</button>
+                <span class="lbl-top"></span> <button class="btn-sm btn-red" onclick="G.closeRank()">X</button>
             </div>
-            <div id="rank-list">Loading...</div>
+            <div id="rank-list" class="lbl-loading"></div>
         </div>
     </div>
 
     <header class="panel grid">
         <div class="flex" style="border-bottom:1px dashed var(--bd); padding-bottom:5px;">
             <div class="flex" style="gap:4px">
-                <button class="btn-sm btn-red" onclick="G.wipe()">RST</button>
-                <button class="btn-sm" onclick="G.exp()">SAV</button>
-                <button class="btn-sm" onclick="document.getElementById('fi').click()">LOD</button>
+                <button class="btn-sm btn-red lbl-rst" onclick="G.wipe()"></button>
+                <button class="btn-sm lbl-save" onclick="G.exp()"></button>
+                <button class="btn-sm lbl-load" onclick="document.getElementById('fi').click()"></button>
                 <input type="file" id="fi" style="display:none" onchange="G.imp(this)">
-                <button class="btn-sm" onclick="G.lang()">EN/中</button>
-                <button id="b-au" class="btn-sm" onclick="G.tAu()">AUTO</button>
+                <button class="btn-sm lbl-rank" onclick="G.openRank()"></button>
+                <button class="btn-sm lbl-lang" onclick="G.lang()"></button>
+                <button id="b-au" class="btn-sm lbl-auto" onclick="G.tAu()"></button>
             </div>
             <div class="flex" style="gap:2px">
-                <button class="btn-sm" id="s10" onclick="G.spd(10)">1x</button>
-                <button class="btn-sm" id="s30" onclick="G.spd(30)">3x</button>
-                <button class="btn-sm" id="s100" onclick="G.spd(100)">MAX</button>
+                <button class="btn-sm lbl-spd1" id="s10" onclick="G.spd(10)"></button>
+                <button class="btn-sm lbl-spd3" id="s30" onclick="G.spd(30)"></button>
+                <button class="btn-sm lbl-max" id="s100" onclick="G.spd(100)"></button>
             </div>
         </div>
 
         <div class="flex eq-row">
             <div><span id="uloc" class="c-n">Prontera</span></div>
-            <div>W:<span id="ueqw" class="eq-v">-</span> A:<span id="ueqa" class="eq-v">-</span></div>
+            <div><span class="lbl-w"></span><span id="ueqw" class="eq-v">-</span> <span class="lbl-a"></span><span id="ueqa" class="eq-v">-</span></div>
         </div>
 
         <div class="flex">
             <div style="flex:1;">
-                <div class="flex"><div><b id="un" class="c-n" style="font-size:12px"></b> <span id="uj" class="c-d" style="font-size:10px"></span></div><div style="font-size:11px">Lv <span id="ul" class="c-r">1</span> <span class="c-d">F<span id="ufl">1</span></span></div></div>
+                <div class="flex">
+                    <div><b id="un" class="c-n" style="font-size:12px"></b> <span id="uj"></span></div>
+                    <div style="font-size:11px"><span class="lbl-lv c-r"></span> <span id="ul" class="c-r">1</span> <span class="c-d"><span class="lbl-flr"></span><span id="ufl">1</span></span></div>
+                </div>
                 <div class="grid g-2" style="margin-top:2px">
-                    <div style="font-size:9px"><div class="flex"><span>HP</span> <span id="uh"></span></div><progress id="bh" value="100" max="100"></progress></div>
-                    <div style="font-size:9px"><div class="flex"><span>SP</span> <span id="us"></span></div><progress id="bs" value="20" max="20"></progress></div>
+                    <div style="font-size:9px"><div class="flex"><span class="lbl-hp"></span> <span id="uh"></span></div><progress id="bh" value="100" max="100"></progress></div>
+                    <div style="font-size:9px"><div class="flex"><span class="lbl-sp"></span> <span id="us"></span></div><progress id="bs" value="20" max="20"></progress></div>
                 </div>
             </div>
         </div>
 
         <div class="grid g-6" style="background:#111; border:1px solid #333; padding:2px;">
-            <div class="stat-cell">STR<span id="vstr" class="stv">1</span></div><div class="stat-cell">AGI<span id="vagi" class="stv">1</span></div><div class="stat-cell">VIT<span id="vvit" class="stv">1</span></div>
-            <div class="stat-cell">INT<span id="vint" class="stv">1</span></div><div class="stat-cell">DEX<span id="vdex" class="stv">1</span></div><div class="stat-cell">LUK<span id="vluk" class="stv">1</span></div>
+            <div class="stat-cell"><span class="lbl-str"></span><span id="vstr" class="stv">1</span></div>
+            <div class="stat-cell"><span class="lbl-agi"></span><span id="vagi" class="stv">1</span></div>
+            <div class="stat-cell"><span class="lbl-vit"></span><span id="vvit" class="stv">1</span></div>
+            <div class="stat-cell"><span class="lbl-int"></span><span id="vint" class="stv">1</span></div>
+            <div class="stat-cell"><span class="lbl-dex"></span><span id="vdex" class="stv">1</span></div>
+            <div class="stat-cell"><span class="lbl-luk"></span><span id="vluk" class="stv">1</span></div>
         </div>
         <div class="grid g-6" style="margin-top:2px;">
-            <div class="stat-cell">ATK<span id="catk" class="sec-stat">0</span></div><div class="stat-cell">MATK<span id="cmatk" class="sec-stat">0</span></div><div class="stat-cell">ASPD<span id="caspd" class="sec-stat">0</span></div>
-            <div class="stat-cell">CRI<span id="ccri" class="sec-stat">0</span></div><div class="stat-cell">HIT<span id="chit" class="sec-stat">0</span></div><div class="stat-cell">FLEE<span id="cflee" class="sec-stat">0</span></div>
+            <div class="stat-cell"><span class="lbl-atk"></span><span id="catk" class="sec-stat">0</span></div>
+            <div class="stat-cell"><span class="lbl-matk"></span><span id="cmatk" class="sec-stat">0</span></div>
+            <div class="stat-cell"><span class="lbl-aspd"></span><span id="caspd" class="sec-stat">0</span></div>
+            <div class="stat-cell"><span class="lbl-cri"></span><span id="ccri" class="sec-stat">0</span></div>
+            <div class="stat-cell"><span class="lbl-hit"></span><span id="chit" class="sec-stat">0</span></div>
+            <div class="stat-cell"><span class="lbl-flee"></span><span id="cflee" class="sec-stat">0</span></div>
         </div>
     </header>
 
     <section id="btl" class="panel">
         <div class="flex" style="margin-bottom:5px; font-size:10px;">
-            <span class="c-n">PLAYER</span>
-            <span id="en" style="font-weight:bold; color:var(--hp);">TARGET</span>
+            <span class="c-n lbl-plr"></span>
+            <span id="en" style="font-weight:bold; color:var(--hp);" class="lbl-trg"></span>
         </div>
         
         <div id="stage">
-            <div id="p-box" class="avatar-box">
-                <div id="spr" class="spr ro-m"><div class="hr"></div><div class="hd"></div><div class="bd"></div></div>
-            </div>
-            <div id="e-box" class="avatar-box">
-                <div id="espr" class="spr"><div id="ehd" class="hd"></div><div id="ehr" class="hr"></div><div id="ebd" class="bd"></div></div>
-            </div>
+            <div id="p-box" class="avatar-box"><div id="spr" class="spr ro-m"><div class="hr"></div><div class="hd"></div><div class="bd"></div></div></div>
+            <div id="e-box" class="avatar-box"><div id="espr" class="spr"><div id="ehd" class="hd"></div><div id="ehr" class="hr"></div><div id="ebd" class="bd"></div></div></div>
         </div>
 
         <div class="grid" style="margin-top:5px;">
-            <div class="flex" style="font-size:10px"><span class="c-n">ATB</span> <progress id="ap" value="0" max="1000" style="width:80%"></progress></div>
-            <div class="flex" style="font-size:10px"><span class="c-h">HP</span> <progress id="ae" value="0" max="1000" style="width:80%"></progress></div>
+            <div class="flex" style="font-size:10px"><span class="c-n lbl-atb"></span> <progress id="ap" value="0" max="1000" style="width:80%"></progress></div>
+            <div class="flex" style="font-size:10px"><span class="c-h lbl-hp"></span> <progress id="ae" value="0" max="1000" style="width:80%"></progress></div>
         </div>
     </section>
 
@@ -87,23 +96,31 @@
 
 <script>
 // --- DB ---
-const J=[{n:'Novice',c:'初心者',hp:60,sp:20,as:50},{n:'Swordman',c:'劍士',hp:150,sp:40,as:45},{n:'Mage',c:'法師',hp:80,sp:120,as:60},{n:'Thief',c:'盜賊',hp:110,sp:50,as:35},{n:'Archer',c:'弓箭手',hp:100,sp:60,as:40},{n:'Acolyte',c:'服事',hp:90,sp:100,as:55},{n:'Merchant',c:'商人',hp:120,sp:50,as:50}];
-const B=[{n:'Angeling',c:'天使波利',h:1500,a:50},{n:'GT Bug',c:'黃金蟲',h:5000,a:120},{n:'Eddga',c:'虎王',h:12000,a:250},{n:'Osiris',c:'歐西里斯',h:30000,a:600},{n:'Baphomet',c:'巴風特',h:99999,a:1500}];
-const SK0=[{n:'First Aid',c:'緊急治療',v:20,t:'h'},{n:'Bash',c:'狂擊',v:1.4,t:'p'},{n:'Napalm',c:'心靈爆破',v:1.5,t:'m'}];
-const SKJ={Swordman:[{n:'Bash',c:'狂擊',v:1.5,t:'p'},{n:'Magnum',c:'怒爆',v:1.2,t:'p'}],Mage:[{n:'FireBolt',c:'火箭術',v:2.0,t:'m'},{n:'ColdBolt',c:'冰箭術',v:2.0,t:'m'}],Thief:[{n:'Double',c:'二刀連擊',t:'a'},{n:'Hiding',c:'偽裝',t:'a'}],Acolyte:[{n:'Heal',c:'治癒術',v:50,t:'h'},{n:'HolyLight',c:'神聖之光',v:1.8,t:'m'}]};
+const J=[{hp:60,sp:20,as:50},{hp:150,sp:40,as:45},{hp:80,sp:120,as:60},{hp:110,sp:50,as:35},{hp:100,sp:60,as:40},{hp:90,sp:100,as:55},{hp:120,sp:50,as:50},
+{hp:350,sp:80,as:40},{hp:150,sp:280,as:55},{hp:240,sp:100,as:25},{hp:220,sp:120,as:35},{hp:200,sp:220,as:50},{hp:280,sp:100,as:45}];
+const B=[{n:'Angeling',h:1500,a:50},{n:'GT Bug',h:5000,a:120},{n:'Eddga',h:12000,a:250},{n:'Osiris',h:30000,a:600},{n:'Baphomet',h:99999,a:1500}];
+const SK0=[{n:'FirstAid',v:20,t:'h'},{n:'Bash',v:1.4,t:'p'},{n:'Napalm',v:1.5,t:'m'}];
+const SKJ={
+    Swordman:[{n:'Bash',v:1.5,t:'p'},{n:'Magnum',v:1.2,t:'p'}],
+    Knight:[{n:'BowlingBash',v:3.0,t:'p'}],
+    Mage:[{n:'FireBolt',v:2.0,t:'m'},{n:'ColdBolt',v:2.0,t:'m'}],
+    Wizard:[{n:'StormGust',v:4.5,t:'m'}],
+    Thief:[{n:'Double',t:'a'},{n:'Hiding',t:'a'}],
+    Assassin:[{n:'SonicBlow',v:4.0,t:'p'}],
+    Archer:[{n:'Double',v:1.8,t:'p'}],
+    Hunter:[{n:'ArrowShower',v:2.2,t:'p'}],
+    Acolyte:[{n:'Heal',v:50,t:'h'},{n:'HolyLight',v:1.8,t:'m'}],
+    Priest:[{n:'Magnus',v:5.0,t:'m'}],
+    Merchant:[{n:'Bash',v:1.5,t:'p'}],
+    Blacksmith:[{n:'Adrenaline',v:1.5,t:'a'}]
+};
+const JN=['Novice','Swordman','Mage','Thief','Archer','Acolyte','Merchant','Knight','Wizard','Assassin','Hunter','Priest','Blacksmith'];
 const LOC_EN=["Prontera","Payon","Orc Dungeon","Glast Heim","Clock Tower","Thanatos"];
 const LOC_CN=["普隆德拉","斐揚","獸人洞穴","古城","鐘塔","塔納托斯"];
 const MON_EN=["Wolf","Orc","Raydric","Alarm","Thanatos"];
 const MON_CN=["狼","獸人","深淵騎士","朽魔","塔納托斯"];
 const DB_IT={w:[{n:'Knife',v:5},{n:'Blade',v:15},{n:'Saber',v:40},{n:'Excalibur',v:100}],a:[{n:'Shirt',v:10},{n:'Coat',v:50},{n:'Mail',v:90},{n:'Suit',v:250}]};
 
-// --- TRANSLATIONS ---
-const T={
-    en:{st:"ID REGISTRATION",ph:"ENTER NAME",ea:"EASY",ha:"HARD",mi:"MISSION: Play to unlock secrets.",on:"AUTO:ON",off:"AUTO:OFF",lv:"LV",pts:"PTS",ok:"OK",stb:"START",mvp:"MVP DETECTED!",fi:"FIGHT",re:"REST",nx:"NEXT FLOOR",win:"CLEARED",vic:"VICTORY",go:"GAME OVER",rs:"RESTART",wipe:"WIPE?",sel:"Select Skill:",jc:"Job Change!",rank:"RANKING",sub:"SUBMIT SCORE",evt_atk:"Blacksmith refined weapon! +1 ATK",evt_matk:"Sage refined staff! +1 MATK",evt_hp:"Priest blessed you! +10 MaxHP"},
-    cn:{st:"身分登錄",ph:"輸入名稱",ea:"簡單",ha:"困難",mi:"任務: 遊玩以解鎖秘密",on:"自動:開",off:"自動:關",lv:"等級",pts:"點數",ok:"確認",stb:"開始",mvp:"MVP出現!",fi:"戰鬥",re:"休息",nx:"下一層",win:"區域清除",vic:"任務完成",go:"任務失敗",rs:"重來",wipe:"刪除存檔?",sel:"選擇技能:",jc:"可轉職!",rank:"排行榜",sub:"上傳分數",evt_atk:"鐵匠精煉成功! +1 ATK",evt_matk:"賢者升級法杖! +1 MATK",evt_hp:"牧師祝福! +10 HP上限"}
-};
-
-// --- VISUAL ASSETS ---
 const M_ART = {
     'Poring': { h:'#fca', hr:'none', b:'none', rad:'50%', w:24, ht:20, t:15 },
     'Poporing': { h:'#5f5', hr:'none', b:'none', rad:'50%', w:24, ht:20, t:15 },
@@ -120,7 +137,7 @@ const M_ART = {
     'Thanatos': { h:'#406', hr:'#fff', b:'#204', rad:'2px', op:0.7 }
 };
 
-const K='jro_neon_v5', el=i=>document.getElementById(i), rnd=m=>Math.floor(Math.random()*m);
+const K='jro_ultimate_v3', el=i=>document.getElementById(i), rnd=m=>Math.floor(Math.random()*m);
 const GH_USER="6wmzzcd7m5-commits", GH_REPO="nojob-ro", RAW_URL=`https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/main/leaderboard.json`, SALT="SECRET_KEY_999";
 
 const G={
@@ -131,251 +148,149 @@ const G={
         if(r){
             try{ 
                 const d=JSON.parse(atob(r));
-                if(!d.eq) d.eq = {w:null,a:null};
-                if(!d.b) d.b = {atk:0,matk:0};
                 this.p=d; this.s.b=false; clearInterval(this.s.tm);
-                if(this.s.spd<10)this.s.spd=10; this.spd(this.s.spd); 
-                this.draw();
-                if(this.p.pts>0&&!this.s.au) return this.stM(this.s.f==1);
-                this.mnu();
-            }catch(e){ console.error(e); this.scr(); }
+                document.body.className = 'lang-' + this.s.l;
+                this.draw(); this.mnu();
+            }catch(e){ this.scr(); }
         }else{ this.scr(); }
     },
     
     xpReq(){ return this.p.lv * 100; },
     mobXp(){ return this.s.f * 120; },
 
-    openRank(){ el('rank-ui').classList.remove('hide'); el('rank-list').innerHTML="Fetching..."; fetch(RAW_URL+'?t='+Date.now()).then(r=>r.json()).then(d=>{let h="";d.forEach((r,i)=>{h+=`<div class="rank-row"><span style="color:${i<3?'#ff0':'#fff'}">#${i+1} ${r.n}</span><span class="c-d">${r.j}</span><span class="c-n">F${r.f}</span></div>`;});el('rank-list').innerHTML=h;}).catch(()=>el('rank-list').innerHTML="Offline"); },
+    openRank(){ el('rank-ui').classList.remove('hide'); el('rank-list').innerHTML="Fetching..."; fetch(RAW_URL+'?t='+Date.now()).then(r=>r.json()).then(d=>{let h="";d.forEach((r,i)=>{h+=`<div class="rank-row"><span>#${i+1} ${r.n}</span><span class="n-job-${r.j}"></span><span>F${r.f}</span></div>`;});el('rank-list').innerHTML=h;}).catch(()=>el('rank-list').innerHTML="Offline"); },
     closeRank(){el('rank-ui').classList.add('hide');},
     submitRank(){
-        const now=Date.now(),last=localStorage.getItem('last_sub')||0;
-        if(now-last<60000){alert("Wait 60s.");return;}
-        localStorage.setItem('last_sub',now);
         const raw=`${this.p.n}-${this.p.j}-${this.s.f}-${SALT}`;
         let hash=0;for(let i=0;i<raw.length;i++){hash=((hash<<5)-hash)+raw.charCodeAt(i);hash|=0;}
         const d=JSON.stringify({n:this.p.n,j:this.p.j,f:this.s.f,h:hash.toString()});
-        const t=encodeURIComponent(`SCORE: ${this.p.n}`);
-        const b=encodeURIComponent(`\`\`\`json\n${d}\n\`\`\``);
-        window.open(`https://github.com/${GH_USER}/${GH_REPO}/issues/new?title=${t}&body=${b}`,'_blank');
+        window.open(`https://github.com/${GH_USER}/${GH_REPO}/issues/new?title=SCORE&body=\`\`\`json\n${d}\n\`\`\``,'_blank');
     },
 
     scr(){
-        if(!this.s) this.s = {l:'en'};
         const c=el('ctl'); 
-        this.tmp.g = this.tmp.g || 'm'; 
-        c.innerHTML=`<div class="panel" style="grid-column:span 2;text-align:center"><div class="c-n" style="font-weight:bold;margin-bottom:10px">${this.txt('st')}</div><div class="flex" style="justify-content:center;gap:5px;margin-bottom:10px"><input id="in" placeholder="${this.txt('ph')}" maxlength="10"><div id="bm" class="g-tag ${this.tmp.g=='m'?'active':''}" onclick="G.setG('m')">_m</div><div id="bf" class="g-tag ${this.tmp.g=='f'?'active':''}" onclick="G.setG('f')">_f</div></div><button onclick="G.ng()" style="width:100%">${this.txt('stb')}</button></div>`;
+        c.innerHTML=`<div class="panel" style="grid-column:span 2;text-align:center"><div class="c-n lbl-reg" style="font-weight:bold;margin-bottom:10px"></div><div class="flex" style="justify-content:center;gap:5px;margin-bottom:10px"><input id="in" maxlength="10"><div id="bm" class="g-tag ${this.tmp.g=='m'?'active':''}" onclick="G.setG('m')">_m</div><div id="bf" class="g-tag ${this.tmp.g=='f'?'active':''}" onclick="G.setG('f')">_f</div></div><button onclick="G.ng()" style="width:100%" class="lbl-start"></button></div>`;
         this.updSpr();
-        if(this.tm_scr) clearInterval(this.tm_scr);
-        this.tm_scr = setInterval(() => {
-            const keys = Object.keys(M_ART);
-            const r = keys[Math.floor(Math.random() * keys.length)];
-            this.drawMob(r);
-            el('en').innerText = r;
-        }, 3000);
-        this.drawMob('Poring'); el('en').innerText='Poring';
     },
     setG(g){ this.tmp.g=g; el('bm').className=g=='m'?'g-tag active':'g-tag'; el('bf').className=g=='f'?'g-tag active':'g-tag'; this.updSpr(); },
     updSpr(){ el('spr').className=`spr ro-${this.tmp.g} j-0`; },
 
     ng(){
-        if(this.tm_scr) clearInterval(this.tm_scr); 
-        el('en').innerText = "TARGET";
         const n=el('in').value||"Novice";
-        this.p={n:n,j:0,lv:1,xp:0,nx:100,hp:60,mh:60,sp:20,ms:20,str:1,agi:1,vit:1,int:1,dex:1,luk:1,pts:5,pots:3,b:{atk:0,matk:0},eq:{w:null,a:null},sk:{},act:null,g:this.tmp.g};
-        const curLang = this.s && this.s.l ? this.s.l : 'en';
-        this.s={f:1,b:false,spd:10,au:false,l:curLang};
+        this.p={n:n,j:0,lv:1,xp:0,hp:60,mh:60,sp:20,ms:20,str:1,agi:1,vit:1,int:1,dex:1,luk:1,pts:5,pots:3,b:{atk:0,matk:0},eq:{w:null,a:null},sk:{},act:null,g:this.tmp.g};
         this.skM();
     },
     skM(){
-        this.sv(); el('ctl').innerHTML=''; this.log(this.txt('sel'),'l-w');
-        SK0.forEach(s=>{ this.btn(this.s.l=='cn'?s.c:s.n,()=>{ if(s.t!='h')this.p.act=s; this.p.sk[s.n]=1; this.stM(true); }); });
+        el('ctl').innerHTML='';
+        SK0.forEach(s=>{ this.btn("",()=>{ if(s.t!='h')this.p.act=s; this.p.sk[s.n]=1; this.stM(true); },'n-sk-'+s.n); });
     },
     stM(st){
-        const c=el('ctl'); c.innerHTML=''; 
-        ['str','agi','vit','int','dex','luk'].forEach(k=>{ 
-            this.btn(`${k.toUpperCase()} +`,()=>{
-                if(this.p.pts>0){ this.p[k]++; this.p.pts--; this.draw(); this.stM(st); }
-            }); 
-        });
-        if(st || this.p.pts==0) this.btn(this.txt('ok'),()=>{ if(this.p.lv>=10&&this.p.j==0)this.jbM(); else this.mnu(); });
+        el('ctl').innerHTML=''; 
+        ['str','agi','vit','int','dex','luk'].forEach(k=>{ this.btn(k.toUpperCase()+"+",()=>{if(this.p.pts>0){this.p[k]++;this.p.pts--;this.draw();this.stM(st);}}); });
+        if(st || this.p.pts==0) this.btn("OK",()=>{ if(this.p.lv>=10&&this.p.j==0)this.jbM(); else this.mnu(); });
     },
     jbM(){
         el('ctl').innerHTML='';
-        for(let i=1;i<=6;i++) this.btn(this.s.l=='cn'?J[i].c:J[i].n,()=>{
-            this.p.j=i; this.p.pts+=5; this.p.mh=J[i].hp+this.p.lv*20; this.p.hp=this.p.mh;
-            const sn=J[i].n, l=SKJ[sn]; if(l) l.forEach(s=>{ if(s.t!='h'&&s.t!='a')this.p.act=s; this.p.sk[s.n]=1; });
-            this.mnu();
-        });
+        for(let i=1;i<=6;i++) this.btn("",()=>{ this.p.j=i; this.p.pts+=5; this.p.mh=J[i].hp+this.p.lv*20; this.p.hp=this.p.mh; const l=SKJ[JN[i]]; if(l) l.forEach(s=>{if(s.t!='h'&&s.t!='a')this.p.act=s;this.p.sk[s.n]=1;}); this.mnu(); },'n-job-'+i);
+    },
+    jcM(){
+        el('ctl').innerHTML='';
+        const nextJ = this.p.j + 6;
+        this.btn("",()=>{
+            this.p.j = nextJ; this.p.mh += 200; this.p.hp = this.p.mh;
+            const l=SKJ[JN[nextJ]]; if(l) l.forEach(s=>{if(s.t!='h'&&s.t!='a')this.p.act=s;this.p.sk[s.n]=1;});
+            this.draw(); this.mnu();
+        },'n-job-'+nextJ);
     },
     mnu(){
         this.sv(); el('ctl').innerHTML=''; this.draw();
-        
-        // AUTO Battle Bug Fix: Correctly triggers next floor
-        if(this.s.au && !this.s.b){ 
-            setTimeout(()=>{ 
-                if(!this.s.b && this.p.pts === 0) {
-                    if(this.s.f%10==0)this.bt(true); else this.bt(false); 
-                }
-            }, 500); 
-            return; 
-        }
-        
+        if(this.s.au && !this.s.b){ setTimeout(()=>{ if(!this.s.b) this.bt(this.s.f%10==0); }, 500); return; }
         if(this.s.f%10==0) this.btn("BOSS",()=>this.bt(true),'btn-red');
-        else this.btn(this.txt('fi'),()=>this.bt(false));
-        
-        this.btn(this.txt('re'),()=>{ this.p.hp=this.p.mh; this.draw(); });
-        if(this.s.f>1) el('ctl').innerHTML+=`<button class="btn-blue" style="width:100%;margin-top:5px" onclick="G.submitRank()">${this.txt('sub')}</button>`;
+        else this.btn("FIGHT",()=>this.bt(false));
+        this.btn("REST",()=>{ this.p.hp=this.p.mh; this.draw(); });
     },
     bt(isB){
-        if(this.s.b) return;
-        this.s.b=true; 
+        if(this.s.b) return; this.s.b=true; 
         const mScale = this.s.f > 50 ? Math.pow(1.05, this.s.f-50) : 1;
-        
         if(isB){
             const b = B[Math.min(4, ((this.s.f/10)-1)%5)];
-            this.mob = { n: this.s.l=='cn'?b.c:b.n, h:b.h*mScale, a:b.a*mScale, x:this.mobXp()*10, vis:b.n };
+            this.mob = { n: b.n, h:b.h*mScale, a:b.a*mScale, x:this.mobXp()*10, vis:b.n };
         } else {
-            let mn, vis;
-            if(this.s.f <= 9) {
-                if(this.s.f <= 3) { mn='Poring'; vis='Poring'; }
-                else if(this.s.f <= 6) { mn='Poporing'; vis='Poporing'; }
-                else { mn='Marin'; vis='Marin'; }
-            } else {
-                const idx = Math.min(4, Math.ceil((this.s.f-10)/10)-1);
-                mn = this.s.l=='cn'?MON_CN[idx]:MON_EN[idx];
-                vis = MON_EN[idx];
-            }
-            this.mob = { n:mn, h:this.s.f*25*mScale, a:(this.s.f*3+5)*mScale, x:this.mobXp(), vis:vis };
+            let mn = (this.s.f <= 9) ? (this.s.f <= 3 ? 'Poring' : this.s.f <= 6 ? 'Poporing' : 'Marin') : MON_EN[Math.min(4, Math.ceil((this.s.f-10)/10)-1)];
+            this.mob = { n:mn, h:this.s.f*25*mScale, a:(this.s.f*3+5)*mScale, x:this.mobXp(), vis:mn };
         }
-        
         this.mob.hp=Math.floor(this.mob.h); this.mob.mh=this.mob.hp;
-        this.pb=0; this.eb=0;
-        
-        el('en').innerText=this.mob.n;
-        this.drawMob(this.mob.vis);
-        if(this.s.tm)clearInterval(this.s.tm); 
+        this.pb=0; this.eb=0; el('en').innerText=this.mob.n; this.drawMob(this.mob.vis);
         this.s.tm=setInterval(()=>this.loop(),30);
     },
     drawMob(name) {
         const s = M_ART[name] || { h:'#999', hr:'#555', b:'#333' };
         const es = el('espr'), hd = el('ehd'), hr = el('ehr'), bd = el('ebd');
-        es.style.transform = name.includes('Baphomet') || name.includes('GTB') ? 'scaleX(-1) scale(1.2)' : 'scaleX(-1)';
-        es.style.opacity = s.op || 1;
-        hd.style.background = s.h; hd.style.borderRadius = s.rad || '4px';
+        es.style.transform = 'scaleX(-1)'; hd.style.background = s.h; hd.style.borderRadius = s.rad || '4px';
         hd.style.width = (s.w || 20) + 'px'; hd.style.height = (s.ht || 18) + 'px';
-        hd.style.top = (s.t || 0) + 'px'; hd.style.boxShadow = s.glow ? '0 0 5px #fff' : 'none';
-        hr.style.background = s.hr === 'none' ? 'transparent' : s.hr;
-        hr.style.width = (s.hr_w || 24) + 'px'; hr.style.height = (s.hr_h || 10) + 'px';
-        hr.style.left = (s.hr_l || 3) + 'px';
-        bd.style.background = s.b === 'none' ? 'transparent' : s.b;
+        hr.style.background = s.hr === 'none' ? 'transparent' : s.hr; bd.style.background = s.b === 'none' ? 'transparent' : s.b;
     },
     loop(){
         if(!this.s.b) return;
-        const iter = this.s.spd;
-        for(let i=0; i<iter; i++){ if(!this.s.b) break; this.tk(); }
-        if(this.s.b){
-            el('ap').value=this.pb; el('ae').value=this.mob.hp; el('ae').max=this.mob.mh;
-        }
+        for(let i=0; i<this.s.spd; i++){ if(!this.s.b) break; this.tk(); }
+        if(this.s.b){ el('ap').value=this.pb; el('ae').value=this.mob.hp; el('ae').max=this.mob.mh; }
     },
     tk(){
-        const ps=this.calc(this.p), es=10; 
-        this.pb+=ps.aspd; this.eb+=es;
+        const ps=this.calc(this.p); this.pb+=ps.aspd; this.eb+=10;
         if(this.pb>=1000){ this.pb=0; this.act(this.p,this.mob,ps,true); }
         if(this.eb>=1000){ this.eb=0; this.act(this.mob,this.p,{hit:999,crit:0,atk:this.mob.a},false); }
     },
     calc(c){
-        const j=J[c.j]||J[0], eq=c.eq.w?.v||0;
+        const j=J[c.j], eq=c.eq.w?.v||0;
         let atk=c.str+(c.dex/5)+(c.luk/3)+c.lv*2+c.b.atk+eq;
         let matk=c.int+(c.int/2)+(c.dex/5)+c.lv*2+c.b.matk+eq;
         let aspd=Math.floor((j.as)+(c.agi*0.8)+(c.dex*0.2));
-        let hit=c.dex+c.lv, flee=c.agi+c.lv, crit=1+(c.luk*0.3);
-        return {atk:Math.floor(atk), matk:Math.floor(matk), aspd, hit, flee, crit, def:Math.floor(c.vit/2+c.lv/2)};
+        return {atk:Math.floor(atk), matk:Math.floor(matk), aspd, hit:c.dex+c.lv, flee:c.agi+c.lv, crit:1+(c.luk*0.3), def:Math.floor(c.vit/2+c.lv/2)};
     },
     act(s,t,st,p){
-        const box = p ? el('p-box') : el('e-box');
         const targetBox = p ? el('e-box') : el('p-box');
-        box.classList.remove(p?'anim-atk-p':'anim-atk-e');
-        void box.offsetWidth;
-        box.classList.add(p?'anim-atk-p':'anim-atk-e');
         let sk=p?this.p.act:null, mul=sk?sk.v:1;
-        let hit=p ? (80+st.hit) : 100, cr=p?(Math.random()*100<st.crit):false;
-        if(p && Math.random()*100 > hit){ 
-            this.pop(targetBox, "MISS", "dmg-m"); 
-            return; 
-        }
-        let d = Math.max(1, (st.atk*mul*(cr?1.5:1)) - (p?0:st.def));
-        t.hp -= Math.floor(d);
-        this.pop(targetBox, Math.floor(d) + (cr?'!':''), cr?'dmg-c':'dmg-w');
-        targetBox.classList.remove('anim-shake');
-        void targetBox.offsetWidth;
-        targetBox.classList.add('anim-shake');
-        if(p&&this.p.hp<this.p.mh*0.3&&this.p.pots>0){this.p.pots--;this.p.hp+=Math.floor(this.p.mh*0.5); this.pop(box,"POTION","dmg-w");}
-        else if(!p)this.draw();
+        let d = Math.max(1, ( (sk?.t=='m'?st.matk:st.atk)*mul ) - (p?0:st.def));
+        t.hp -= Math.floor(d); this.pop(targetBox, Math.floor(d), 'dmg-w');
         if(t.hp<=0){ if(p)this.win(); else this.over(); }
     },
     pop(dom, txt, cls){
         if(this.s.spd > 30) return; 
-        const d = document.createElement('div');
-        d.className = `dmg-pop ${cls}`;
-        d.innerText = txt;
-        dom.appendChild(d);
-        setTimeout(()=>d.remove(), 800);
+        const d = document.createElement('div'); d.className = `dmg-pop ${cls}`; d.innerText = txt;
+        dom.appendChild(d); setTimeout(()=>d.remove(), 800);
     },
     win(){
-        clearInterval(this.s.tm); this.s.b=false; 
-        this.p.xp+=Math.floor(this.mob.x);
-        this.s.f++;
-        if(Math.random()<0.1) {
-            const type=rnd(2)?'w':'a', list=DB_IT[type], it=list[Math.min(list.length-1, Math.floor(this.s.f/8))];
-            if(!this.p.eq[type]||it.v>this.p.eq[type].v){
-                if(type=='a'){ if(this.p.eq.a)this.p.mh-=this.p.eq.a.v; this.p.mh+=it.v; }
-                this.p.eq[type]=it; 
-                this.log(`Found ${it.n}`,'c-n');
-            }
-        }
-        if(Math.random()<0.05){ this.p.b.atk++; this.log(this.txt('evt_atk'),'c-r'); }
+        clearInterval(this.s.tm); this.s.b=false; this.p.xp+=Math.floor(this.mob.x); this.s.f++;
         if(this.p.xp>=this.xpReq()){
-            this.p.lv++; this.p.xp=0; this.p.pts+=3; 
-            this.p.mh+=20; this.p.hp=this.p.mh;
-            if(this.s.au){ this.autoDist(); this.mnu(); } else { this.stM(false); }
-        } else {
-            this.mnu();
-        }
+            this.p.lv++; this.p.xp=0; this.p.pts+=3; this.p.mh+=20; this.p.hp=this.p.mh;
+            if(this.p.lv>=40 && this.p.j>0 && this.p.j<=6) this.jcM();
+            else if(this.s.au){ this.autoDist(); this.mnu(); } else { this.stM(false); }
+        } else { this.mnu(); }
     },
-    over(){ clearInterval(this.s.tm); this.s.b=false; el('ctl').innerHTML=`<button onclick="G.scr()">${this.txt('go')}</button>`; },
-    txt(k){return T[this.s.l][k]||k},
-    log(t,c){ const d=document.createElement('div');d.className=`lr ${c||''}`;d.innerText=t;el('log').prepend(d);if(el('log').children.length>20)el('log').lastChild.remove(); },
-    btn(t,fn,c=''){const b=document.createElement('button');b.innerText=t;b.onclick=fn;if(c)b.className=c;el('ctl').appendChild(b);},
+    over(){ clearInterval(this.s.tm); this.s.b=false; el('ctl').innerHTML=`<button onclick="G.scr()">RESTART</button>`; },
+    btn(t,fn,c=''){const b=document.createElement('button');b.innerText=t;b.onclick=fn;if(c)b.classList.add(...c.split(' '));el('ctl').appendChild(b);},
     draw(){
-        const p=this.p;
-        if(!p) return;
+        const p=this.p; if(!p) return;
         el('spr').className=`spr ro-${p.g} j-${p.j}`;
-        el('un').innerText=p.n; el('ul').innerText=p.lv; el('ufl').innerText=this.s.f;
-        el('uloc').innerText = this.s.f > 50 ? "Endless" : (this.s.l=='cn'?LOC_CN:LOC_EN)[Math.min(5,Math.ceil(this.s.f/10)-1)];
+        el('uj').className='c-d n-job-'+p.j; el('un').innerText=p.n; el('ul').innerText=p.lv; el('ufl').innerText=this.s.f;
+        el('uloc').innerText = (this.s.l=='cn'?LOC_CN:LOC_EN)[Math.min(5,Math.ceil(this.s.f/10)-1)] || "Endless";
         el('ueqw').innerText = p.eq.w?p.eq.w.n:'-'; el('ueqa').innerText = p.eq.a?p.eq.a.n:'-';
         ['str','agi','vit','int','dex','luk'].forEach(k=>el('v'+k).innerText=p[k]);
         el('bh').value=p.hp; el('bh').max=p.mh; el('uh').innerText=p.hp;
-        el('bs').value=p.sp; el('bs').max=20; el('us').innerText=p.sp;
+        el('bs').value=p.sp; el('bs').max=p.ms; el('us').innerText=p.sp;
         const ps=this.calc(p);
         el('catk').innerText=ps.atk; el('cmatk').innerText=ps.matk; el('caspd').innerText=ps.aspd;
-        el('ccri').innerText=ps.crit+"%"; el('chit').innerText=ps.hit; el('cflee').innerText=ps.flee;
+        el('ccri').innerText=Math.floor(ps.crit)+"%"; el('chit').innerText=ps.hit; el('cflee').innerText=ps.flee;
         el('b-au').className = this.s.au ? "btn-sm active" : "btn-sm";
     },
     autoDist(){ while(this.p.pts>0){ const k=['str','agi','vit','int','dex','luk'][rnd(6)]; this.p[k]++; this.p.pts--; } this.draw(); },
-    tAu(){ 
-        this.s.au=!this.s.au; 
-        this.draw(); 
-        if(this.s.au){
-            if(this.p.pts>0) this.autoDist(); 
-            if(!this.s.b) this.mnu(); 
-        }
-    },
-    lang(){ this.s.l=this.s.l=='en'?'cn':'en'; this.draw(); if(this.p && this.p.pts>0)this.stM(); else if(this.p && !this.s.b)this.mnu(); else this.scr(); },
+    tAu(){ this.s.au=!this.s.au; this.draw(); if(this.s.au&&!this.s.b) this.mnu(); },
+    lang(){ this.s.l=this.s.l=='en'?'cn':'en'; document.body.className='lang-'+this.s.l; this.draw(); if(this.p&&!this.s.b)this.mnu(); },
     sv(){ localStorage.setItem(K, btoa(JSON.stringify(this.p))); },
     wipe(){ if(confirm("Reset?")) { localStorage.removeItem(K); location.reload(); } },
-    spd(x){ this.s.spd=x; [10,30,100].forEach(n=>el('s'+n).className='btn-sm'); el('s'+x).className='btn-sm active'; },
+    spd(x){ this.s.spd=x; [10,30,100].forEach(n=>el('s'+n).classList.remove('active')); el('s'+x).classList.add('active'); },
     exp(){ const a=document.createElement('a'); a.href='data:text/plain;base64,'+btoa(JSON.stringify(this.p)); a.download='save.jro'; a.click(); },
-    imp(e){ const f=e.files[0]; const r=new FileReader(); r.onload=x=>{ try{this.p=JSON.parse(atob(x.target.result));this.draw();this.mnu();}catch(e){alert("Error");}}; r.readAsText(f); }
+    imp(e){ const f=e.files[0], r=new FileReader(); r.onload=x=>{this.p=JSON.parse(atob(x.target.result));this.draw();this.mnu();}; r.readAsText(f); }
 };
 G.init();
 </script>
