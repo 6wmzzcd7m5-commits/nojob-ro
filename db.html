@@ -1,0 +1,76 @@
+<script>
+/**
+ * AEGIS ENTITY DATABASE
+ * Centralized data for monsters, skills, and job classes.
+ */
+window.DB = {
+    // MONSTER TIER LIST (Tier 0 = Map Zone 1-10, etc.)
+    mobs: [
+        [ // ZONE 01-10: Prontera Fields
+            { n: 'Poring', hp: 50, atk: 12, xp: 15, zeny: 10 },
+            { n: 'Fabre', hp: 65, atk: 14, xp: 18, zeny: 12 },
+            { n: 'Chonchon', hp: 55, atk: 18, xp: 22, zeny: 15 }
+        ],
+        [ // ZONE 11-20: Payon Cave / Culverts
+            { n: 'Zombie', hp: 400, atk: 55, xp: 90, zeny: 50 },
+            { n: 'Skeleton', hp: 450, atk: 65, xp: 120, zeny: 75 },
+            { n: 'Poporing', hp: 320, atk: 45, xp: 80, zeny: 40 }
+        ],
+        [ // ZONE 21-30: Orc Village / Mt. Mjolnir
+            { n: 'Orc Warrior', hp: 850, atk: 95, xp: 250, zeny: 180 },
+            { n: 'Drainliar', hp: 600, atk: 85, xp: 210, zeny: 150 },
+            { n: 'Mantis', hp: 720, atk: 110, xp: 280, zeny: 200 }
+        ]
+    ],
+
+    // MVP BOSS DATA (Interception every 10th Zone)
+    bosses: {
+        10: { n: 'Angeling', hp: 2000, atk: 80, xp: 1000, zeny: 1000 },
+        20: { n: 'Golden Thief Bug', hp: 6000, atk: 180, xp: 3500, zeny: 5000 },
+        30: { n: 'Orc Hero', hp: 15000, atk: 450, xp: 12000, zeny: 15000 }
+    },
+
+    // JOB EVOLUTION DATA (Class Bonuses & Archetypes)
+    jobs: {
+        'Novice': { 
+            next: ['Swordman', 'Mage', 'Thief'], 
+            pool: ['First Aid'], 
+            hp: 60, sp: 20, 
+            stats: [2, 2, 2, 1, 1, 1] 
+        },
+        'Swordman': { 
+            next: ['Knight'], 
+            pool: ['Bash'], 
+            hp: 160, sp: 40, 
+            stats: [5, 3, 4, 1, 2, 1] 
+        },
+        'Mage': { 
+            next: ['Wizard'], 
+            pool: ['Fire Bolt'], 
+            hp: 90, sp: 110, 
+            stats: [1, 4, 2, 9, 3, 1] 
+        },
+        'Thief': { 
+            next: ['Assassin'], 
+            pool: ['Envenom'], 
+            hp: 110, sp: 60, 
+            stats: [4, 7, 2, 2, 4, 2] 
+        },
+        'Knight': { next: [], pool: ['Bowling Bash'], hp: 500, sp: 100, stats: [10, 5, 8, 2, 4, 2] },
+        'Wizard': { next: [], pool: ['Storm Gust'], hp: 250, sp: 400, stats: [2, 6, 4, 15, 8, 2] },
+        'Assassin': { next: [], pool: ['Sonic Blow'], hp: 350, sp: 150, stats: [8, 12, 4, 4, 8, 5] }
+    },
+
+    // SKILL DATASET (Multipliers & SP Costs)
+    skills: { 
+        'First Aid': { sp: 3, val: 25, type: 'heal' }, 
+        'Bash': { sp: 8, val: 1.6, type: 'phys' }, 
+        'Fire Bolt': { sp: 12, val: 2.2, type: 'mag' }, 
+        'Envenom': { sp: 10, val: 1.4, type: 'phys' },
+        'Bowling Bash': { sp: 25, val: 3.5, type: 'phys' },
+        'Storm Gust': { sp: 45, val: 4.0, type: 'mag' },
+        'Sonic Blow': { sp: 30, val: 5.0, type: 'phys' }
+    }
+};
+console.log("AEGIS_KERNEL: DATABASE_LOAD_SUCCESSFUL");
+</script>
