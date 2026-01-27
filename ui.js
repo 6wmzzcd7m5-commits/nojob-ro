@@ -22,10 +22,20 @@ window.UI = {
         // Persistent HUD Elements
         el('ui-name').innerText = p.n; // Permanent Player Name Field
         el('btn-save').innerText = DB.txt('save');
+        el('btn-reset').innerText = DB.txt('reset');
+        el('btn-rank').innerText = DB.txt('rank');
+        el('lbl-lv').innerText = DB.txt('lv');
+        el('lbl-flr').innerText = DB.txt('flr');
         el('ui-job').innerText = DB.getName('jobs', p.job);
         el('btn-speed').innerText = s.spd + "x";
         el('ui-lvl').innerText = p.lvl;
         this.updLoc(s.f);
+
+        // Localize Stat Labels
+        ['atk', 'matk', 'cri', 'hit', 'flee', 'def', 'str', 'agi', 'vit', 'int', 'dex', 'luk'].forEach(k => {
+            const labelEl = el('lbl-' + k);
+            if (labelEl) labelEl.innerText = DB.txt(k);
+        });
 
         // Calculate Passive Bonuses
         const pas = { str: 0, agi: 0, vit: 0, int: 0, dex: 0, luk: 0 };

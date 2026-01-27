@@ -16,7 +16,7 @@
             <div class="flex" style="border-bottom:1px solid var(--neon); padding-bottom:5px; margin-bottom:5px;">
                 <div class="flex" style="gap:5px">
                     <button class="btn-sm" id="btn-save" onclick="G.exp()">SAVE</button>
-                    <button class="btn-sm btn-red" onclick="G.reset()">RESET</button>
+                    <button class="btn-sm btn-red" id="btn-reset" onclick="G.reset()">RESET</button>
                     <button class="btn-sm" id="btn-rank" onclick="G.rank()" style="color:var(--zeny)">RANK</button>
                     <button class="btn-sm" onclick="G.toggleLang()">EN/繁</button>
                 </div>
@@ -45,21 +45,21 @@
             </div>
 
             <div class="grid g-6" style="margin-top:5px; font-size:8px;">
-                <div class="stat-cell">ATK<b id="ui-atk">0</b></div>
-                <div class="stat-cell">MATK<b id="ui-matk">0</b></div>
-                <div class="stat-cell">CRI<b id="ui-cri">0</b></div>
-                <div class="stat-cell">HIT<b id="ui-hit">0</b></div>
-                <div class="stat-cell">FLEE<b id="ui-flee">0</b></div>
-                <div class="stat-cell">DEF<b id="ui-def">0</b></div>
+                <div class="stat-cell"><span id="lbl-atk">ATK</span><b id="ui-atk">0</b></div>
+                <div class="stat-cell"><span id="lbl-matk">MATK</span><b id="ui-matk">0</b></div>
+                <div class="stat-cell"><span id="lbl-cri">CRI</span><b id="ui-cri">0</b></div>
+                <div class="stat-cell"><span id="lbl-hit">HIT</span><b id="ui-hit">0</b></div>
+                <div class="stat-cell"><span id="lbl-flee">FLEE</span><b id="ui-flee">0</b></div>
+                <div class="stat-cell"><span id="lbl-def">DEF</span><b id="ui-def">0</b></div>
             </div>
 
             <div class="grid g-6" style="margin-top:4px;">
-                <div class="stat-cell">STR<b id="ui-str">1</b></div>
-                <div class="stat-cell">AGI<b id="ui-agi">1</b></div>
-                <div class="stat-cell">VIT<b id="ui-vit">1</b></div>
-                <div class="stat-cell">INT<b id="ui-int">1</b></div>
-                <div class="stat-cell">DEX<b id="ui-dex">1</b></div>
-                <div class="stat-cell">LUK<b id="ui-luk">1</b></div>
+                <div class="stat-cell"><span id="lbl-str">STR</span><b id="ui-str">1</b></div>
+                <div class="stat-cell"><span id="lbl-agi">AGI</span><b id="ui-agi">1</b></div>
+                <div class="stat-cell"><span id="lbl-vit">VIT</span><b id="ui-vit">1</b></div>
+                <div class="stat-cell"><span id="lbl-int">INT</span><b id="ui-int">1</b></div>
+                <div class="stat-cell"><span id="lbl-dex">DEX</span><b id="ui-dex">1</b></div>
+                <div class="stat-cell"><span id="lbl-luk">LUK</span><b id="ui-luk">1</b></div>
             </div>
 
             <div class="flex"

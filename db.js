@@ -16,7 +16,9 @@ window.DB = {
                 empty_inv: "EMPTY_INVENTORY", no_skills: "NO_SKILLS_LEARNED",
                 fetching: "FETCHING_LEGENDS...", offline: "RANK_OFFLINE", synced: "LEGENDARY_DATA_SYNCED",
                 retry: "RETRY", back: "BACK", legends: "🏆 TOP 10 LEGENDS",
-                ended: "YOUR ADVENTURE ENDS HERE...", reached: "FLOOR REACHED:", mobile_ed: "ULTIMATE MOBILE EDITION"
+                ended: "YOUR ADVENTURE ENDS HERE...", reached: "FLOOR REACHED:", mobile_ed: "ULTIMATE MOBILE EDITION",
+                atk: "ATK", matk: "MATK", cri: "CRI", hit: "HIT", flee: "FLEE", def: "DEF",
+                str: "STR", agi: "AGI", vit: "VIT", int: "INT", dex: "DEX", luk: "LUK"
             },
             maps: {
                 "Prontera Field": "Prontera Field", "Payon Cave": "Payon Cave", "Prontera Culvert": "Prontera Culvert",
@@ -62,7 +64,9 @@ window.DB = {
                 empty_inv: "物品欄空空如也", no_skills: "尚未學會技能",
                 fetching: "正在獲取傳奇榜...", offline: "排行榜離線", synced: "傳奇數據已同步",
                 retry: "重試", back: "返回", legends: "🏆 前10名傳奇",
-                ended: "你的冒險結束了...", reached: "到達樓層:", mobile_ed: "究極行動版"
+                ended: "你的冒險結束了...", reached: "到達樓層:", mobile_ed: "究極行動版",
+                atk: "攻擊", matk: "魔攻", cri: "爆擊", hit: "命中", flee: "迴避", def: "防禦",
+                str: "力量", agi: "敏捷", vit: "體質", int: "智力", dex: "靈巧", luk: "幸運"
             },
             maps: {
                 "Prontera Field": "普隆德拉 原野", "Payon Cave": "斐揚 洞窟", "Prontera Culvert": "普隆德拉 地下水道",
