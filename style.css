@@ -1,152 +1,158 @@
-/* --- 1. CORE VARIABLES & RESET --- */
+/* --- 1. CORE SYSTEM VARIABLES --- */
 :root {
-    --bg: #050505; 
-    --panel: #0d0d0d; 
-    --neon: #39ff14; /* Pure Neon Green */
-    --neon-glow: rgba(57, 255, 20, 0.3);
-    --text: #e0e0e0;
-    --hp: #ff3131; 
-    --sp: #00d2ff; 
-    --r: #ffd700;
+    --bg: #030303; 
+    --panel: #0a0a0a; 
+    --neon: #39ff14; /* Cyber Neon Green */
+    --glow: rgba(57, 255, 20, 0.4);
+    --hp: #ff2a2a; /* RO Red */
+    --sp: #00bfff; /* RO Blue */
+    --zeny: #ffff00;
+    --rare: #ff00ff; /* Item/Card rarity glow */
 }
 
 * { box-sizing: border-box; }
 
 body {
     background: var(--bg);
-    color: var(--text);
-    font-family: 'Courier New', Courier, monospace; /* Matrix/Hacker aesthetic */
-    margin: 0; padding: 10px;
-    max-width: 500px; 
+    color: var(--neon);
+    font-family: 'Courier New', Courier, monospace;
     margin: 0 auto;
+    max-width: 500px;
+    padding: 10px;
     overflow-x: hidden;
 }
 
-/* --- 2. COMPONENT OVERHAUL (NEON BORDERS) --- */
-
-/* All UI containers now have the glowing green frame */
+/* --- 2. AEGIS TERMINAL PANELS --- */
 .panel {
     background: var(--panel);
     border: 1px solid var(--neon);
     padding: 12px;
     border-radius: 2px;
-    box-shadow: 0 0 10px var(--neon-glow);
-    margin-bottom: 5px;
+    box-shadow: 0 0 12px var(--glow);
+    margin-bottom: 10px;
+    position: relative;
 }
 
-/* Primary buttons: Hollow black with neon green accents */
+/* --- 3. COMMAND BUTTONS --- */
 button {
     background: #000;
     color: var(--neon);
     border: 1px solid var(--neon);
-    padding: 10px;
+    padding: 12px;
     font-weight: bold;
     text-transform: uppercase;
     cursor: pointer;
-    box-shadow: inset 0 0 5px var(--neon-glow);
-    transition: all 0.2s ease;
+    font-family: inherit;
+    width: 100%;
+    transition: 0.1s;
+    outline: none;
 }
 
 button:hover {
     background: var(--neon);
     color: #000;
-    box-shadow: 0 0 15px var(--neon);
+    box-shadow: 0 0 20px var(--neon);
 }
 
 button:active {
     transform: translateY(2px);
-    box-shadow: 0 0 5px var(--neon);
 }
 
-/* Small system buttons */
-.btn-sm { padding: 4px 8px; font-size: 0.7rem; }
-.btn-red { border-color: var(--hp); color: var(--hp); box-shadow: 0 0 5px var(--hp); }
-
-/* Inputs and Textareas */
-input {
-    background: #000;
-    color: var(--neon);
-    border: 1px solid var(--neon);
-    padding: 8px;
-    font-family: inherit;
-    width: 100%;
+button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    border-color: #333;
 }
 
-/* --- 3. VITALS & ATB (PROGRESS BARS) --- */
+.btn-sm { padding: 4px 8px; font-size: 0.7rem; width: auto; }
+.btn-red { border-color: var(--hp); color: var(--hp); }
 
+/* --- 4. RO VITALS & ATB --- */
 progress { 
     width: 100%; 
-    height: 10px; 
+    height: 12px; 
     appearance: none; 
-    border: 1px solid var(--neon); /* Neon frame for bars */
-    background: #000;
+    border: 1px solid var(--neon); 
+    background: #000; 
     margin: 2px 0;
 }
-
-/* Webkit specific styles for bar colors */
 progress::-webkit-progress-bar { background: #000; }
-progress::-webkit-progress-value { transition: width 0.3s; }
+#hp-bar::-webkit-progress-value { background: var(--hp); box-shadow: 0 0 10px var(--hp); }
+#sp-bar::-webkit-progress-value { background: var(--sp); box-shadow: 0 0 10px var(--sp); }
 
-#hp-bar::-webkit-progress-value { background: var(--hp); }
-#sp-bar::-webkit-progress-value { background: var(--sp); }
-#atb-p::-webkit-progress-value { background: var(--neon); }
-#atb-e::-webkit-progress-value { background: var(--hp); }
-
-/* --- 4. HUD STAT GRID --- */
-
+/* --- 5. HUD ATTRIBUTES --- */
 .stat-cell {
-    text-align: center;
-    font-size: 0.65rem;
-    color: #888;
+    text-align: center; 
+    font-size: 0.65rem; 
+    border: 1px solid var(--neon);
+    padding: 8px 4px; 
     background: #000;
-    padding: 6px 2px;
-    border: 1px solid var(--neon); /* Grid cells now have neon borders */
 }
-
-.stat-cell b, .stat-cell span {
-    font-size: 0.85rem;
-    display: block;
-    color: var(--neon);
-    margin-top: 2px;
-}
-
-/* --- 5. LOG SYSTEM --- */
-
-#log {
-    height: 120px;
-    overflow-y: hidden;
-    font-size: 0.8rem;
-    display: flex;
-    flex-direction: column;
-    border-top: 1px solid var(--neon);
-    padding-top: 5px;
-}
-
-.entry {
-    padding: 4px 0;
-    border-bottom: 1px solid #1a1a1a;
-    animation: fadeIn 0.3s ease;
-}
-
-.entry:first-child { 
+.stat-cell b { 
+    display: block; 
+    font-size: 0.9rem; 
     color: var(--neon); 
-    border-left: 2px solid var(--neon); 
-    padding-left: 8px; 
+    margin-top: 3px; 
 }
 
-/* --- 6. UTILITY CLASSES --- */
+/* --- 6. REWARD CHOICE CARDS --- */
+.choice-card {
+    border: 1px double var(--neon);
+    background: rgba(57, 255, 20, 0.05);
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
 
+.choice-card:hover {
+    background: rgba(57, 255, 20, 0.2);
+    box-shadow: 0 0 15px var(--glow);
+}
+
+.choice-card.rare { 
+    border-color: var(--rare); 
+    box-shadow: 0 0 10px var(--rare); 
+}
+
+/* --- 7. UTILITY CLASSES --- */
 .flex { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-.flex-col { display: flex; flex-direction: column; gap: 8px; }
-
-.grid { display: grid; gap: 8px; }
+.flex-col { display: flex; flex-direction: column; }
+.grid { display: grid; gap: 10px; }
 .g-1 { grid-template-columns: 1fr; }
 .g-2 { grid-template-columns: 1fr 1fr; }
 .g-5 { grid-template-columns: repeat(5, 1fr); }
 .g-6 { grid-template-columns: repeat(6, 1fr); }
 
-.c-n { color: var(--neon); text-shadow: 0 0 5px var(--neon-glow); }
+.c-n { color: var(--neon); }
 .c-red { color: var(--hp); }
-.c-yel { color: var(--r); }
+.c-yel { color: var(--zeny); }
 
-@keyframes fadeIn { from { opacity: 0; transform: translateX(-5px); } to { opacity: 1; transform: translateX(0); } }
+.lang-en .cn { display: none; }
+.lang-cn .en { display: none; }
+
+/* --- 8. LOG SYSTEM --- */
+.entry {
+    padding: 6px 0; 
+    border-bottom: 1px solid #1a1a1a;
+    font-size: 0.75rem; 
+    color: #888;
+}
+.entry:first-child { 
+    color: var(--neon); 
+    border-left: 2px solid var(--neon); 
+    padding-left: 10px; 
+}
+
+/* --- 9. LANGUAGE SWITCH --- */
+.switch { position: relative; display: inline-block; width: 44px; height: 22px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #000; border: 1px solid var(--neon); transition: .4s;
+}
+.slider:before {
+    position: absolute; content: ""; height: 14px; width: 14px;
+    left: 3px; bottom: 3px; background-color: var(--neon); transition: .4s;
+}
+input:checked + .slider:before { transform: translateX(22px); }
