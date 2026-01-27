@@ -97,7 +97,7 @@ const MON_EN=["Wolf","Orc","Raydric","Alarm","Thanatos"];
 const MON_CN=["狼","獸人","深淵騎士","朽魔","塔納托斯"];
 const DB_IT={w:[{n:'Knife',v:5},{n:'Blade',v:15},{n:'Saber',v:40},{n:'Excalibur',v:100}],a:[{n:'Shirt',v:10},{n:'Coat',v:50},{n:'Mail',v:90},{n:'Suit',v:250}]};
 
-// --- TRANSLATIONS (Traditional Chinese) ---
+// --- TRANSLATIONS ---
 const T={
     en:{st:"ID REGISTRATION",ph:"ENTER NAME",ea:"EASY",ha:"HARD",mi:"MISSION: Play to unlock secrets.",on:"AUTO:ON",off:"AUTO:OFF",lv:"LV",pts:"PTS",ok:"OK",stb:"START",mvp:"MVP DETECTED!",fi:"FIGHT",re:"REST",nx:"NEXT FLOOR",win:"CLEARED",vic:"VICTORY",go:"GAME OVER",rs:"RESTART",wipe:"WIPE?",sel:"Select Skill:",jc:"Job Change!",rank:"RANKING",sub:"SUBMIT SCORE",evt_atk:"Blacksmith refined weapon! +1 ATK",evt_matk:"Sage refined staff! +1 MATK",evt_hp:"Priest blessed you! +10 MaxHP"},
     cn:{st:"身分登錄",ph:"輸入名稱",ea:"簡單",ha:"困難",mi:"任務: 遊玩以解鎖秘密",on:"自動:開",off:"自動:關",lv:"等級",pts:"點數",ok:"確認",stb:"開始",mvp:"MVP出現!",fi:"戰鬥",re:"休息",nx:"下一層",win:"區域清除",vic:"任務完成",go:"任務失敗",rs:"重來",wipe:"刪除存檔?",sel:"選擇技能:",jc:"可轉職!",rank:"排行榜",sub:"上傳分數",evt_atk:"鐵匠精煉成功! +1 ATK",evt_matk:"賢者升級法杖! +1 MATK",evt_hp:"牧師祝福! +10 HP上限"}
@@ -105,19 +105,14 @@ const T={
 
 // --- VISUAL ASSETS ---
 const M_ART = {
-    // Poring Family
     'Poring': { h:'#fca', hr:'none', b:'none', rad:'50%', w:24, ht:20, t:15 },
     'Poporing': { h:'#5f5', hr:'none', b:'none', rad:'50%', w:24, ht:20, t:15 },
     'Marin': { h:'#5af', hr:'none', b:'none', rad:'50%', w:24, ht:20, t:15 },
-    
-    // Bosses
     'Angeling': { h:'#fff', hr:'#ff9', b:'none', rad:'50%', w:28, ht:24, t:12, glow:true },
     'GT Bug': { h:'#fc0', hr:'#b80', b:'#fc0', rad:'50%', w:30, ht:25, t:10 },
     'Eddga': { h:'#fa0', hr:'#d50', b:'#fa0', rad:'8px', hr_w:8, hr_h:10, hr_l:2 },
     'Osiris': { h:'#eee', hr:'#cb8', b:'#eee', rad:'3px' },
     'Baphomet': { h:'#333', hr:'#900', b:'#222', rad:'5px', w:28, ht:25, t:5 },
-    
-    // Standard Mobs
     'Wolf': { h:'#889', hr:'#556', b:'#445', rad:'5px 5px 15px 15px', hr_w:6, hr_h:8, hr_l:2 },
     'Orc': { h:'#684', hr:'#342', b:'#543', rad:'2px' },
     'Raydric': { h:'#456', hr:'#223', b:'#556', rad:'4px', op:0.8 },
@@ -125,7 +120,7 @@ const M_ART = {
     'Thanatos': { h:'#406', hr:'#fff', b:'#204', rad:'2px', op:0.7 }
 };
 
-const K='jro_neon_v4', el=i=>document.getElementById(i), rnd=m=>Math.floor(Math.random()*m);
+const K='jro_neon_v5', el=i=>document.getElementById(i), rnd=m=>Math.floor(Math.random()*m);
 const GH_USER="6wmzzcd7m5-commits", GH_REPO="nojob-ro", RAW_URL=`https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/main/leaderboard.json`, SALT="SECRET_KEY_999";
 
 const G={
@@ -150,7 +145,6 @@ const G={
     xpReq(){ return this.p.lv * 100; },
     mobXp(){ return this.s.f * 120; },
 
-    // --- LEADERBOARD ---
     openRank(){ el('rank-ui').classList.remove('hide'); el('rank-list').innerHTML="Fetching..."; fetch(RAW_URL+'?t='+Date.now()).then(r=>r.json()).then(d=>{let h="";d.forEach((r,i)=>{h+=`<div class="rank-row"><span style="color:${i<3?'#ff0':'#fff'}">#${i+1} ${r.n}</span><span class="c-d">${r.j}</span><span class="c-n">F${r.f}</span></div>`;});el('rank-list').innerHTML=h;}).catch(()=>el('rank-list').innerHTML="Offline"); },
     closeRank(){el('rank-ui').classList.add('hide');},
     submitRank(){const now=Date.now(),last=localStorage.getItem('last_sub')||0;if(now-last<60000){alert("Wait 60s.");return;}localStorage.setItem('last_sub',now);const raw=`${this.p.n}-${this.p.j}-${this.s.f}-${SALT}`;let hash=0;for(let i=0;i<raw.length;i++){hash=((hash<<5)-hash)+raw.charCodeAt(i);hash|=0;}const d=JSON.stringify({n:this.p.n,j:this.p.j,f:this.s.f,h:hash.toString()});const t=encodeURIComponent(`SCORE: ${this.p.n}`);const b=encodeURIComponent("```json\n"+d+"\n```");window.open(`https://github.com/${GH_USER}/${GH_REPO}/issues/new?title=${t}&body=${b}`,'_blank');},
@@ -158,10 +152,13 @@ const G={
     scr(){
         if(!this.s) this.s = {l:'en'};
         const c=el('ctl'); 
-        c.innerHTML=`<div class="panel" style="grid-column:span 2;text-align:center"><div class="c-n" style="font-weight:bold;margin-bottom:10px">${this.txt('st')}</div><div class="flex" style="justify-content:center;gap:5px;margin-bottom:10px"><input id="in" placeholder="${this.txt('ph')}" maxlength="10"><div id="bm" class="g-tag active" onclick="G.setG('m')">_m</div><div id="bf" class="g-tag" onclick="G.setG('f')">_f</div></div><button onclick="G.ng()" style="width:100%">${this.txt('stb')}</button></div>`;
-        this.tmp.g='m'; this.updSpr();
         
-        // Start Monster Cycle
+        // --- FIX: Use stored temp gender so language switch doesn't reset it ---
+        this.tmp.g = this.tmp.g || 'm'; 
+        
+        c.innerHTML=`<div class="panel" style="grid-column:span 2;text-align:center"><div class="c-n" style="font-weight:bold;margin-bottom:10px">${this.txt('st')}</div><div class="flex" style="justify-content:center;gap:5px;margin-bottom:10px"><input id="in" placeholder="${this.txt('ph')}" maxlength="10"><div id="bm" class="g-tag ${this.tmp.g=='m'?'active':''}" onclick="G.setG('m')">_m</div><div id="bf" class="g-tag ${this.tmp.g=='f'?'active':''}" onclick="G.setG('f')">_f</div></div><button onclick="G.ng()" style="width:100%">${this.txt('stb')}</button></div>`;
+        this.updSpr();
+        
         if(this.tm_scr) clearInterval(this.tm_scr);
         this.tm_scr = setInterval(() => {
             const keys = Object.keys(M_ART);
@@ -175,7 +172,7 @@ const G={
     updSpr(){ el('spr').className=`spr ro-${this.tmp.g} j-0`; },
 
     ng(){
-        if(this.tm_scr) clearInterval(this.tm_scr); // Stop cycling
+        if(this.tm_scr) clearInterval(this.tm_scr); 
         el('en').innerText = "TARGET";
         const n=el('in').value||"Novice";
         this.p={n:n,j:0,lv:1,xp:0,nx:100,hp:60,mh:60,sp:20,ms:20,str:1,agi:1,vit:1,int:1,dex:1,luk:1,pts:5,pots:3,b:{atk:0,matk:0},eq:{w:null,a:null},sk:{},act:null,g:this.tmp.g};
@@ -352,6 +349,8 @@ const G={
     
     draw(){
         const p=this.p;
+        if(!p) return; // Fix for Start Screen Crash
+        
         el('spr').className=`spr ro-${p.g} j-${p.j}`;
         el('un').innerText=p.n; el('ul').innerText=p.lv; el('ufl').innerText=this.s.f;
         el('uloc').innerText = this.s.f > 50 ? "Endless" : (this.s.l=='cn'?LOC_CN:LOC_EN)[Math.min(5,Math.ceil(this.s.f/10)-1)];
