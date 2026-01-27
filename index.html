@@ -3,59 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jobless RO v1.2.2 | Rouge Edition</title>
+    <title>TERMINAL://JOBLESS_RO_V1.2.2</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="visuals.css">
 </head>
-<body class="lang-en" data-l-lv-en="Level" data-l-lv-cn="等級" data-l-fl-en="Floor" data-l-fl-cn="層">
+<body class="lang-en">
 
 <div id="app">
     <header class="panel">
-        <div class="flex" style="border-bottom:1px dashed var(--bd); padding-bottom:5px;">
-            <div class="flex" style="gap:4px">
+        <div class="flex" style="border-bottom: 1px solid var(--neon); padding-bottom: 5px; margin-bottom: 10px;">
+            <div class="flex" style="gap: 5px;">
                 <button class="btn-sm" onclick="G.exp()" data-t="save"></button>
-                <button class="btn-sm" onclick="G.lang()">EN/中</button>
-                <button class="btn-sm btn-red" onclick="G.wipe()">RESET</button>
+                <button class="btn-sm" onclick="G.lang()">SYS_LANG</button>
+                <button class="btn-sm btn-red" onclick="G.wipe()">PURGE</button>
             </div>
-            <div class="flex" style="gap:10px">
-                <div class="c-yel">POT: <span id="ui-pots">0</span></div>
-                <div class="c-n">F<span id="ui-floor">1</span></div>
+            <div class="c-n" style="font-weight: bold;">
+                LOC://FLOOR_<span id="ui-floor">01</span>
             </div>
         </div>
-        
-        <div class="flex" style="margin-top:8px;">
-            <div style="flex:1;">
-                <div class="flex">
-                    <b id="ui-job" class="c-n">Novice</b>
-                    <div>Lv <span id="ui-lvl">1</span></div>
-                </div>
+
+        <div class="grid g-1">
+            <div class="flex">
+                <b id="ui-job" class="c-n">LINKING...</b>
+                <div class="c-n">LVL_0<span id="ui-lvl">1</span></div>
+            </div>
+            <div class="flex-col" style="gap: 2px;">
+                <div class="flex" style="font-size: 0.6rem; color: var(--hp);">VITALS_HP</div>
                 <progress id="hp-bar" value="0" max="100"></progress>
+                <div class="flex" style="font-size: 0.6rem; color: var(--sp);">ENERGY_SP</div>
                 <progress id="sp-bar" value="0" max="100"></progress>
             </div>
         </div>
 
-        <div class="grid g-6" id="ui-base-stats" style="margin-top:5px; border-top:1px solid #333; padding-top:4px;">
-            <div class="stat-cell">STR<br><b id="ui-str">0</b></div>
-            <div class="stat-cell">AGI<br><b id="ui-agi">0</b></div>
-            <div class="stat-cell">VIT<br><b id="ui-vit">0</b></div>
-            <div class="stat-cell">INT<br><b id="ui-int">0</b></div>
-            <div class="stat-cell">DEX<br><b id="ui-dex">0</b></div>
-            <div class="stat-cell">LUK<br><b id="ui-luk">0</b></div>
+        <div class="grid g-6" style="margin-top: 10px;">
+            <div class="stat-cell">STR<b id="ui-str">0</b></div>
+            <div class="stat-cell">AGI<b id="ui-agi">0</b></div>
+            <div class="stat-cell">VIT<b id="ui-vit">0</b></div>
+            <div class="stat-cell">INT<b id="ui-int">0</b></div>
+            <div class="stat-cell">DEX<b id="ui-dex">0</b></div>
+            <div class="stat-cell">LUK<b id="ui-luk">0</b></div>
         </div>
-        <div class="grid g-5" id="ui-sub-stats" style="margin-top:2px; background:rgba(0,0,0,0.3);">
-            <div class="stat-cell">ATK<br><span id="ui-atk" class="c-n">0</span></div>
-            <div class="stat-cell">MATK<br><span id="ui-matk" class="c-n">0</span></div>
-            <div class="stat-cell">HIT<br><span id="ui-hit" class="c-n">0</span></div>
-            <div class="stat-cell">FLEE<br><span id="ui-flee" class="c-n">0</span></div>
-            <div class="stat-cell">CRI<br><span id="ui-cri" class="c-n">0%</span></div>
+        <div class="grid g-5" style="margin-top: 5px; background: rgba(57, 255, 20, 0.05);">
+            <div class="stat-cell">ATK<span id="ui-atk">0</span></div>
+            <div class="stat-cell">MATK<span id="ui-matk">0</span></div>
+            <div class="stat-cell">HIT<span id="ui-hit">0</span></div>
+            <div class="stat-cell">FLEE<span id="ui-flee">0</span></div>
+            <div class="stat-cell">CRI<span id="ui-cri">0%</span></div>
         </div>
     </header>
 
-    <section id="battle-ui" class="panel" style="margin-top:5px; border-color:var(--hp)" hidden>
-        <div style="text-align:center; color:var(--hp); font-weight:bold; font-size:10px" id="ui-target">TARGET</div>
-        <div class="grid g-1">
-            <div class="flex" style="font-size:8px">YOU <progress id="atb-p" value="0" max="100" style="width:80%"></progress></div>
-            <div class="flex" style="font-size:8px">FOE <progress id="atb-e" value="0" max="100" style="width:80%"></progress></div>
+    <section id="battle-ui" class="panel" style="border-style: dashed; border-color: var(--hp);" hidden>
+        <div id="ui-target" style="text-align: center; font-size: 0.7rem; color: var(--hp); margin-bottom: 5px;">ENCOUNTER_ACTIVE</div>
+        <div class="flex-col" style="gap: 5px;">
+            <div class="flex" style="font-size: 0.6rem;">USR_SYNC <progress id="atb-p" value="0" max="100" style="width: 70%;"></progress></div>
+            <div class="flex" style="font-size: 0.6rem;">FOE_SYNC <progress id="atb-e" value="0" max="100" style="width: 70%;"></progress></div>
         </div>
     </section>
 
@@ -69,7 +70,7 @@
     </section>
 
     <main id="ctl" class="grid">
-        <button class="btn-neon" style="grid-column: span 2; padding: 25px; font-size: 1.2rem;" onclick="G.init()" data-t="start"></button>
+        <button style="grid-column: span 2; padding: 30px; font-size: 1.2rem;" onclick="G.init()" data-t="start"></button>
     </main>
 
     <footer id="log" class="panel"></footer>
@@ -77,8 +78,8 @@
 
 <script>
 /**
- * JOBLESS RO ENGINE v1.2.2
- * Global State & Fragment Router
+ * JOBLESS_RO_CORE v1.2.2
+ * Cyber-Terminal Implementation
  */
 const DB = {
     jobs: {
@@ -87,13 +88,15 @@ const DB = {
         'Mage': { next:['Wizard'], pool:['Fire Bolt'], hp:80, sp:100, stats:[1,4,2,8,3,1] },
         'Thief': { next:['Assassin'], pool:['Envenom'], hp:100, sp:50, stats:[4,6,2,2,4,2] }
     },
-    skills: {
-        'First Aid':{sp:3, val:20, type:'heal'}, 'Bash':{sp:8, val:1.5, type:'phys'},
-        'Fire Bolt':{sp:10, val:1.8, type:'mag'}, 'Envenom':{sp:10, val:1.2, type:'phys'}
+    skills: { 
+        'First Aid': {sp:3, val:20, type:'heal'}, 
+        'Bash': {sp:8, val:1.5, type:'phys'}, 
+        'Fire Bolt': {sp:10, val:1.8, type:'mag'}, 
+        'Envenom': {sp:10, val:1.2, type:'phys'} 
     },
-    mobs: [
-        [{n:'Poring',hp:30,atk:5,xp:10},{n:'Lunatic',hp:45,atk:8,xp:15}],
-        [{n:'Wolf',hp:150,atk:25,xp:50},{n:'Skeleton',hp:180,atk:30,xp:60}]
+    mobs: [ 
+        [{n:'Poring',hp:35,atk:10,xp:10},{n:'Lunatic',hp:50,atk:14,xp:15}], 
+        [{n:'Wolf',hp:250,atk:38,xp:65},{n:'Skeleton',hp:300,atk:48,xp:85}] 
     ]
 };
 
@@ -103,27 +106,19 @@ const G = {
     p: null, 
     s: { f:1, b:false, tm:null, l:'en', patb:0, eatb:0 },
 
-    // Initialization: Checks for save or starts fresh
     init() {
         const saved = localStorage.getItem('ro_rouge_v121');
         if (saved) {
-            try {
-                this.p = JSON.parse(atob(saved));
-                this.loadScene('mnu');
-            } catch(e) { this.loadScene('reg'); }
-        } else {
-            this.loadScene('reg');
-        }
+            try { this.p = JSON.parse(atob(saved)); this.loadScene('mnu'); } 
+            catch(e) { this.loadScene('reg'); }
+        } else { this.loadScene('reg'); }
     },
 
-    // Fragment Router: Loads HTML, executes internal script, renders HUD
     async loadScene(name) {
         try {
             const res = await fetch(`./scenes/${name}.html`);
-            if (!res.ok) throw new Error();
             const html = await res.text();
             el('ctl').innerHTML = html;
-            
             el('ctl').querySelectorAll('script').forEach(s => {
                 const n = document.createElement('script');
                 n.textContent = s.textContent;
@@ -131,25 +126,23 @@ const G = {
             });
             this.render();
         } catch(e) {
-            el('ctl').innerHTML = `<button class="btn-neon" onclick="G.init()">ERROR: RETRY LOAD</button>`;
+            el('ctl').innerHTML = `<button onclick="G.init()">ERROR_RETRY_LINK</button>`;
         }
     },
 
-    // Global Render: Updates persistent UI and Calculates derived stats
     render() {
         if(!this.p) return;
-        
-        el('ui-job').innerText = this.p.job;
-        el('ui-lvl').innerText = this.p.lvl;
-        el('ui-floor').innerText = this.s.f;
+        el('ui-job').innerText = this.p.job.toUpperCase();
+        el('ui-lvl').innerText = this.p.lvl.toString().padStart(2, '0');
+        el('ui-floor').innerText = this.s.f.toString().padStart(2, '0');
         el('ui-pots').innerText = this.p.pots;
         
         el('hp-bar').value = this.p.hp; el('hp-bar').max = this.p.mh;
         el('sp-bar').value = this.p.sp; el('sp-bar').max = this.p.msp;
 
-        ['str','agi','vit','int','dex','luk'].forEach(k => { el('ui-'+k).innerText = this.p[k]; });
+        ['str','agi','vit','int','dex','luk'].forEach(k => el('ui-'+k).innerText = this.p[k]);
 
-        // Derived Stats Calculation
+        // Formulas
         el('ui-atk').innerText = Math.floor(this.p.str * 2.5 + this.p.lvl * 2);
         el('ui-matk').innerText = Math.floor(this.p.int * 3 + this.p.lvl * 2);
         el('ui-hit').innerText = this.p.dex + this.p.lvl;
@@ -157,31 +150,39 @@ const G = {
         el('ui-cri').innerText = Math.floor(this.p.luk * 0.5) + '%';
 
         el('battle-ui').hidden = !this.s.b;
-        if(this.s.b && this.s.mob) el('ui-target').innerText = this.s.mob.n;
-        
         el('p-spr').className = `spr j-${this.p.job}`;
-        document.getElementById('stage').style.filter = 'none'; // Clear death grayscale
+        el('stage').style.filter = 'none';
     },
 
-    // Boss Warning Helper
-    triggerWarning(callback) {
+    triggerWarning(cb) {
+        G.log("⚠️ CRITICAL_THREAT_DETECTED", "c-red");
         const stage = el('stage');
         const warn = document.createElement('div');
         warn.className = 'warning-overlay';
-        warn.innerHTML = '<div class="warning-text">BOSS WARNING</div>';
+        warn.innerHTML = '<div class="warning-text">BOSS_WARNING</div>';
         stage.appendChild(warn);
-        setTimeout(() => { warn.remove(); if(callback) callback(); }, 1500);
+        setTimeout(() => { warn.remove(); if(cb) cb(); }, 1500);
     },
 
-    // State Persistence
+    bt(mob) {
+        this.s.mob = { ...mob, mhp: mob.hp };
+        this.loadScene('btl');
+    },
+
     sv() { localStorage.setItem('ro_rouge_v121', btoa(JSON.stringify(this.p))); },
-    exp() { const a=document.createElement('a'); a.href='data:text/plain;base64,'+btoa(JSON.stringify(this.p)); a.download='save.jro'; a.click(); },
-    wipe() { if(confirm("Reset Progress?")){ localStorage.removeItem('ro_rouge_v121'); location.reload(); } },
-    lang() { this.s.l = this.s.l==='en'?'cn':'en'; document.body.className='lang-'+this.s.l; },
+    wipe() { if(confirm("PURGE ALL DATA?")){ localStorage.clear(); location.reload(); } },
+    lang() { this.s.l = this.s.l === 'en' ? 'cn' : 'en'; document.body.className = 'lang-' + this.s.l; },
     log(m, c='') {
         const l = el('log');
-        l.insertAdjacentHTML('afterbegin', `<div class="entry ${c}">${m}</div>`);
+        l.insertAdjacentHTML('afterbegin', `<div class="entry ${c}">[SYS]: ${m}</div>`);
         if(l.children.length > 5) l.lastElementChild.remove();
+    },
+    exp() {
+        const data = btoa(JSON.stringify(this.p));
+        const a = document.createElement('a');
+        a.href = 'data:text/plain;base64,' + data;
+        a.download = `CHAR_${this.p.n}.jro`;
+        a.click();
     }
 };
 </script>
