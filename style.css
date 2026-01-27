@@ -1,3 +1,24 @@
+/* ADD THIS TO THE TOP OF YOUR STYLE.CSS */
+[class^="lbl-"], [class^="n-job-"], [class^="n-sk-"] {
+    display: inline-block;
+    min-height: 1em;
+    pointer-events: none; /* Let clicks pass through to the button */
+}
+
+/* Fix for buttons relying on CSS content */
+button:empty::after, button :empty::after {
+    content: attr(data-label); /* Fallback to a data attribute if needed */
+}
+
+/* Ensure Archetype buttons have enough space */
+.btn-neon {
+    min-width: 120px;
+    margin: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 :root { 
     --bg:#050505; --p:#0a0a0a; 
     --bd:#39ff14; 
