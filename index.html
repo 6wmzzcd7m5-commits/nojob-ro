@@ -15,7 +15,12 @@
                 <button class="btn-sm" onclick="G.exp()">SAVE</button>
                 <button class="btn-sm" onclick="G.rank()" style="color:var(--zeny)">RANK</button>
             </div>
-            <div class="c-n">ZONE_FLR: <span id="ui-floor">1</span></div>
+            <div class="flex" style="gap:2px">
+                <button class="btn-sm spd-btn active" id="spd-1" onclick="G.setSpd(1)">1x</button>
+                <button class="btn-sm spd-btn" id="spd-5" onclick="G.setSpd(5)">5x</button>
+                <button class="btn-sm spd-btn" id="spd-20" onclick="G.setSpd(20)">20x</button>
+            </div>
+            <div class="c-n">FLR: <span id="ui-floor">1</span></div>
         </div>
         
         <div class="flex">
@@ -26,7 +31,7 @@
                 </div>
                 <div class="bar-container"><div id="hp-fill" class="fill"></div></div>
                 <div class="bar-container" style="height:2px; margin-top:2px; border:none; background:transparent;">
-                    <div id="atb-fill" style="width:0%; height:100%; background:rgba(255,255,255,0.2);"></div>
+                    <div id="atb-fill" style="width:0%; height:100%; background:rgba(57, 255, 20, 0.4);"></div>
                 </div>
             </div>
         </div>
@@ -41,10 +46,8 @@
         </div>
     </header>
 
-    <section id="stage" class="panel" style="display:flex; justify-content: space-around; height: 140px; align-items: flex-end; position:relative;">
-        <div id="p-box" class="avatar-box">
-            <div id="p-spr" class="spr"><div class="hd"></div><div class="bd"></div></div>
-        </div>
+    <section id="stage" class="panel">
+        <div id="p-box" class="avatar-box"><div id="p-spr" class="spr"><div class="hd"></div><div class="bd"></div></div></div>
         <div id="e-box" class="avatar-box">
             <div id="e-spr" class="spr"><div class="hd"></div><div class="bd"></div></div>
             <small id="e-name" style="position:absolute; bottom:-15px; font-size:9px; color:var(--hp)"></small>
@@ -52,8 +55,7 @@
     </section>
 
     <main id="ctl" class="grid" style="margin-top:10px; min-height:120px;"></main>
-
-    <footer id="log" class="panel" style="height: 80px; overflow: hidden; font-size: 9px; display: flex; flex-direction: column-reverse;"></footer>
+    <footer id="log" class="panel"></footer>
 </div>
 
 <script src="db.js"></script>
@@ -64,9 +66,8 @@ const el = i => document.getElementById(i);
 
 const G = {
     p: null, 
-    s: { f:1, b:false, atb:0, loop:null, mob:null, repo: "6wmzzcd7m5-commits/nojob-ro" },
+    s: { f:1, b:false, atb:0, loop:null, mob:null, spd: 1, repo: "6wmzzcd7m5-commits/nojob-ro" },
 
-    // 1. ENGINE INITIALIZATION
     boot() {
         const saved = localStorage.getItem('ro_prime_v3');
         if(saved) {
@@ -78,13 +79,23 @@ const G = {
         }
     },
 
-    // 2. TICK SYSTEM: 30ms Heartbeat (Section 2.B)
+    // DYNAMIC SPEED CONTROL
+    setSpd(val) {
+        this.s.spd = val;
+        document.querySelectorAll('.spd-btn').forEach(b => b.classList.remove('active'));
+        el('spd-' + val).classList.add('active');
+        if(this.s.b) this.startLoop(); // Restart loop with new speed if in battle
+        this.log("TIMELINE_ACCELERATION: " + val + "X", "c-yel");
+    },
+
+    // 30ms LOOP SYSTEM (Section 2.B)
     startLoop() {
         if(this.s.loop) clearInterval(this.s.loop);
+        // Interval is shortened based on speed (30ms / speed)
+        const tickRate = Math.max(1, 30 / this.s.spd); 
         this.s.loop = setInterval(() => {
             if(!this.s.b) return;
             
-            // Fill Rate = Base_Job_ASPD + (AGI * 0.8) + (DEX * 0.2)
             const fillRate = (DB.jobs[this.p.job].aspd || 150) + (this.p.agi * 0.8) + (this.p.dex * 0.2);
             this.s.atb += (fillRate / 10);
             el('atb-fill').style.width = Math.min(100, this.s.atb / 10) + "%";
@@ -93,16 +104,13 @@ const G = {
                 this.s.atb = 0;
                 this.executeAction();
             }
-        }, 30); // 30ms Tick Rate
+        }, tickRate);
     },
 
-    // 3. COMBAT LOGIC (Section 2.B)
     executeAction() {
-        // ATK = STR + [DEX/5] + [LUK/3] + (LVL * 2)
         const atk = this.p.str + Math.floor(this.p.dex/5) + Math.floor(this.p.luk/3) + (this.p.lvl * 2);
         const dmg = Math.max(1, atk - (this.s.mob.def || 0));
         
-        // Visual Lung Animation
         const spr = el('p-spr');
         spr.classList.remove('lung');
         void spr.offsetWidth; 
@@ -116,46 +124,25 @@ const G = {
 
     resolveWin() {
         this.s.b = false;
+        if(this.s.loop) clearInterval(this.s.loop);
         this.p.lvl++; this.s.f++; this.p.floor = this.s.f;
         this.log(`TARGET ELIMINATED. FLOOR CLEAR!`, "c-n");
-        this.sv();
-        this.render();
-        this.loadScene('mnu');
+        this.sv(); this.render(); this.loadScene('mnu');
     },
 
-    // 4. ISSUEOPS RANKING (Section 1.B)
     rank() {
-        const hash = this.djb2(this.p.n + this.p.job + this.s.f + DB_ITEMS.SALT);
-        const payload = {
-            name: this.p.n,
-            job: this.p.job,
-            floor: this.s.f,
-            lvl: this.p.lvl,
-            hash: hash
-        };
+        const hash = getSecureHash(this.p);
+        const payload = { name: this.p.n, job: this.p.job, floor: this.s.f, lvl: this.p.lvl, hash: hash };
         const body = encodeURIComponent(JSON.stringify(payload));
-        const url = `https://github.com/${this.s.repo}/issues/new?title=RANK_SUBMISSION&body=${body}`;
-        window.open(url, '_blank');
+        window.open(`https://github.com/${this.s.repo}/issues/new?title=RANK_SUBMISSION&body=${body}`, '_blank');
     },
 
-    djb2(str) {
-        let hash = 5381;
-        for (let i = 0; i < str.length; i++) {
-            hash = ((hash << 5) + hash) + str.charCodeAt(i);
-        }
-        return hash >>> 0;
-    },
-
-    // 5. UI RENDERER
     render() {
         if(!this.p) return;
         el('ui-job').innerText = this.p.job;
         el('ui-lvl').innerText = this.p.lvl;
         el('ui-floor').innerText = this.s.f;
-        
-        const hpPct = Math.max(0, (this.p.hp / this.p.mh) * 100);
-        el('hp-fill').style.width = hpPct + "%";
-        
+        el('hp-fill').style.width = Math.max(0, (this.p.hp / this.p.mh) * 100) + "%";
         ['str','agi','vit','int','dex','luk'].forEach(k => el('ui-'+k).innerText = this.p[k]);
         el('p-spr').className = `spr j-${this.p.job}`;
     },
@@ -163,38 +150,32 @@ const G = {
     loadScene(name) {
         const c = el('ctl');
         if(name === 'reg') {
-            c.innerHTML = `
-                <div class="panel grid g-1">
-                    <input id="pname" placeholder="IDENT_ID..." class="panel" style="width:100%; background:#000; color:var(--neon); border-style:dashed;">
-                    <button onclick="G.initChar()" class="panel" style="width:100%; color:var(--neon); background:#000;">INITIALIZE_IDENTITY</button>
-                </div>`;
+            c.innerHTML = `<div class="panel grid g-1"><input id="pname" placeholder="IDENT_ID..." class="panel" style="width:100%; background:#000; color:var(--neon);"><button onclick="G.initChar()" class="panel" style="width:100%; color:var(--neon); background:#000;">BOOT_SYSTEM</button></div>`;
         } else if(name === 'mnu') {
-            c.innerHTML = `
-                <button onclick="G.startBattle()" class="panel" style="width:100%; color:var(--neon); background:#000; padding:20px;">WARP_TO_FLOOR_${this.s.f}</button>
-                <button onclick="G.rest()" class="panel" style="width:100%; color:var(--neon); background:#000; font-size:9px;">RECOVERY_SYNC</button>`;
+            c.innerHTML = `<button onclick="G.startBattle()" class="panel" style="width:100%; color:var(--neon); background:#000; padding:20px;">WARP_TO_FLOOR_${this.s.f}</button>`;
         }
     },
 
     initChar() {
-        const name = el('pname').value || "Novice_" + Math.floor(Math.random()*999);
-        this.p = { n: name, job:'Novice', lvl:1, str:5, agi:5, vit:5, int:5, dex:5, luk:5, hp:100, mh:100, floor:1 };
+        const n = el('pname').value || "Novice";
+        this.p = { n, job:'Novice', lvl:1, str:5, agi:5, vit:5, int:5, dex:5, luk:5, hp:100, mh:100, floor:1 };
         this.sv(); this.render(); this.loadScene('mnu');
     },
 
     startBattle() {
         this.s.mob = DB.mobs.scaling(this.s.f);
+        el('e-box').setAttribute('data-tier', Math.ceil(this.s.f / 10));
         el('e-name').innerText = this.s.mob.n.toUpperCase();
         this.s.b = true; this.s.atb = 0;
         this.startLoop();
-        el('ctl').innerHTML = `<div class="panel" style="text-align:center; border-style:dotted; color:var(--hp)">AUTO_COMBAT_ACTIVE</div>`;
+        el('ctl').innerHTML = `<div class="panel" style="text-align:center; color:var(--hp)">AUTO_COMBAT_ACTIVE</div>`;
     },
 
-    rest() { this.p.hp = this.p.mh; this.render(); this.log("SYNC COMPLETE: VITALS 100%"); },
     pop(amt, id) {
         const d = document.createElement('div');
         d.className = 'dmg-pop'; d.innerText = amt;
         el(id).appendChild(d);
-        setTimeout(() => d.remove(), 800);
+        setTimeout(() => d.remove(), 800 / this.s.spd); // Speed up popups too
     },
     log(m, c) { el('log').insertAdjacentHTML('afterbegin', `<div class="entry ${c}">> ${m}</div>`); },
     sv() { localStorage.setItem('ro_prime_v3', btoa(JSON.stringify(this.p))); },
