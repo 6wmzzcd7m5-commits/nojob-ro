@@ -1,0 +1,103 @@
+:root { 
+    --bg:#050505; --p:#0a0a0a; 
+    --bd:#39ff14; /* NEON GREEN */
+    --n:#39ff14; --t:#ffffff; --d:#aaaaaa; 
+    --hp:#ff4444; --sp:#4488ff; --r:#ffff00; 
+    --font:'Tahoma', 'Arial', sans-serif; 
+}
+* { box-sizing:border-box; user-select:none; -webkit-tap-highlight-color:transparent; }
+
+body {
+    background: var(--bg); color: var(--t); font-family: var(--font); font-size: 11px;
+    margin: 0; padding: 0; width: 100vw; height: 100dvh;
+    display: flex; justify-content: center; align-items: center; overflow: hidden;
+}
+
+#app {
+    width: 100%; max-width: 500px; height: 100%; 
+    display: flex; flex-direction: column; gap: 6px; padding: 10px;
+    border: 1px solid var(--bd); 
+    box-shadow: 0 0 10px rgba(57, 255, 20, 0.15);
+    position: relative;
+}
+
+/* --- UTILS --- */
+.flex { display:flex; justify-content:space-between; align-items:center; }
+.grid { display:grid; gap:4px; } .g-2 { grid-template-columns:1fr 1fr; } .g-6 { grid-template-columns:repeat(6,1fr); }
+.c-n { color:var(--n); text-shadow: 0 0 2px var(--n); } 
+.c-h { color:var(--hp); } .c-d { color:var(--d); } .c-r { color:var(--r); }
+.panel { border:1px solid var(--bd); background:var(--p); padding:6px; border-radius:2px; }
+.hide { display:none!important; }
+
+button {
+    background: #000; color: var(--n); border: 1px solid var(--bd);
+    padding: 10px; font: inherit; font-weight: bold; cursor: pointer; 
+    text-transform: uppercase; box-shadow: 0 0 5px rgba(57, 255, 20, 0.1);
+}
+button:active, button.active { background: var(--n); color:#000; box-shadow: 0 0 10px var(--n); }
+.btn-sm { padding:4px 8px; font-size:10px; }
+.btn-red { border-color:var(--hp); color:var(--hp); }
+
+input { background:#000; border:1px solid var(--bd); color:#fff; padding:8px; width:100%; font:inherit; text-transform:uppercase; text-align:center; }
+
+/* --- STAGE & AVATARS --- */
+#stage {
+    height: 120px; background: #111; border-bottom: 1px dashed var(--bd);
+    display: flex; justify-content: space-between; align-items: flex-end;
+    padding: 20px 40px; position: relative; overflow: hidden;
+}
+
+.avatar-box { width: 40px; height: 60px; position: relative; }
+
+/* Sprite Construction */
+.spr { width:30px; height:40px; position:absolute; bottom:0; left:5px; animation: idle 1s infinite steps(2); transition: all 0.2s; }
+.hd { width:20px; height:18px; background:#fca; position:absolute; left:5px; top:0; z-index:5; border-radius:4px; transition: all 0.2s; }
+.hr { width:24px; height:10px; background:#853; position:absolute; left:3px; top:-2px; z-index:6; transition: all 0.2s; }
+.bd { width:18px; height:16px; background:#eee; position:absolute; left:6px; top:16px; z-index:2; border-radius:2px 2px 5px 5px; transition: all 0.2s; }
+
+/* Player Variants */
+.ro-m .hr { border-radius:4px 4px 0 0; } 
+.ro-f .hr { width:26px; left:2px; border-radius:8px 8px 0 0; }
+
+/* Job Colors */
+.j-0 .bd{background:linear-gradient(to bottom,#fff 60%,#dca 60%)}
+.j-1 .bd{background:linear-gradient(to bottom,#d84 50%,#468 50%);border-top:2px solid #b62}
+.j-2 .bd{background:linear-gradient(90deg,#348 20%,#eee 20%,#eee 80%,#348 80%);border-bottom:3px solid #642}
+.j-3 .bd{background:linear-gradient(to bottom,#637 40%,#fca 40%,#fca 60%,#543 60%)}
+.j-4 .bd{background:linear-gradient(to bottom,#473 60%,#db9 60%);border-left:2px solid #fca}
+.j-5 .bd{background:linear-gradient(90deg,#fff 40%,#d44 40%,#d44 60%,#fff 60%)}
+.j-6 .bd{background:linear-gradient(90deg,#eee 30%,#a44 30%,#a44 70%,#eee 70%);border-bottom:2px solid #334}
+
+/* Animations */
+@keyframes idle { 0%,100%{transform:translateY(0)} 50%{transform:translateY(2px)} }
+@keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 20% { transform: translate(-3px, 0px) rotate(1deg); } 40% { transform: translate(1px, -1px) rotate(1deg); } 60% { transform: translate(-3px, 1px) rotate(0deg); } 80% { transform: translate(-1px, -1px) rotate(1deg); } 100% { transform: translate(1px, -2px) rotate(-1deg); } }
+@keyframes lung { 0% {transform: translateX(0);} 50% {transform: translateX(20px);} 100% {transform: translateX(0);} }
+@keyframes lung-e { 0% {transform: translateX(0);} 50% {transform: translateX(-20px);} 100% {transform: translateX(0);} }
+@keyframes floatUp { 0% {opacity:1; transform:translateY(0) scale(1);} 100% {opacity:0; transform:translateY(-30px) scale(1.2);} }
+
+.anim-shake { animation: shake 0.5s; }
+.anim-atk-p { animation: lung 0.2s; }
+.anim-atk-e { animation: lung-e 0.2s; }
+
+/* Popups */
+.dmg-pop { position: absolute; font-weight: bold; font-size: 16px; text-shadow: 2px 2px 0 #000; animation: floatUp 0.8s forwards; pointer-events: none; z-index: 10; width: 100px; text-align: center; left: -30px; top: -10px; }
+.dmg-w { color: #fff; } 
+.dmg-c { color: #ff0; font-family: 'Impact'; font-size: 20px; text-shadow: 2px 2px 0 #f00; }
+.dmg-m { color: #aaa; font-style: italic; }
+
+/* Stats */
+progress { width:100%; height:6px; appearance:none; border:none; background:#222; display:block; }
+progress::-webkit-progress-bar { background:#222; } progress::-webkit-progress-value { transition:width 0.1s linear; }
+#bh::-webkit-progress-value { background:var(--hp); } #bs::-webkit-progress-value { background:var(--sp); }
+#ap::-webkit-progress-value { background:var(--n); } #ae::-webkit-progress-value { background:var(--hp); }
+#log { flex:1; overflow-y:auto; font-size:10px; border-top:1px solid var(--bd); padding-top:5px; display:flex; flex-direction:column-reverse; font-family:'Courier New',mono; }
+.lr { padding:1px 0; border-bottom:1px solid #111; }
+.stat-cell { text-align:center; font-size:9px; color:#888; border-right:1px solid #222; }
+.stv { color: #fff; font-weight: bold; display: block; font-size: 11px; }
+.sec-stat { font-size:10px; color:var(--n); text-align:center; }
+.eq-row { font-size:10px; color:#aaa; border-bottom:1px dashed #333; padding-bottom:4px; margin-bottom:4px;}
+.eq-v { color:#fff; font-weight:bold; margin-left:2px;}
+
+/* UI Selection */
+.g-tag { padding:8px; border:1px solid #333; cursor:pointer; color:#666; text-align:center; }
+.g-tag.active { border-color:var(--n); color:var(--n); box-shadow:0 0 5px var(--n); }
