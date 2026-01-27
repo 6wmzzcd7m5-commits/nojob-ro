@@ -33,7 +33,7 @@ window.SCENES = {
     // 2. Ported: Main Menu / Dungeon Warp
     mnu: (p, s) => `
         <div class="grid g-1">
-            <button onclick="G.startBattle()" class="panel" style="width:100%; padding:20px; border-color:var(--neon);">${DB.txt('warp')} ${s.f}</button>
+            <button onclick="G.startBattle()" class="panel" style="width:100%; padding:20px; border-color:var(--neon);">${DB.txt('warp_to')} ${DB.getLocation(s.f)}</button>
             <button onclick="G.loadRank()" class="panel" style="width:100%; font-size:10px; border-color:var(--sp); color:var(--sp); padding:8px;">${DB.txt('rank')}</button>
         </div>`,
 

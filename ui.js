@@ -1,5 +1,11 @@
 /* --- AEGIS_UI_ENGINE_V1.02 (Refactored) --- */
 window.UI = {
+    // 0. LOCTION HUD
+    updLoc(f) {
+        el('ui-floor').innerText = f;
+        el('ui-loc').innerText = DB.getLocation(f);
+    },
+
     // 1. SCENE RENDERER
     // Updates the control panel (#ctl) using external window.SCENES
     loadScene(name, p, s) {
@@ -19,8 +25,7 @@ window.UI = {
         el('ui-job').innerText = DB.getName('jobs', p.job);
         el('btn-speed').innerText = s.spd + "x";
         el('ui-lvl').innerText = p.lvl;
-        el('ui-floor').innerText = s.f;
-        el('ui-loc').innerText = DB.getLocation(s.f);
+        this.updLoc(s.f);
 
         // Calculate Passive Bonuses
         const pas = { str: 0, agi: 0, vit: 0, int: 0, dex: 0, luk: 0 };
