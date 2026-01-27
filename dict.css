@@ -1,105 +1,84 @@
 /* =========================================
-   DICT.CSS: ARCHETYPE SPECIALIZATION v1.0
-   Separates UI text from logic 
+   DICT.CSS: ROUGE EDITION v1.0.4
    ========================================= */
 
 /* --- 1. JOB CLASSES --- */
-
-/* Novice */
 .n-job-0::after { content: "Novice"; }
-.lang-cn .n-job-0::after { content: "初心者"; }
-
-/* MELEE GROUP (STR/VIT Focus ) */
 .n-job-1::after { content: "Swordman"; }
-.n-job-6::after { content: "Merchant"; }
-.n-job-7::after { content: "Knight"; }
-.n-job-12::after { content: "Blacksmith"; }
-
-.lang-cn .n-job-1::after { content: "劍士"; }
-.lang-cn .n-job-6::after { content: "商人"; }
-.lang-cn .n-job-7::after { content: "騎士"; }
-.lang-cn .n-job-12::after { content: "鐵匠"; }
-
-/* MAGICAL GROUP (INT/DEX Focus ) */
 .n-job-2::after { content: "Mage"; }
-.n-job-5::after { content: "Acolyte"; }
-.n-job-8::after { content: "Wizard"; }
-.n-job-11::after { content: "Priest"; }
-
-.lang-cn .n-job-2::after { content: "法師"; }
-.lang-cn .n-job-5::after { content: "服事"; }
-.lang-cn .n-job-8::after { content: "巫師"; }
-.lang-cn .n-job-11::after { content: "牧師"; }
-
-/* ROUGE GROUP (AGI/DEX Focus ) */
 .n-job-3::after { content: "Thief"; }
 .n-job-4::after { content: "Archer"; }
+.n-job-5::after { content: "Acolyte"; }
+.n-job-6::after { content: "Merchant"; }
+.n-job-7::after { content: "Knight"; }
+.n-job-8::after { content: "Wizard"; }
 .n-job-9::after { content: "Assassin"; }
 .n-job-10::after { content: "Hunter"; }
+.n-job-11::after { content: "Priest"; }
+.n-job-12::after { content: "Blacksmith"; }
 
+/* Chinese Translations */
+.lang-cn .n-job-0::after { content: "初心者"; }
+.lang-cn .n-job-1::after { content: "劍士"; }
+.lang-cn .n-job-2::after { content: "法師"; }
 .lang-cn .n-job-3::after { content: "盜賊"; }
 .lang-cn .n-job-4::after { content: "弓箭手"; }
+.lang-cn .n-job-5::after { content: "服事"; }
+.lang-cn .n-job-6::after { content: "商人"; }
+.lang-cn .n-job-7::after { content: "騎士"; }
+.lang-cn .n-job-8::after { content: "巫師"; }
 .lang-cn .n-job-9::after { content: "刺客"; }
 .lang-cn .n-job-10::after { content: "獵人"; }
+.lang-cn .n-job-11::after { content: "牧師"; }
+.lang-cn .n-job-12::after { content: "鐵匠"; }
 
-/* --- 2. ACTIVE SKILLS (MVP REWARDS) --- */
-
-/* Melee Skills */
-.n-sk-Bash::after { content: "Bash"; }
-.n-sk-Magnum::after { content: "Magnum Break"; }
-.n-sk-BowlingBash::after { content: "Bowling Bash"; }
-.lang-cn .n-sk-Bash::after { content: "狂擊"; }
-.lang-cn .n-sk-Magnum::after { content: "怒爆"; }
-.lang-cn .n-sk-BowlingBash::after { content: "保齡球擊"; }
-
-/* Magical Skills */
-.n-sk-Napalm::after { content: "Napalm Beat"; }
+/* --- 2. ACTIVE SKILLS --- */
+.n-sk-FirstAid::after { content: "First Aid"; }
+.n-sk-Bash::after     { content: "Bash"; }
+.n-sk-Napalm::after   { content: "Napalm Beat"; }
+.n-sk-Magnum::after   { content: "Magnum Break"; }
 .n-sk-FireBolt::after { content: "Fire Bolt"; }
 .n-sk-ColdBolt::after { content: "Cold Bolt"; }
-.n-sk-StormGust::after { content: "Storm Gust"; }
-.n-sk-Heal::after { content: "Heal"; }
-.n-sk-HolyLight::after { content: "Holy Light"; }
-.n-sk-Magnus::after { content: "Magnus Exorcismus"; }
-.lang-cn .n-sk-Napalm::after { content: "心靈爆破"; }
+.n-sk-Double::after   { content: "Double Attack"; }
+.n-sk-Hiding::after   { content: "Hiding"; }
+.n-sk-Heal::after     { content: "Heal"; }
+.n-sk-HolyLight::after{ content: "Holy Light"; }
+.n-sk-BowlingBash::after { content: "Bowling Bash"; }
+.n-sk-StormGust::after   { content: "Storm Gust"; }
+.n-sk-SonicBlow::after   { content: "Sonic Blow"; }
+.n-sk-ArrowShower::after { content: "Arrow Shower"; }
+.n-sk-Magnus::after      { content: "Magnus Exorcismus"; }
+
+/* Chinese Translations */
+.lang-cn .n-sk-FirstAid::after { content: "緊急治療"; }
+.lang-cn .n-sk-Bash::after     { content: "狂擊"; }
+.lang-cn .n-sk-Napalm::after   { content: "心靈爆破"; }
+.lang-cn .n-sk-Magnum::after   { content: "怒爆"; }
 .lang-cn .n-sk-FireBolt::after { content: "火箭術"; }
 .lang-cn .n-sk-ColdBolt::after { content: "冰箭術"; }
-.lang-cn .n-sk-StormGust::after { content: "暴風雪"; }
-.lang-cn .n-sk-Heal::after { content: "治癒術"; }
-.lang-cn .n-sk-HolyLight::after { content: "神聖之光"; }
-.lang-cn .n-sk-Magnus::after { content: "十字驅魔攻擊"; }
-
-/* Rouge Skills */
-.n-sk-Double::after { content: "Double Attack"; }
-.n-sk-Hiding::after { content: "Hiding"; }
-.n-sk-SonicBlow::after { content: "Sonic Blow"; }
-.n-sk-ArrowShower::after { content: "Arrow Shower"; }
-.lang-cn .n-sk-Double::after { content: "二刀連擊"; }
-.lang-cn .n-sk-Hiding::after { content: "偽裝"; }
-.lang-cn .n-sk-SonicBlow::after { content: "音速投擲"; }
+.lang-cn .n-sk-Double::after   { content: "二刀連擊"; }
+.lang-cn .n-sk-Hiding::after   { content: "偽裝"; }
+.lang-cn .n-sk-Heal::after     { content: "治癒術"; }
+.lang-cn .n-sk-HolyLight::after{ content: "神聖之光"; }
+.lang-cn .n-sk-BowlingBash::after { content: "保齡球擊"; }
+.lang-cn .n-sk-StormGust::after   { content: "暴風雪"; }
+.lang-cn .n-sk-SonicBlow::after   { content: "音速投擲"; }
 .lang-cn .n-sk-ArrowShower::after { content: "箭雨"; }
+.lang-cn .n-sk-Magnus::after      { content: "十字驅魔攻擊"; }
 
-/* --- 3. ROGUELIKE POOL --- */
-
-/* Passives */
+/* --- 3. ROGUELIKE PASSIVES & CURSES --- */
 .n-sk-P_ATK::after   { content: "Divine Might"; }
 .n-sk-P_MATK::after  { content: "Arcane Lore"; }
 .n-sk-P_FLEE::after  { content: "Ghost Walk"; }
 .n-sk-P_LIFE::after  { content: "Life Stream"; }
-.n-sk-P_CRIT::after  { content: "Eagle Eye"; }
+.n-sk-C_STR::after   { content: "Berserker's Blood"; }
+.n-sk-C_INT::after   { content: "Forbidden Knowledge"; }
+.n-sk-C_AGI::after   { content: "Weightless Soul"; }
 
 .lang-cn .n-sk-P_ATK::after  { content: "神力庇護"; }
 .lang-cn .n-sk-P_MATK::after { content: "秘法傳承"; }
 .lang-cn .n-sk-P_FLEE::after { content: "殘影"; }
 .lang-cn .n-sk-P_LIFE::after { content: "生命洪流"; }
-.lang-cn .n-sk-P_CRIT::after { content: "鷹眼"; }
-
-/* Curses */
-.n-sk-C_STR::after   { content: "Berserker's Blood"; }
-.n-sk-C_INT::after   { content: "Forbidden Knowledge"; }
-.n-sk-C_AGI::after   { content: "Weightless Soul"; }
-.n-sk-C_LUK::after   { content: "Devil's Deal"; }
-
 .lang-cn .n-sk-C_STR::after  { content: "狂戰士之血"; }
 .lang-cn .n-sk-C_INT::after  { content: "禁忌知識"; }
 .lang-cn .n-sk-C_AGI::after  { content: "失重靈魂"; }
-.lang-cn .n-sk-C_LUK::after  { content: "惡魔契約"; }
