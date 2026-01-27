@@ -65,15 +65,15 @@ window.DB = {
                 ended: "你的冒險結束了...", reached: "到達樓層:", mobile_ed: "究極行動版"
             },
             maps: {
-                "Prontera Field": "普隆德拉 原野", "Payon Cave": "斐揚 洞窟", "Prontera Culvert": "普隆德拉 下水道",
-                "Byalan Island": "柏ani 柏亞蘭 島嶼", "Orc Dungeon": "獸人 洞窟", "Glast Heim": "古城 克雷斯特漢姆",
-                "Magma Dungeon": "岩漿 洞窟", "Ice Dungeon": "冰 洞窟", "Abyss Lake": "深淵 湖泊", "Thanatos Tower": "達納托斯 塔"
+                "Prontera Field": "普隆德拉 原野", "Payon Cave": "斐揚 洞窟", "Prontera Culvert": "普隆德拉 地下水道",
+                "Byalan Island": "柏伊亞嵐島 (海洞)", "Orc Dungeon": "獸人地下洞窟", "Glast Heim": "克雷斯特漢姆古城",
+                "Magma Dungeon": "諾可羅德 (火洞)", "Ice Dungeon": "冰洞穴", "Abyss Lake": "深淵湖水", "Thanatos Tower": "達納托斯之塔"
             },
             mobs: {
-                "Poring": "波利", "Fabre": "法布爾", "Lunatic": "瘋兔", "Chonchon": "蒼蠅", "Roda Frog": "羅達蛙",
-                "Spore": "蘑菇", "Tarou": "塔羅", "Poison Spore": "毒蘑菇", "Wormtail": "土波利", "Angeling [MVP]": "天使波利 [MVP]",
-                "Zombie": "殭屍", "Skeleton": "腐屍", "Poporing": "波波利", "Hydra": "希特拉", "Vadon": "螃蟹",
-                "Marina": "水母", "Thief Bug": "盜蟲", "Soldier Skeleton": "邪骸戰士", "Archer Skeleton": "邪骸弓箭手", "Golden Thief Bug [MVP]": "黃金盜蟲 [MVP]"
+                "Poring": "波利", "Fabre": "綠棉蟲", "Lunatic": "瘋兔", "Chonchon": "蒼蠅", "Roda Frog": "羅達蛙",
+                "Spore": "蘑菇", "Tarou": "塔魯安", "Poison Spore": "毒蘑菇", "Wormtail": "土波利", "Angeling [MVP]": "天使波利 [MVP]",
+                "Zombie": "殭屍", "Skeleton": "邪骸戰士", "Poporing": "波波利", "Hydra": "海葵", "Vadon": "螃蟹",
+                "Marina": "瑪麗娜", "Thief Bug": "盜蟲", "Soldier Skeleton": "邪骸士兵", "Archer Skeleton": "邪骸弓箭手", "Golden Thief Bug [MVP]": "黃金盜蟲 [MVP]"
             },
             jobs: {
                 'Novice': '初學者', 'Swordman': '劍士', 'Knight': '騎士',
