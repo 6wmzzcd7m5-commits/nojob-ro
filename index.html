@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jobless RO: Rouge Edition v1.0.2</title>
+    <title>Jobless RO: Rouge Edition v1.0.4</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dict.css">
 </head>
@@ -39,7 +39,7 @@
 
         <div class="flex eq-row">
             <div><span id="uloc" class="c-n">Prontera</span></div>
-            <div><span class="lbl-w"></span><span id="ueqw" class="eq-v">-</span> <span class="lbl-a"></span><span id="ueqa" class="eq-v">-</span></div>
+            <div style="font-size:10px"><span class="lbl-w"></span><span id="ueqw" class="eq-v">-</span> <span class="lbl-a"></span><span id="ueqa" class="eq-v">-</span></div>
         </div>
 
         <div class="flex">
@@ -66,37 +66,34 @@
     </header>
 
     <section id="btl" class="panel">
-        <div class="flex" style="margin-bottom:5px; font-size:10px;">
-            <span class="c-n lbl-plr"></span>
-            <span id="en" style="font-weight:bold; color:var(--hp);"></span>
-        </div>
         <div id="stage">
             <div id="p-box" class="avatar-box"><div id="spr" class="spr ro-m"><div class="hr"></div><div class="hd"></div><div class="bd"></div></div></div>
             <div id="e-box" class="avatar-box"><div id="espr" class="spr"><div id="ehd" class="hd"></div><div id="ehr" class="hr"></div><div id="ebd" class="bd"></div></div></div>
         </div>
         <div class="grid" style="margin-top:5px;">
-            <div class="flex" style="font-size:10px"><span class="c-n lbl-atb"></span> <progress id="ap" value="0" max="1000" style="width:80%"></progress></div>
-            <div class="flex" style="font-size:10px"><span class="c-h lbl-hp"></span> <progress id="ae" value="0" max="1000" style="width:80%"></progress></div>
+            <div class="flex" style="font-size:9px">ATB <progress id="ap" value="0" max="1000" style="width:80%"></progress></div>
+            <div class="flex" style="font-size:9px">MOB <progress id="ae" value="0" max="1000" style="width:80%"></progress></div>
         </div>
     </section>
 
-    <nav id="ctl" class="grid g-2" style="min-height:100px"></nav>
+    <nav id="ctl" class="grid g-2" style="min-height:80px"></nav>
     <main id="log"></main>
 </div>
 
 <script>
+// --- DATABASES ---
 const J=[{hp:60,sp:20,as:50},{hp:150,sp:40,as:45},{hp:80,sp:120,as:60},{hp:110,sp:50,as:35},{hp:100,sp:60,as:40},{hp:90,sp:100,as:55},{hp:120,sp:50,as:50},{hp:350,sp:80,as:40},{hp:150,sp:280,as:55},{hp:240,sp:100,as:25},{hp:220,sp:120,as:35},{hp:200,sp:220,as:50},{hp:280,sp:100,as:45}];
 const B=[{n:'Angeling',h:2500,a:80,mvp:true},{n:'GT Bug',h:6000,a:150,mvp:true},{n:'Eddga',h:15000,a:300,mvp:true},{n:'Osiris',h:40000,a:800,mvp:true},{n:'Baphomet',h:99999,a:1800,mvp:true}];
 const SK0=[{n:'FirstAid',v:20,t:'h'},{n:'Bash',v:1.4,t:'p'},{n:'Napalm',v:1.5,t:'m'}];
 
 const SK_POOL = {
-    Melee: [{n:'Bash',v:1.6,t:'p',d:'Heavy strike.'},{n:'Magnum',v:1.3,t:'p',d:'Fire hit.'},{n:'BowlingBash',v:3.5,t:'p',d:'Double strike.'}],
-    Magical: [{n:'FireBolt',v:2.2,t:'m',d:'Fire magic.'},{n:'ColdBolt',v:2.2,t:'m',d:'Ice magic.'},{n:'StormGust',v:5.0,t:'m',d:'Blizzard.'},{n:'Heal',v:60,t:'h',d:'Restores HP.'},{n:'Magnus',v:5.5,t:'m',d:'Holy attack.'}],
-    Rouge: [{n:'Double',t:'a',d:'2 hits.'},{n:'Hiding',t:'a',d:'Dodge hits.'},{n:'SonicBlow',v:4.5,t:'p',d:'8-hit kill.'},{n:'ArrowShower',v:2.5,t:'p',d:'Arrow rain.'}]
+    Melee: [{n:'Bash',v:1.6,t:'p',d:'Heavy physical strike.'},{n:'Magnum',v:1.3,t:'p',d:'Fire property splash hit.'},{n:'BowlingBash',v:3.5,t:'p',d:'Massive double-hit strike.'}],
+    Magical: [{n:'FireBolt',v:2.2,t:'m',d:'Fire magic arrows.'},{n:'ColdBolt',v:2.2,t:'m',d:'Ice magic spears.'},{n:'StormGust',v:5.0,t:'m',d:'Freezing blizzard AOE.'},{n:'Heal',v:60,t:'h',d:'Restores HP via INT.'},{n:'Magnus',v:5.5,t:'m',d:'Holy purge attack.'}],
+    Rouge: [{n:'Double',t:'a',d:'Chance for 2 hits.'},{n:'Hiding',t:'a',d:'Dodge all hits.'},{n:'SonicBlow',v:4.5,t:'p',d:'8-hit rapid assassination.'},{n:'ArrowShower',v:2.5,t:'p',d:'Ranged AOE volley.'}]
 };
 
-const PASSIVES = [{n:'P_ATK',v:1.1,t:'p_atk',d:'ATK +10%'},{n:'P_MATK',v:1.1,t:'p_matk',d:'MATK +10%'},{n:'P_FLEE',v:25,t:'p_flee',d:'Flee +25'},{n:'P_LIFE',v:1.2,t:'p_hp',d:'HP +20%'}];
-const CURSES = [{n:'C_STR',v:50,t:'c_str',d:'ATK+50/VIT-15'},{n:'C_INT',v:75,t:'c_int',d:'MATK+75/STR-12'},{n:'C_AGI',v:35,t:'c_agi',d:'Flee+35/HP-20%'}];
+const PASSIVES = [{n:'P_ATK',v:1.1,t:'p_atk',d:'Total ATK +10%'},{n:'P_MATK',v:1.1,t:'p_matk',d:'Total MATK +10%'},{n:'P_FLEE',v:25,t:'p_flee',d:'Permanent Flee +25'},{n:'P_LIFE',v:1.2,t:'p_hp',d:'Total MaxHP +20%'}];
+const CURSES = [{n:'C_STR',v:50,t:'c_str',d:'ATK+50 / VIT-15'},{n:'C_INT',v:75,t:'c_int',d:'MATK+75 / STR-12'},{n:'C_AGI',v:35,t:'c_agi',d:'Flee+35 / HP-20%'}];
 
 const ARCH = {
     Melee: { jobs: [1, 6], next: { 1: 7, 6: 12 } },
@@ -104,17 +101,25 @@ const ARCH = {
     Rouge: { jobs: [3, 4], next: { 3: 9, 4: 10 } }
 };
 
-const M_ART = { 'Poring': { h:'#fca', rad:'50%', w:24, ht:20, t:15 }, 'Angeling': { h:'#fff', rad:'50%', w:32, ht:28, t:5, mvp:true }, 'GT Bug': { h:'#fc0', w:35, ht:30, mvp:true }, 'Baphomet': { h:'#333', w:40, ht:50, t:-15, mvp:true } };
+const M_ART = { 
+    'Poring': { h:'#fca', rad:'50%', w:24, ht:20, t:15 }, 
+    'Angeling': { h:'#fff', rad:'50%', w:32, ht:28, t:5, mvp:true }, 
+    'GT Bug': { h:'#fc0', rad:'50%', w:35, ht:30, t:0, mvp:true },
+    'Eddga': { h:'#fa0', rad:'8px', w:35, ht:35, t:-5, mvp:true },
+    'Osiris': { h:'#eee', rad:'3px', w:30, ht:45, t:-10, mvp:true },
+    'Baphomet': { h:'#333', w:40, ht:50, t:-15, mvp:true } 
+};
 
 const K='jro_rouge_v1', el=i=>document.getElementById(i), rnd=m=>Math.floor(Math.random()*m);
+const SALT="SECRET_KEY_999";
+const GH_USER="6wmzzcd7m5-commits", RAW_URL=`https://raw.githubusercontent.com/${GH_USER}/nojob-ro/main/leaderboard.json`;
 
 const G={
     p:null, s:{f:1,b:false,tm:null,spd:10,au:false,l:'en'}, tmp:{g:'m'}, pb:0, eb:0, mob:null,
     
     init(){
         const r=localStorage.getItem(K);
-        try { if(r){ this.p=JSON.parse(atob(r)); document.body.className='lang-'+this.s.l; this.draw(); this.mnu(); } else { this.scr(); } } 
-        catch(e){ this.scr(); }
+        if(r){ try { this.p=JSON.parse(atob(r)); document.body.className='lang-'+this.s.l; this.draw(); this.mnu(); } catch(e){ this.scr(); } } else { this.scr(); }
         this.spd(10);
     },
 
@@ -127,8 +132,14 @@ const G={
     updSpr(){ el('spr').className=`spr ro-${this.tmp.g} j-0`; },
 
     ng(){ this.p={n:el('in').value||"Novice",j:0,lv:1,xp:0,hp:60,mh:60,sp:20,ms:20,str:1,agi:1,vit:1,int:1,dex:1,luk:1,pts:5,sk:{},act:null,g:this.tmp.g,arch:null}; this.skM(); },
+    
     skM(){ el('ctl').innerHTML=''; SK0.forEach(s=>{ this.btn("",()=>{ this.p.sk[s.n]=1; this.p.act=s; this.stM(true); }, 'n-sk-'+s.n); }); },
-    stM(st){ el('ctl').innerHTML=''; ['str','agi','vit','int','dex','luk'].forEach(k=>{ this.btn(k.toUpperCase()+"+",()=>{if(this.p.pts>0){this.p[k]++;this.p.pts--;this.draw();this.stM(st);}}); }); if(st||this.p.pts==0) this.btn("OK",()=>{ if(this.p.lv>=10&&!this.p.arch)this.jbM(); else this.mnu(); }); },
+
+    stM(st){ 
+        el('ctl').innerHTML=''; 
+        ['str','agi','vit','int','dex','luk'].forEach(k=>{ this.btn(k.toUpperCase()+"+",()=>{if(this.p.pts>0){this.p[k]++;this.p.pts--;this.draw();this.stM(st);}}); }); 
+        if(st||this.p.pts==0) this.btn("OK",()=>{ if(this.p.lv>=10&&!this.p.arch)this.jbM(); else this.mnu(); }); 
+    },
 
     jbM(){
         el('ctl').innerHTML='';
@@ -142,60 +153,66 @@ const G={
         });
     },
 
-    jcM(){ el('ctl').innerHTML=''; const nextJ = ARCH[this.p.arch].next[this.p.j]; this.btn("", () => { this.p.j = nextJ; this.p.mh += 300; this.p.hp=this.p.mh; this.mnu(); }, 'n-job-'+nextJ); },
+    jcM(){
+        el('ctl').innerHTML=''; const nextJ = ARCH[this.p.arch].next[this.p.j];
+        this.btn("", () => { this.p.j = nextJ; this.p.mh += 300; this.p.hp=this.p.mh; this.mnu(); }, 'n-job-'+nextJ);
+    },
 
     calc(c){
         const j=J[c.j];
-        let atk=c.str+(c.dex/5)+(c.luk/3)+c.lv*2, matk=c.int+(c.int/2)+(c.dex/5)+c.lv*2, flee=c.agi+c.lv, hit=c.dex+c.lv;
-        if(c.sk.C_STR) atk += (50*c.sk.C_STR); if(c.sk.C_INT) matk += (75*c.sk.C_INT); if(c.sk.C_AGI) flee += 35;
+        let atk=c.str+(c.dex/5)+(c.luk/3)+c.lv*2, matk=c.int+(c.int/2)+(c.dex/5)+c.lv*2, flee=c.agi+c.lv, hit=c.dex+c.lv, hp_m=1.0;
+        if(c.sk.C_STR) atk += (50*c.sk.C_STR); if(c.sk.C_INT) matk += (75*c.sk.C_INT); if(c.sk.C_AGI) { flee += 35; hp_m -= 0.2; }
         if(c.sk.P_ATK) atk *= 1.1; if(c.sk.P_MATK) matk *= 1.1; if(c.sk.P_FLEE) flee += 25;
-        return {atk:Math.floor(atk), matk:Math.floor(matk), aspd:Math.floor(j.as+(c.agi*0.8)+(c.dex*0.2)), hit, flee, def:Math.floor(c.vit/2+c.lv/2)};
+        return {atk:Math.floor(atk), matk:Math.floor(matk), aspd:Math.floor(j.as+(c.agi*0.8)+(c.dex*0.2)), hit, flee, def:Math.floor(c.vit/2+c.lv/2), hp_m};
     },
 
-    mnu(){ this.sv(); el('ctl').innerHTML=''; this.draw(); if(this.s.au&&!this.s.b){ this.bt(this.s.f%10==0); return; } if(this.s.f%10==0) this.btn("BOSS",()=>this.bt(true),'btn-red'); else this.btn("FIGHT",()=>this.bt(false)); this.btn("REST",()=>{this.p.hp=this.p.mh;this.draw();}); },
-    
+    mnu(){ 
+        this.sv(); el('ctl').innerHTML=''; this.draw(); 
+        if(this.s.au && !this.s.b){ setTimeout(() => { if(this.s.au && !this.s.b) this.bt(this.s.f % 10 === 0); }, 700); return; }
+        if(this.s.f % 10 === 0) this.btn("BOSS", () => this.bt(true), 'btn-red');
+        else this.btn("FIGHT", () => this.bt(false));
+        this.btn("REST", () => { this.p.hp = this.p.mh; this.draw(); });
+    },
+
     bt(isB){
-        if(this.s.b) return; this.s.b=true;
+        if(this.s.b) return; this.s.b = true;
         if(isB){ const b=B[rnd(B.length)]; this.mob={n:b.n,h:b.h,a:b.a,mvp:true,vis:b.n}; } 
-        else { this.mob={n:'Poring',h:this.s.f*35,a:this.s.f*6,vis:'Poring'}; }
+        else { this.mob={n:'Poring',h:this.s.f*40,a:this.s.f*6,vis:'Poring'}; }
         this.mob.hp=this.mob.h; this.mob.mh=this.mob.h; this.pb=0; this.eb=0;
         el('en').innerText=this.mob.n; this.drawMob(this.mob.vis);
         if(this.s.tm) clearInterval(this.s.tm);
         this.s.tm=setInterval(()=>this.loop(), 30);
     },
 
-    loop(){
-        if(!this.s.b) return;
-        for(let i=0; i<this.s.spd; i++){ if(!this.s.b) break; this.tk(); }
-        if(this.s.b) this.uiTick(); // Only update bars once per frame
-    },
-
-    tk(){
-        const ps=this.calc(this.p); this.pb+=ps.aspd; this.eb+=10;
-        if(this.pb>=1000){ this.pb=0; this.act(this.p,this.mob,ps,true); }
-        if(this.eb>=1000){ this.eb=0; this.act(this.mob,this.p,{hit:80+(this.s.f*1.5),atk:this.mob.a},false); }
+    loop(){ if(!this.s.b) return; for(let i=0; i<this.s.spd; i++){ if(!this.s.b) break; this.tk(); } if(this.s.b) this.uiTick(); },
+    
+    tk(){ 
+        const ps=this.calc(this.p); this.pb+=ps.aspd; this.eb+=10; 
+        if(this.pb>=1000){ this.pb=0; this.act(this.p,this.mob,ps,true); } 
+        if(this.eb>=1000){ this.eb=0; this.act(this.mob,this.p,{hit:80+(this.s.f*1.5),atk:this.mob.a},false); } 
     },
 
     act(s, t, st, p) {
         const tflee = p ? 0 : this.calc(this.p).flee;
         const chance = Math.max(5, Math.min(95, 80 + (st.hit - tflee)));
-        if (Math.random() * 100 > chance) { this.pop(p?el('e-box'):el('p-box'), "MISS", "dmg-m"); return; }
+        const targetBox = p ? el('e-box') : el('p-box');
+        if (Math.random() * 100 > chance) { if(this.s.spd<=30) this.pop(targetBox,"MISS","dmg-m"); return; }
         let sk = p ? this.p.act : null, mul = sk ? sk.v : 1;
         let d = Math.max(1, ((sk?.t == 'm' ? st.matk : st.atk) * mul) - (p ? 0 : st.def));
         t.hp -= Math.floor(d);
-        if(this.s.spd <= 30) this.pop(p?el('e-box'):el('p-box'), Math.floor(d), 'dmg-w');
+        if(this.s.spd <= 30) this.pop(targetBox, Math.floor(d), 'dmg-w');
         if (t.hp <= 0) this.win(p);
     },
 
     win(p){
         clearInterval(this.s.tm); this.s.b=false;
-        if(!p){ el('ctl').innerHTML=`<button onclick="location.reload()" class="btn-red">DEAD</button>`; return; }
-        const isMVP = this.mob.mvp; this.p.xp += Math.floor(this.s.f * 150); this.s.f++;
+        if(!p) { el('ctl').innerHTML=`<button onclick="location.reload()" class="btn-red">DEAD</button>`; return; }
+        const isMVP = this.mob.mvp; this.p.xp += 150; this.s.f++;
         if (isMVP) this.rewardM(); else this.checkLv();
     },
 
     rewardM(){
-        el('ctl').innerHTML=''; 
+        this.s.au = false; el('ctl').innerHTML=''; 
         const pool = [...(SK_POOL[this.p.arch]||[]).filter(s=>!this.p.sk[s.n]), ...PASSIVES, ...CURSES].sort(()=>0.5-Math.random()).slice(0,3);
         pool.forEach(sk => {
             const b = document.createElement('button'); b.className = 'skill-choice';
@@ -215,20 +232,32 @@ const G={
         } else { this.mnu(); }
     },
 
-    uiTick(){
-        el('uh').innerText=this.p.hp; el('bh').value=this.p.hp; el('ap').value=this.pb;
-        el('ae').value=this.mob?this.mob.hp:0; el('ae').max=this.mob?this.mob.mh:1;
-    },
-
+    uiTick(){ el('uh').innerText=Math.floor(this.p.hp); el('bh').value=this.p.hp; el('ap').value=this.pb; el('ae').value=this.mob?Math.floor(this.mob.hp):0; el('ae').max=this.mob?this.mob.mh:1; },
+    
     draw(){ 
         const p=this.p; if(!p) return; 
         el('un').innerText=p.n; el('ul').innerText=p.lv; el('ufl').innerText=this.s.f;
         el('uj').className='n-job-'+p.j; el('spr').className=`spr ro-${p.g} j-${p.j}`;
-        el('uh').innerText=p.hp; el('bh').value=p.hp; el('bh').max=p.mh;
+        el('uh').innerText=Math.floor(p.hp); el('bh').value=p.hp; el('bh').max=p.mh;
         ['str','agi','vit','int','dex','luk'].forEach(k=>el('v'+k).innerText=p[k]);
+        el('b-au').className = this.s.au ? "btn-sm active" : "btn-sm";
         this.sv();
     },
 
-    drawMob(n){ const s=M_ART[n]||{h:'#999'}; el('espr').className=s.mvp?'spr mvp-glow':'spr'; el('e-box').className=s.mvp?'avatar-box mvp-scale':'avatar-box'; el('ehd').style.background=s.h; el('ehd').style.width=(s.w||20)+'px'; },
-    pop(dom, txt, cls){ if(this.s.spd > 30) return; const d=document.createElement('div'); d.className=`dmg-pop ${cls}`; d.innerText=txt; dom.appendChild(d); setTimeout(()=>d.remove(), 800); },
-    btn(t,fn
+    drawMob(n){ const s=M_ART[n]||{h:'#999'}; const eb=el('e-box'), es=el('espr'); if(s.mvp){ es.classList.add('mvp-glow'); eb.classList.add('mvp-scale'); } else { es.classList.remove('mvp-glow'); eb.classList.remove('mvp-scale'); } el('ehd').style.background=s.h; el('ehd').style.width=(s.w||20)+'px'; el('ehd').style.height=(s.ht||18)+'px'; el('ehd').style.top=(s.t||0)+'px'; },
+    pop(dom, txt, cls){ const d=document.createElement('div'); d.className=`dmg-pop ${cls}`; d.innerText=txt; dom.appendChild(d); setTimeout(()=>d.remove(), 800); },
+    btn(t,fn,c=''){const b=document.createElement('button'); if(t) b.innerText=t; b.onclick=fn; if(c) b.className=c; el('ctl').appendChild(b);},
+    lang(){ this.s.l=this.s.l=='en'?'cn':'en'; document.body.className='lang-'+this.s.l; this.draw(); if(this.p&&!this.s.b)this.mnu(); },
+    sv(){ localStorage.setItem(K, btoa(JSON.stringify(this.p))); },
+    wipe(){ if(confirm("Reset?")) { localStorage.removeItem(K); location.reload(); } },
+    spd(x){ this.s.spd=x; [10,30,100].forEach(n=>el('s'+n).classList.remove('active')); el('s'+x).classList.add('active'); },
+    exp(){ const a=document.createElement('a'); a.href='data:text/plain;base64,'+btoa(JSON.stringify(this.p)); a.download='save.jro'; a.click(); },
+    imp(e){ const f=e.files[0], r=new FileReader(); r.onload=x=>{this.p=JSON.parse(atob(x.target.result));this.draw();this.mnu();}; r.readAsText(f); },
+    openRank(){ el('rank-ui').classList.remove('hide'); el('rank-list').innerHTML="Fetching..."; fetch(RAW_URL+'?t='+Date.now()).then(r=>r.json()).then(d=>{let h="";d.forEach((r,i)=>{h+=`<div class="rank-row"><span>#${i+1} ${r.n}</span><span class="n-job-${r.j}"></span><span>F${r.f}</span></div>`;});el('rank-list').innerHTML=h;}).catch(()=>el('rank-list').innerHTML="Offline"); },
+    closeRank(){el('rank-ui').classList.add('hide');},
+    tAu(){ this.s.au=!this.s.au; this.draw(); if(this.s.au&&!this.s.b) this.mnu(); }
+};
+G.init();
+</script>
+</body>
+</html>
