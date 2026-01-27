@@ -1,8 +1,13 @@
-/* --- AEGIS_DATABASE_V4.0 (Internationalized & Expanded) --- */
+/* --- AEGIS_DATABASE_V4.4 (Full Internationalization & Tiered System) --- */
 window.DB = {
-    // 1. LOCALIZATION DICTIONARY
+    // 1. LOCALIZATION SYSTEM
     T: {
         en: {
+            st: { // UI Strings
+                save: "SAVE", rank: "RANK", warp: "WARP: FLOOR", init: "ID_INIT...", 
+                create: "CREATE_VESSEL", combat: "COMBAT_IN_PROGRESS", clear: "CLEAR!",
+                lv: "Lv", flr: "FLR", novice: "Novice"
+            },
             jobs: { 
                 'Novice': 'Novice', 'Swordman': 'Swordman', 'Knight': 'Knight', 
                 'Merchant': 'Merchant', 'Blacksmith': 'Blacksmith', 'Mage': 'Mage', 
@@ -10,13 +15,29 @@ window.DB = {
                 'Thief': 'Thief', 'Assassin': 'Assassin', 'Archer': 'Archer', 'Hunter': 'Hunter' 
             },
             skills: {
-                'Bash': 'Bash', 'Magnum Break': 'Magnum Break', 'Bowling Bash': 'Bowling Bash',
-                'Fire Bolt': 'Fire Bolt', 'Storm Gust': 'Storm Gust', 'Heal': 'Heal',
-                'Double Strafe': 'Double Strafe', 'Sonic Blow': 'Sonic Blow', 'Falcon Assault': 'Falcon Assault'
-                // ... (additional mapping omitted for brevity, full mapping included in logic)
+                'Bash': 'Bash', 'Magnum Break': 'Magnum Break', 'Pierce': 'Pierce', 'Spear Stab': 'Spear Stab',
+                'Cart Revolution': 'Cart Revolution', 'Provoke': 'Provoke', 'Bowling Bash': 'Bowling Bash',
+                'Spear Boomerang': 'Spear Boomerang', 'Brandish Spear': 'Brandish Spear', 'Mammonite': 'Mammonite',
+                'Hammer Fall': 'Hammer Fall', 'Power Thrust': 'Power Thrust', 'Weapon Perfection': 'Weapon Perfection',
+                'Adrenaline Rush': 'Adrenaline Rush', 'Spiral Pierce': 'Spiral Pierce',
+                'Fire Bolt': 'Fire Bolt', 'Cold Bolt': 'Cold Bolt', 'Lightning Bolt': 'Lightning Bolt',
+                'Soul Strike': 'Soul Strike', 'Heal': 'Heal', 'Blessing': 'Blessing', 'Storm Gust': 'Storm Gust',
+                'Lord of Vermilion': 'Lord of Vermilion', 'Meteor Storm': 'Meteor Storm', 'Jupitel Thunder': 'Jupitel Thunder',
+                'Magnus Exorcismus': 'Magnus Exorcismus', 'Sanctuary': 'Sanctuary', 'Turn Undead': 'Turn Undead',
+                'Safety Wall': 'Safety Wall', 'Frost Diver': 'Frost Diver',
+                'Envenom': 'Envenom', 'Double Strafe': 'Double Strafe', 'Arrow Shower': 'Arrow Shower',
+                'Steal': 'Steal', 'Improve Concentration': 'Improve Concentration', 'Hide': 'Hide',
+                'Sonic Blow': 'Sonic Blow', 'Grimtooth': 'Grimtooth', 'Venom Splasher': 'Venom Splasher',
+                'Falcon Assault': 'Falcon Assault', 'Blast Mine': 'Blast Mine', 'Claymore Trap': 'Claymore Trap',
+                'Venom Dust': 'Venom Dust', 'Beast Charge': 'Beast Charge', 'Back Stab': 'Back Stab'
             }
         },
         tc: { // Traditional Chinese
+            st: { // UI Strings
+                save: "存檔", rank: "排名", warp: "傳送: 地層", init: "角色初始化...", 
+                create: "建立容器", combat: "戰鬥中", clear: "通關!",
+                lv: "等級", flr: "樓層", novice: "初學者"
+            },
             jobs: { 
                 'Novice': '初學者', 'Swordman': '劍士', 'Knight': '騎士', 
                 'Merchant': '商人', 'Blacksmith': '鐵匠', 'Mage': '法師', 
@@ -24,17 +45,41 @@ window.DB = {
                 'Thief': '盜賊', 'Assassin': '刺客', 'Archer': '弓箭手', 'Hunter': '獵人' 
             },
             skills: {
-                'Bash': '重擊', 'Magnum Break': '怒爆', 'Bowling Bash': '怪物互擊',
-                'Fire Bolt': '火箭術', 'Storm Gust': '暴風雪', 'Heal': '治癒術',
-                'Double Strafe': '二連矢', 'Sonic Blow': '音速投擲', 'Falcon Assault': '獵鷹突擊',
-                'Mammonite': '金錢攻擊', 'Hammer Fall': '大地之擊', 'Adrenaline Rush': '速度激發',
-                'Meteor Storm': '隕石術', 'Lord of Vermilion': '怒雷強擊', 'Magnus Exorcismus': '十字驅魔攻擊',
-                'Envenom': '施毒', 'Grimtooth': '無影之牙', 'Arrow Shower': '箭雨', 'Claymore Trap': '地雷陷阱'
+                'Bash': '重擊', 'Magnum Break': '怒爆', 'Pierce': '連刺攻擊', 'Spear Stab': '投擲長矛',
+                'Cart Revolution': '手推車攻擊', 'Provoke': '挑釁', 'Bowling Bash': '怪物互擊',
+                'Spear Boomerang': '迴旋連刺', 'Brandish Spear': '連刺攻擊', 'Mammonite': '金錢攻擊',
+                'Hammer Fall': '大地之擊', 'Power Thrust': '無視體型攻擊', 'Weapon Perfection': '武器值最大化',
+                'Adrenaline Rush': '速度激發', 'Spiral Pierce': '螺旋擊刺',
+                'Fire Bolt': '火箭術', 'Cold Bolt': '冰箭術', 'Lightning Bolt': '雷擊術',
+                'Soul Strike': '聖靈召喚', 'Heal': '治癒術', 'Blessing': '天賜', 'Storm Gust': '暴風雪',
+                'Lord of Vermilion': '怒雷強擊', 'Meteor Storm': '隕石術', 'Jupitel Thunder': '雷鳴術',
+                'Magnus Exorcismus': '十字驅魔攻擊', 'Sanctuary': '聖域術', 'Turn Undead': '轉生術',
+                'Safety Wall': '暗之障壁', 'Frost Diver': '冰凍術',
+                'Envenom': '施毒', 'Double Strafe': '二連矢', 'Arrow Shower': '箭雨',
+                'Steal': '偷竊', 'Improve Concentration': '集中力向上', 'Hide': '隱匿',
+                'Sonic Blow': '音速投擲', 'Grimtooth': '無影之牙', 'Venom Splasher': '毒性反彈',
+                'Falcon Assault': '獵鷹突擊', 'Blast Mine': '爆破陷阱', 'Claymore Trap': '地雷陷阱',
+                'Venom Dust': '毒性擴散', 'Beast Charge': '動物閃電擊', 'Back Stab': '背刺'
             }
         }
     },
 
-    // 2. TIERED JOB SYSTEM
+    // 2. HELPER FUNCTIONS
+    getLang() {
+        return document.body.classList.contains('lang-tc') ? 'tc' : 'en';
+    },
+
+    txt(key, type = 'st') {
+        const lang = this.getLang();
+        return this.T[lang][type][key] || key;
+    },
+
+    getName(type, id) {
+        const lang = this.getLang();
+        return this.T[lang][type][id] || id;
+    },
+
+    // 3. TIERED JOB SYSTEM
     jobs: {
         melee: {
             'Swordman': { hp: 400, sp: 60, aspd: 170, stats: [12, 5, 10, 2, 8, 2], next: ['Knight'] },
@@ -59,7 +104,7 @@ window.DB = {
         }
     },
 
-    // 3. FULL SKILL POOL (15-20 per group)
+    // 4. SKILL DATABASE (15-20 per group)
     skills: {
         melee: {
             'Bash': { sp: 10, mult: 2.5, tier: 1 }, 'Magnum Break': { sp: 30, mult: 3.2, tier: 1 },
@@ -93,14 +138,25 @@ window.DB = {
         }
     },
 
-    // 4. UTILITY HELPERS
-    getLang() {
-        return document.body.className.includes('lang-tc') ? 'tc' : 'en';
-    },
-
-    getName(type, id) {
-        const lang = this.getLang();
-        return this.T[lang][type][id] || id;
+    // 5. MONSTER ROSTER
+    mobs: {
+        names: [
+            "Poring", "Fabre", "Lunatic", "Chonchon", "Roda Frog", 
+            "Spore", "Tarou", "Poison Spore", "Wormtail", "Angeling [MVP]",
+            "Zombie", "Skeleton", "Poporing", "Hydra", "Vadon", 
+            "Marina", "Thief Bug", "Soldier Skeleton", "Archer Skeleton", "Golden Thief Bug [MVP]"
+        ],
+        scaling: (floor) => {
+            const isBoss = (floor % 10 === 0);
+            const multi = isBoss ? 5 : 1;
+            return {
+                n: window.DB.mobs.names[Math.min(floor - 1, 19)] || `Void Spectre #${floor}`,
+                hp: (50 + (floor * 40)) * multi,
+                atk: (10 + (floor * 10)) * multi,
+                def: Math.floor(floor * 1.5),
+                zeny: floor * 20
+            };
+        }
     },
 
     getJob(jobName) {
@@ -111,4 +167,4 @@ window.DB = {
     }
 };
 
-console.log("DB_PILLAR: MULTI_LANG_EXPANDED_READY");
+console.log("DB_PILLAR: FULL_DB_LOADED_V4.4");
