@@ -1,11 +1,9 @@
-# nojob-ro
-link: https://6wmzzcd7m5-commits.github.io/nojob-ro/
-# Jobless RO: The Ultimate Text-Based Idle Roguelike
+# Jobless RO: Pocket Edition (Serverless RPG)
 
-![Version](https://img.shields.io/badge/version-Ultimate_1.0-39ff14?style=for-the-badge)
-![Platform](https://img.shields.io/badge/Platform-Web%20%7C%20Mobile-blue?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-red?style=for-the-badge)
-![Theme](https://img.shields.io/badge/Theme-Neon_Cyber-39ff14?style=for-the-badge)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Status](https://img.shields.io/badge/status-live-blue)
+![Platform](https://img.shields.io/badge/platform-web-orange)
+![Tech](https://img.shields.io/badge/tech-VanillaJS%20%7C%20GitHub%20Actions-yellow)
 
 ```text
       _  ____  ____  _      ______  _____ _____   _____   ____  
@@ -15,148 +13,103 @@ link: https://6wmzzcd7m5-commits.github.io/nojob-ro/
 | |__| | |__| | |_) | |___  | |____ ____) |___) | | | \ \| |__| |
  \____/ \____/|____/|_____|______|_____/_____/  |_|  \_\\____/
 
->> SYSTEM STATUS: ONLINE
->> PROTOCOL: GRIND_UNTIL_DEATH
->> TARGET: FLOOR 50
+**Jobless RO** is a lightweight, procedural, endless RPG engine that runs entirely in the browser. It pays homage to the classic MMORPG *Ragnarok Online*, re-imagined as a single-file, zero-dependency application.
 
-# Jobless RO: Official Game Manual & Documentation
+What makes this project unique is its **"Serverless IssueOps" Architecture**. It requires no external backend, no database hosting, and no cloud fees. It uses GitHub Issues and GitHub Actions as a secure, automated backend for global leaderboards.
+
+---
 
 ## 📖 Table of Contents
-* [Introduction](#-introduction)
-* [Key Features](#-key-features)
-* [Getting Started](#-getting-started)
-* [Gameplay Mechanics](#-gameplay-mechanics)
-* [Stats & Attributes](#-stats--attributes)
-* [Job Classes & Skills](#-job-classes--skills)
-* [The Loot System](#-the-loot-system)
-* [Difficulty Modes](#-difficulty-modes)
-* [Strategy Guide](#-strategy-guide)
-* [Technical Documentation](#-technical-documentation)
-* [Secrets & Easter Eggs](#-secrets--easter-eggs)
-* [Credits](#-credits)
+
+1.  [Features](#-features)
+2.  [How to Play](#-how-to-play)
+3.  [Technical Architecture](#-technical-architecture)
+4.  [Game Mechanics & Formulas](#-game-mechanics--formulas)
+5.  [The CSS Sprite Engine](#-the-css-sprite-engine)
+6.  [Security & Anti-Cheat](#-security--anti-cheat)
+7.  [Deployment Guide](#-deployment-guide)
+8.  [Contribution](#-contribution)
+9.  [License](#-license)
 
 ---
 
-## 📜 Introduction
-**Jobless RO** is a lightweight, single-file, offline-capable HTML5 RPG that pays homage to the classic MMORPG *Ragnarok Online*. Stripped of heavy 3D assets and complex networking, this game distills the core "grind" experience into its purest form: **Numbers, Speed, and Progression.**
+## ✨ Features
 
-Set in a cyberpunk-terminal interface (Neon Green on Black), you play as a "Jobless" Novice attempting to ascend the Endless Tower. There are no servers, no lag, and no microtransactions—only you, the Random Number Generator (RNG), and 50 floors of monsters standing between you and the ultimate secret.
+### ⚔️ Core Gameplay
+* **Procedural Dungeon Crawler:** Infinite floor scaling. Every floor is mathematically generated, ensuring no two runs are exactly the same while maintaining a balanced difficulty curve.
+* **Classic Job System:** Start as a **Novice** and branch into 6 distinct classes: **Swordman, Mage, Archer, Merchant, Thief, and Acolyte**, each with unique stat multipliers and skill sets.
+* **Endless Tower Mode:** The game technically never ends. After Floor 50, monsters scale exponentially (`1.05^x`), challenging players to optimize their builds to the mathematical limit.
+* **Boss Encounters:** Fixed Boss encounters (MVPs) spawn every 10 floors (Angeling, Golden Thief Bug, Eddga, Osiris, Baphomet), requiring strategic resource management.
 
----
+### 🎨 Visuals & UI
+* **CSS-Only Pixel Art:** There are **zero** image files in this repository. All characters, costumes, and animations are rendered dynamically using CSS `box-shadow`, `linear-gradient`, and keyframe animations. This keeps the file size incredibly small (<30KB).
+* **Responsive Design:** Features a `100dvh` (Dynamic Viewport Height) layout, optimized perfectly for both Desktop and Mobile browsers without address bar interference.
+* **Dark Mode UI:** A clean, terminal-inspired aesthetic with neon accents (Cyan/Pink/Green) that reduces eye strain.
 
-## ✨ Key Features
-* **Zero Dependencies:** The entire game is contained in a single `.html` file. No internet or external libraries required.
-* **Hyper-Speed Engine:** Run at **10x** (Base), **30x** (Turbo), or **100x** (Hyper) speed.
-* **Deep Customization:** Manually allocate points into STR, AGI, VIT, INT, DEX, and LUK.
-* **Classic Job System:** Evolve from Novice to 1st and 2nd Job classes.
-* **Roguelike Elements:** Randomized skill upgrades and "Sage Blessings" between floors.
-* **Persistent Save:** Autosaves your progress to the browser's `LocalStorage`.
-
----
-
-## 🚀 Getting Started
-
-### Installation
-1.  Download the `Jobless_RO.html` file.
-2.  Open it in any modern web browser (Chrome, Firefox, Safari, Edge).
-3.  **Mobile:** Add the file to your home screen to play it like a native app.
-
-### The First Steps
-1.  **Identity Registration:** Enter your character name.
-2.  **Select Protocol (Difficulty):** * **EASY:** Monsters have 80% stats.
-    * **HARD:** Monsters have 150% stats, but give 150% EXP.
-3.  **Novice Specialization:** Choose your starting skill (*First Aid, Heavy Strike, or Mana Bolt*).
-4.  **Allocate Stats:** You start with **9 Points**. Use them wisely!
+### ☁️ Infrastructure
+* **Zero-Dependency:** The entire game logic resides in a single `index.html` file.
+* **Global Ranking System:** A cross-player leaderboard powered entirely by GitHub.
+* **Offline Capable:** The core game loop works offline; internet is only required to fetch or submit rankings.
 
 ---
 
-## ⚙️ Gameplay Mechanics
+## 🎮 How to Play
 
-### The Tower & Progression
-You must defeat a specific number of monsters to find the stairs to the next floor:
-* **Floors 1-9:** 1 Kill to advance.
-* **Floors 11-49:** Required kills increase every 10 floors (up to 5 kills).
-* **Boss Floors:** Every 10th Floor (10, 20, 30, 40, 50). You must defeat the **MVP** to proceed.
+### Controls
+The game is played entirely with the mouse (or touch on mobile).
+* **FIGHT:** Engage the current floor's monster.
+* **REST:** Regenerate HP (30% chance to succeed).
+* **AUTO:** Toggles automatic combat and stat distribution (useful for farming lower floors).
+* **SUBMIT SCORE:** Uploads your current progress to the global leaderboard.
 
-### Combat System (ATB)
-* **The Bar:** Both you and the enemy have an ATB bar (0 to 1000).
-* **Speed:** Fill rate is determined by **AGI** and **ASPD**.
-* **The Turn:** When the bar reaches 1000, an attack is launched.
-* **Damage:** Calculated via ATK vs DEF. **LUK** determines Critical Hits (ignoring DEF).
-
----
-
-## 📊 Stats & Attributes
-
-| Stat Name | Effect |
-| :--- | :--- |
-| **STR** (Strength) | Increases melee physical damage (ATK). |
-| **AGI** (Agility) | Increases Attack Speed (ASPD) and Dodge rate (FLEE). |
-| **VIT** (Vitality) | Increases Max HP, Defense (DEF), and potion effectiveness. |
-| **INT** (Intelligence) | Increases Magic Attack (MATK), Max SP, and SP recovery. |
-| **DEX** (Dexterity) | Increases Accuracy (HIT), damage stability, and ASPD. |
-| **LUK** (Luck) | Increases Critical Hit rate (CRIT) and Drop Rate. |
+### Character Creation
+1.  **Name:** Enter a name (Max 10 characters).
+2.  **Gender:** Select `_m` (Male) or `_f` (Female). This changes the visual sprite generation and color palette.
+3.  **Difficulty:**
+    * **EASY:** 0.8x Monster Stats.
+    * **HARD:** 1.5x Monster Stats (For the true challenge).
 
 ---
 
-## ⚔️ Job Classes & Skills
+## 🏗 Technical Architecture
 
-### Novice (Lv 1 - 9)
-* **Skills:** First Aid, Heavy Strike, Mana Bolt.
+Jobless RO utilizes a **"Serverless IssueOps"** pattern. Instead of paying for a Node.js server or a MongoDB instance, we abuse the power of GitHub's infrastructure to act as our database and API.
 
-### 1st Jobs (Lv 10+)
-* **Swordman:** Tanky brawler. Skills: *Bash, Magnum Break, Auto Berserk.*
-* **Mage:** Glass cannon. Skills: *Fire/Cold/Lightning Bolt.*
-* **Thief:** Speedster. Skills: *Envenom, Double Attack, Hiding.*
+### 1. The Frontend (Client)
+The `index.html` file contains the Game Engine (`G` object), the Database (`DB` object), and the UI Renderer. It handles the game loop at 30 ticks per second using `setInterval`.
 
-### 2nd Jobs (Lv 30+)
-* **Knight:** Physical force. Skills: *Bowling Bash, Pierce, Two-Hand Quicken.*
-* **Wizard:** Screen-clearer. Skills: *Storm Gust, Meteor Storm, Lord of Vermilion.*
-* **Assassin:** Crit master. Skills: *Sonic Blow, Grimtooth, Katar Mastery.*
+### 2. The Database (JSON)
+A file named `leaderboard.json` sits in the root of the repository. This static file acts as the "Read-Only" database. The game client fetches this file via `raw.githubusercontent.com` to display the Top 10 rankings.
 
----
+### 3. The API (GitHub Issues)
+When a player clicks "Submit Score", the client does not send a POST request to a server. Instead, it constructs a pre-filled URL to open a **New GitHub Issue**.
+* **Title:** `SCORE: PlayerName`
+* **Body:** A JSON block containing the save data and a cryptographic hash.
 
-## 🎒 The Loot System
-Equipment is automatically equipped only if the drop is superior to your current gear.
-
-**Drop Rate Formula:**
-> `Base (1%) + (LUK * 0.1%) + (Level * 0.1%)` — *Max Cap: 10%*
-
-### Equipment Progression
-* **Weapons:** Knife (+5) $\rightarrow$ Katana (+35) $\rightarrow$ Muramasa (+80) $\rightarrow$ **Excalibur (+120)**.
-* **Armor:** Cotton Shirt (+10) $\rightarrow$ Coat (+60) $\rightarrow$ Plate Armor (+250) $\rightarrow$ **Lord's Clothes (+400)**.
+### 4. The Backend (GitHub Actions)
+A workflow file `.github/workflows/secure_rank.yml` listens for `issues: [opened]`. When a score is submitted:
+1.  **Validation:** It checks if the GitHub account is at least 7 days old (Anti-Bot).
+2.  **Verification:** It recalculates the hash signature of the payload using a secret SALT to ensure the JSON wasn't tampered with manually.
+3.  **Processing:** It reads `leaderboard.json`, updates the score if it qualifies for the Top 20, re-sorts the array, and writes the file back to the repo.
+4.  **Cleanup:** It automatically closes the Issue.
 
 ---
 
-## 🧠 Strategy Guide
+## 📊 Game Mechanics & Formulas
 
-1.  **The "AGI Critical" Assassin:** Pump AGI to 99 first. High flee makes you untouchable against normal mobs, but watch out for undodgeable magic!
-2.  **The "VIT Tank" Knight:** Focus on VIT/STR. You can survive Boss nukes that would one-shot other builds.
-3.  **The Pro-Tip Reset:** When you change jobs (Lv 10/30), you get a **Stat Reset**. Use AGI early for fast leveling, then reset to INT if you want to become a Wizard.
+Understanding the math is key to reaching Floor 100+.
 
----
+### Attributes
+* **STR (Strength):** Increases Physical Attack Power (ATK).
+* **AGI (Agility):** Increases Attack Speed (ASPD) and Dodge Rate (FLEE).
+* **VIT (Vitality):** Increases Max HP and Physical Defense (DEF).
+* **INT (Intelligence):** Increases Magic Attack (MATK) and Max SP.
+* **DEX (Dexterity):** Increases Hit Rate (HIT), Cast Speed, and stabilizes damage.
+* **LUK (Luck):** Increases Critical Hit Rate (CRIT) and Drop Rates.
 
-## 💻 Technical Documentation
-For developers looking to modify the `Jobless_RO.html` file:
+### Combat Formulas
+The game uses simplified integer-math formulas derived from the original RO pre-renewal mechanics.
 
-* **Architecture:** Vanilla JS (ES6) using a decoupled game loop. 
-* **State:** The `app` object holds player (`p`) and system (`sys`) states.
-* **Modding:** * Find `checkLoot()` to edit drop rates.
-    * Edit `DB.items` to add custom equipment.
-    * Modify `setInterval` logic to change tick rates.
-
----
-
-## 🥚 Secrets & Easter Eggs
-* **The Mission:** "打爆機睇AB食雞子相" (Beat the game to see the "AB eating chicken testicles" photos).
-* **Ending A (Easy):** The game taunts you to try Hard Mode.
-* **Ending B (Hard):** Unlocks the "True Ending" message and the "Message the Guild Leader" prompt.
-
----
-
-## 📝 Credits
-* **Concept:** Inspired by Ragnarok Online (Gravity Co., Ltd).
-* **Development:** Created by Gemini.
-* **License:** MIT License.
-
-**Happy Grinding!**
+**Physical Attack (P):**
+```javascript
+ATK = STR + (DEX/5) + (LUK/3) + (Level * 2) + Weapon_Bonus
