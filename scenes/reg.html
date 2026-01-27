@@ -1,81 +1,50 @@
-<div class="panel grid" style="grid-column: span 2; text-align: center; gap: 15px;">
-    <h2 class="c-n">
-        <span class="en">NEW JOURNEY</span>
-        <span class="cn">新冒險</span>
-    </h2>
-
-    <div class="flex-col" style="gap: 10px;">
-        <input type="text" id="reg-name" placeholder="Name / 名字" 
-               style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid var(--bd);">
-        
-        <div class="grid g-2" style="width: 100%; gap: 5px;">
-            <button class="btn-neon" onclick="reg.create('M')">
-                <span class="en">MALE</span><span class="cn">男</span>
-            </button>
-            <button class="btn-neon" onclick="reg.create('F')" style="border-color: #f8a;">
-                <span class="en">FEMALE</span><span class="cn">女</span>
-            </button>
-        </div>
-    </div>
-
-    <p style="font-size: 0.8rem; color: #888;">
-        <span class="en">Choose gender to start as Novice.</span>
-        <span class="cn">選擇性別以初心者身份開始。</span>
+<div class="panel grid g-1" style="grid-column: span 2; text-align: center; padding: 30px 15px;">
+    <h3 class="c-n" style="margin-top: 0;">
+        <span class="en">INITIALIZE_IDENTITY</span>
+        <span class="cn">創建身份存檔</span>
+    </h3>
+    
+    <p style="font-size: 0.75rem; color: #666; margin-bottom: 20px;">
+        <span class="en">PLEASE INSERT IDENTIFICATION TAG...</span>
+        <span class="cn">請輸入冒險者識別代號...</span>
     </p>
+
+    <input type="text" id="reg-name" maxlength="12" 
+           placeholder="ID_TAG..." 
+           style="background: #000; color: var(--neon); border: 1px solid var(--neon); padding: 15px; text-align: center; font-family: inherit; font-size: 1.2rem; margin-bottom: 10px; outline: none;">
+    
+    <button onclick="reg.go()" style="padding: 20px;">
+        <span class="en">ENTER_MIDGARD</span>
+        <span class="cn">進入米德加爾特</span>
+    </button>
 </div>
 
 <script>
-/**
- * REGISTRATION LOGIC
- * Initializes G.p with parity from v3 engine.
- */
 const reg = {
-    // Initial Job Data
-    base: {
-        job: 'Novice',
-        hp: 60,
-        sp: 20,
-        stats: [2, 2, 2, 1, 1, 1] // STR, AGI, VIT, INT, DEX, LUK
-    },
-
-    create(gender) {
+    go() {
         const nameInput = document.getElementById('reg-name').value.trim();
-        const charName = nameInput || (gender === 'M' ? 'Newbie' : 'Rookie');
-
-        // Initialize Player Object
+        const finalName = nameInput || "NOVICE_01";
+        
+        // --- THE RO BIRTH OBJECT ---
         G.p = {
-            n: charName,
-            g: gender,
-            job: this.base.job,
+            n: finalName,
+            job: 'Novice',
             lvl: 1,
-            xp: 0,
-            next: 50, // Initial XP requirement
-            
-            // Vitals
-            hp: this.base.hp,
-            mh: this.base.hp,
-            sp: this.base.sp,
-            msp: this.base.sp,
-            
-            // Base Attributes
-            str: this.base.stats[0],
-            agi: this.base.stats[1],
-            vit: this.base.stats[2],
-            int: this.base.stats[3],
-            dex: this.base.stats[4],
-            luk: this.base.stats[5],
-            
-            // Inventory & Skills
-            pots: 3,
+            hp: 100,
+            mh: 100,
+            sp: 30,
+            msp: 30,
+            // Stats
+            str: 2, agi: 2, vit: 2, int: 2, dex: 2, luk: 2,
+            // Roguelike Progress
             sk: { 'First Aid': 1 },
-            pts: 0
+            zeny: 100,
+            inv: []
         };
 
-        // UI Feedback & Transition
-        G.log(`Welcome, ${G.p.n}!`, 'c-n');
-        G.render(); // Update HUD in index.html
-        G.sv();     // Save to localStorage
-        G.loadScene('mnu'); // Enter the Main Menu
+        G.log(`NEW_IDENTITY_CREATED: ${finalName}`, "c-n");
+        G.sv(); // Save to LocalStorage
+        G.loadScene('mnu'); // Warp to Menu
     }
 };
 </script>
