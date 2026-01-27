@@ -31,6 +31,33 @@
     z-index: 2;
 }
 
+.hd::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    height: 10px;
+    background: var(--hair, #631);
+    border-radius: 6px 6px 0 0;
+    border: 1px solid #333;
+    z-index: 3;
+}
+
+/* Eye highlights */
+.hd::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 4px;
+    width: 2px;
+    height: 2px;
+    background: #333;
+    border-radius: 50%;
+    box-shadow: 12px 0 #333;
+    z-index: 4;
+}
+
 .bd {
     width: 26px;
     height: 28px;
@@ -102,15 +129,23 @@
     border: 2px solid #ffd700;
 }
 
-.ro-f .hd::after {
+.ro-f .hd::before {
     content: '';
     position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    height: 8px;
-    background: #631;
-    border-radius: 4px 4px 0 0;
+    top: 8px;
+    right: -8px;
+    width: 10px;
+    height: 18px;
+    background: var(--hair, #631);
+    border: 1px solid #333;
+    border-radius: 0 10px 10px 0;
+    z-index: 1;
+    /* Behind head */
+}
+
+/* Male hair refinement */
+.ro-m .hd::after {
+    border-radius: 6px 6px 2px 2px;
 }
 
 /* --- 3. BESPOKE MONSTER SPRITES --- */

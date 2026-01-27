@@ -81,7 +81,8 @@
                     <div class="hd"></div>
                     <div class="bd"></div>
                 </div>
-                <small id="e-name" style="position:absolute; bottom:-15px; font-size:9px; color:var(--hp)"></small>
+                <small id="e-name"
+                    style="position:absolute; top:-35px; width:100%; text-align:center; font-size:9px; color:var(--hp); font-weight:bold;"></small>
                 <div style="position:absolute; top:-20px; width:100%;">
                     <div class="bar-container" style="height:4px; border-color:var(--neon);">
                         <div id="e-hp-fill" class="fill" style="background:var(--hp); width:100%;"></div>
@@ -122,12 +123,15 @@
                 if (saved) {
                     this.p = JSON.parse(atob(saved));
                     if (!this.p.items) this.p.items = {};
+                    if (!this.p.hair) this.p.hair = `hsl(${Math.random() * 360}, 50%, 40%)`;
                     this.s.f = this.p.floor || 1;
                     UI.loadScene('mnu', this.p, this.s);
                 } else {
-                    this.p = { n: "JOBLESS", job: "Novice", gender: 'm', lvl: 1, str: 1, agi: 1, vit: 1, int: 1, dex: 1, luk: 1, hp: 1, mh: 1, items: {} };
+                    const hair = `hsl(${Math.random() * 360}, 50%, 40%)`;
+                    this.p = { n: "JOBLESS", job: "Novice", gender: 'm', lvl: 1, str: 1, agi: 1, vit: 1, int: 1, dex: 1, luk: 1, hp: 1, mh: 1, items: {}, hair };
                     UI.loadScene('start', this.p, this.s);
                 }
+                document.documentElement.style.setProperty('--hair', this.p.hair);
                 UI.render(this.p, this.s);
                 if (!saved) this.startPreview();
                 console.log("GAME_BOOT: SUCCESS_V1.02");
@@ -162,10 +166,12 @@
                 const n = el('pname').value || "Novice";
                 const d = parseFloat(el('pdiff').value) || 1.0;
                 const skills = ['First Aid', 'Basic Skill'];
-                this.p = { n, gender: this.s.tmpG || 'm', diff: d, job: 'Novice', lvl: 1, str: 5, agi: 5, vit: 5, int: 5, dex: 5, luk: 5, hp: 1, mh: 1, floor: 1, items: {}, wpn: null, arm: null, skills, pts: 0 };
+                const hair = `hsl(${Math.random() * 360}, 50%, 40%)`;
+                this.p = { n, gender: this.s.tmpG || 'm', diff: d, job: 'Novice', lvl: 1, str: 5, agi: 5, vit: 5, int: 5, dex: 5, luk: 5, hp: 1, mh: 1, floor: 1, items: {}, wpn: null, arm: null, skills, pts: 0, hair };
                 const base = DB.getJob('Novice');
                 this.p.mh = base.hp + (this.p.vit * 2);
                 this.p.hp = this.p.mh;
+                document.documentElement.style.setProperty('--hair', this.p.hair);
                 this.sv(); UI.render(this.p, this.s); UI.loadScene('mnu', this.p, this.s);
             },
 
