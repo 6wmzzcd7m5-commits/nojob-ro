@@ -1,4 +1,4 @@
-/* --- AEGIS_DATABASE_V4.4 (Full Internationalization & Tiered System) --- */
+/* --- AEGIS_DATABASE_V4.4 (Full Edition with 60% Global Nerf) --- */
 window.DB = {
     // 1. LOCALIZATION SYSTEM
     T: {
@@ -104,7 +104,7 @@ window.DB = {
         }
     },
 
-    // 4. SKILL DATABASE (15-20 per group)
+    // 4. SKILL DATABASE
     skills: {
         melee: {
             'Bash': { sp: 10, mult: 2.5, tier: 1 }, 'Magnum Break': { sp: 30, mult: 3.2, tier: 1 },
@@ -138,7 +138,7 @@ window.DB = {
         }
     },
 
-    // 5. MONSTER ROSTER
+    // 5. MONSTER ROSTER (Nerfed Logic Applied)
     mobs: {
         names: [
             "Poring", "Fabre", "Lunatic", "Chonchon", "Roda Frog", 
@@ -149,11 +149,15 @@ window.DB = {
         scaling: (floor) => {
             const isBoss = (floor % 10 === 0);
             const multi = isBoss ? 5 : 1;
+            
+            // Nerf Factor: 0.4 (100% - 60% nerf = 40% remaining)
+            const NERF = 0.4; 
+
             return {
                 n: window.DB.mobs.names[Math.min(floor - 1, 19)] || `Void Spectre #${floor}`,
-                hp: (50 + (floor * 40)) * multi,
-                atk: (10 + (floor * 10)) * multi,
-                def: Math.floor(floor * 1.5),
+                hp: Math.floor(((50 + (floor * 40)) * multi) * NERF), 
+                atk: Math.floor(((10 + (floor * 10)) * multi) * NERF), 
+                def: Math.floor((floor * 1.5) * NERF), 
                 zeny: floor * 20
             };
         }
@@ -167,4 +171,4 @@ window.DB = {
     }
 };
 
-console.log("DB_PILLAR: FULL_DB_LOADED_V4.4");
+console.log("DB_PILLAR: FULL_DB_LOADED_NERFED_V4.4");
