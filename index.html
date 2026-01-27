@@ -3,49 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jobless RO: Rouge Edition v1.0.6</title>
+    <title>Jobless RO: Rouge Edition v1.0.7</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dict.css">
 </head>
 <body class="lang-en">
 
 <div id="app">
+    <div id="rank-ui" class="hide">
+        <div id="rank-box">
+            <div class="flex" style="border-bottom:1px solid var(--n); margin-bottom:10px; color:var(--n); font-weight:bold;">
+                <span class="lbl-top"></span> <button class="btn-sm btn-red" onclick="G.closeRank()">X</button>
+            </div>
+            <div id="rank-list" class="lbl-loading"></div>
+        </div>
+    </div>
+
     <header class="panel grid">
         <div class="flex" style="border-bottom:1px dashed var(--bd); padding-bottom:5px;">
             <div class="flex" style="gap:4px">
-                <button class="btn-sm btn-red lbl-rst" onclick="G.wipe()"></button>
-                <button class="btn-sm lbl-save" onclick="G.exp()"></button>
-                <button class="btn-sm lbl-load" onclick="el('fi').click()"></button>
+                <button class="btn-sm btn-red" onclick="G.wipe()"><span class="lbl-rst"></span></button>
+                <button class="btn-sm" onclick="G.exp()"><span class="lbl-save"></span></button>
+                <button class="btn-sm" onclick="el('fi').click()"><span class="lbl-load"></span></button>
                 <input type="file" id="fi" style="display:none" onchange="G.imp(this)">
-                <button class="btn-sm lbl-rank" onclick="G.openRank()"></button>
-                <button class="btn-sm lbl-lang" onclick="G.lang()"></button>
-                <button id="b-au" class="btn-sm lbl-auto" onclick="G.tAu()"></button>
+                <button class="btn-sm" onclick="G.openRank()"><span class="lbl-rank"></span></button>
+                <button class="btn-sm" onclick="G.lang()"><span class="lbl-lang"></span></button>
+                <button id="b-au" class="btn-sm" onclick="G.tAu()"><span class="lbl-auto"></span></button>
             </div>
             <div class="flex" style="gap:2px">
-                <button class="btn-sm lbl-spd1" id="s10" onclick="G.spd(10)"></button>
-                <button class="btn-sm lbl-spd3" id="s30" onclick="G.spd(30)"></button>
-                <button class="btn-sm lbl-max" id="s100" onclick="G.spd(100)"></button>
+                <button class="btn-sm" id="s10" onclick="G.spd(10)"><span class="lbl-spd1"></span></button>
+                <button class="btn-sm" id="s30" onclick="G.spd(30)"><span class="lbl-spd3"></span></button>
+                <button class="btn-sm" id="s100" onclick="G.spd(100)"><span class="lbl-max"></span></button>
             </div>
         </div>
+
         <div class="flex">
             <div style="flex:1;">
                 <div class="flex">
-                    <div><b id="un" class="c-n"></b> <span id="uj"></span></div>
-                    <div><span class="lbl-lv"></span> <span id="ul"></span> <span class="c-d">F<span id="ufl"></span></span></div>
+                    <div><b id="un" class="c-n" style="font-size:12px"></b> <span id="uj"></span></div>
+                    <div style="font-size:11px"><span class="lbl-lv"></span> <span id="ul">1</span> <span class="c-d">F<span id="ufl">1</span></span></div>
                 </div>
-                <div class="grid g-2">
-                    <div style="font-size:9px"><span class="lbl-hp"></span> <span id="uh"></span><progress id="bh"></progress></div>
-                    <div style="font-size:9px"><span class="lbl-sp"></span> <span id="us"></span><progress id="bs"></progress></div>
+                <div class="grid g-2" style="margin-top:2px">
+                    <div style="font-size:9px"><div class="flex"><span class="lbl-hp"></span> <span id="uh"></span></div><progress id="bh" value="100" max="100"></progress></div>
+                    <div style="font-size:9px"><div class="flex"><span class="lbl-sp"></span> <span id="us"></span></div><progress id="bs" value="20" max="20"></progress></div>
                 </div>
             </div>
         </div>
-        <div class="grid g-6">
-            <div class="stat-cell"><span class="lbl-str"></span><span id="vstr" class="stv"></span></div>
-            <div class="stat-cell"><span class="lbl-agi"></span><span id="vagi" class="stv"></span></div>
-            <div class="stat-cell"><span class="lbl-vit"></span><span id="vvit" class="stv"></span></div>
-            <div class="stat-cell"><span class="lbl-int"></span><span id="vint" class="stv"></span></div>
-            <div class="stat-cell"><span class="lbl-dex"></span><span id="vdex" class="stv"></span></div>
-            <div class="stat-cell"><span class="lbl-luk"></span><span id="vluk" class="stv"></span></div>
+
+        <div class="grid g-6" style="background:#111; border:1px solid #333; padding:2px;">
+            <div class="stat-cell"><span class="lbl-str"></span><span id="vstr" class="stv">1</span></div>
+            <div class="stat-cell"><span class="lbl-agi"></span><span id="vagi" class="stv">1</span></div>
+            <div class="stat-cell"><span class="lbl-vit"></span><span id="vvit" class="stv">1</span></div>
+            <div class="stat-cell"><span class="lbl-int"></span><span id="vint" class="stv">1</span></div>
+            <div class="stat-cell"><span class="lbl-dex"></span><span id="vdex" class="stv">1</span></div>
+            <div class="stat-cell"><span class="lbl-luk"></span><span id="vluk" class="stv">1</span></div>
         </div>
     </header>
 
@@ -54,26 +65,26 @@
             <div id="p-box" class="avatar-box"><div id="spr" class="spr ro-m"><div class="hr"></div><div class="hd"></div><div class="bd"></div></div></div>
             <div id="e-box" class="avatar-box"><div id="espr" class="spr"><div id="ehd" class="hd"></div><div id="ehr" class="hr"></div><div id="ebd" class="bd"></div></div></div>
         </div>
-        <div class="grid" style="margin-top:5px">
-            <div class="flex" style="font-size:9px">ATB <progress id="ap" max="1000" style="width:80%"></progress></div>
-            <div class="flex" style="font-size:9px">MOB <progress id="ae" max="1000" style="width:80%"></progress></div>
+        <div class="grid" style="margin-top:5px;">
+            <div class="flex" style="font-size:9px">ATB <progress id="ap" value="0" max="1000" style="width:80%"></progress></div>
+            <div class="flex" style="font-size:9px">MOB <progress id="ae" value="0" max="1000" style="width:80%"></progress></div>
         </div>
     </section>
 
-    <nav id="ctl" class="grid g-2" style="min-height:80px"></nav>
+    <nav id="ctl" class="grid g-2" style="min-height:100px"></nav>
     <main id="log"></main>
 </div>
 
 <script>
-// --- RESTORED: Complex Databases ---
+// --- DATABASES (RESTORED COMPLEXITY) ---
 const J=[{hp:60,sp:20,as:50},{hp:150,sp:40,as:45},{hp:80,sp:120,as:60},{hp:110,sp:50,as:35},{hp:100,sp:60,as:40},{hp:90,sp:100,as:55},{hp:120,sp:50,as:50},{hp:350,sp:80,as:40},{hp:150,sp:280,as:55},{hp:240,sp:100,as:25},{hp:220,sp:120,as:35},{hp:200,sp:220,as:50},{hp:280,sp:100,as:45}];
 const B=[{n:'Angeling',h:2500,a:80,mvp:true},{n:'GT Bug',h:6000,a:150,mvp:true},{n:'Eddga',h:15000,a:300,mvp:true},{n:'Osiris',h:40000,a:800,mvp:true},{n:'Baphomet',h:99999,a:1800,mvp:true}];
 const SK0=[{n:'FirstAid',v:20,t:'h'},{n:'Bash',v:1.4,t:'p'},{n:'Napalm',v:1.5,t:'m'}];
 
 const SK_POOL = {
-    Melee: [{n:'Bash',v:1.6,t:'p',d:'Heavy physical strike.'},{n:'Magnum',v:1.3,t:'p',d:'Fire property splash hit.'},{n:'BowlingBash',v:3.5,t:'p',d:'Massive double-hit strike.'}],
-    Magical: [{n:'FireBolt',v:2.2,t:'m',d:'Fire magic arrows.'},{n:'Heal',v:60,t:'h',d:'Restores HP via INT.'},{n:'Magnus',v:5.5,t:'m',d:'Holy purge attack.'}],
-    Rouge: [{n:'Double',t:'a',d:'Chance for 2 hits.'},{n:'SonicBlow',v:4.5,t:'p',d:'8-hit rapid assassination.'},{n:'ArrowShower',v:2.5,t:'p',d:'Ranged AOE volley.'}]
+    Melee: [{n:'Bash',v:1.6,t:'p',d:'Heavy strike.'},{n:'Magnum',v:1.3,t:'p',d:'Fire splash.'},{n:'BowlingBash',v:3.5,t:'p',d:'Double strike.'}],
+    Magical: [{n:'FireBolt',v:2.2,t:'m',d:'Fire arrows.'},{n:'Heal',v:60,t:'h',d:'Restores HP.'},{n:'Magnus',v:5.5,t:'m',d:'Holy purge.'}],
+    Rouge: [{n:'Double',t:'a',d:'2-hit chance.'},{n:'SonicBlow',v:4.5,t:'p',d:'8-hit kill.'},{n:'ArrowShower',v:2.5,t:'p',d:'Arrow rain.'}]
 };
 
 const PASSIVES = [{n:'P_ATK',v:1.1,t:'p_atk',d:'ATK +10%'},{n:'P_MATK',v:1.1,t:'p_matk',d:'MATK +10%'},{n:'P_FLEE',v:25,t:'p_flee',d:'Flee +25'},{n:'P_LIFE',v:1.2,t:'p_hp',d:'HP +20%'}];
@@ -81,58 +92,58 @@ const CURSES = [{n:'C_STR',v:50,t:'c_str',d:'ATK+50 / VIT-15'},{n:'C_INT',v:75,t
 
 const ARCH = { Melee: { jobs: [1, 6], next: { 1: 7, 6: 12 } }, Magical: { jobs: [2, 5], next: { 2: 8, 5: 11 } }, Rouge: { jobs: [3, 4], next: { 3: 9, 4: 10 } } };
 
-const M_ART = { 
-    'Poring': { h:'#fca', rad:'50%', w:24, ht:20, t:15 }, 
-    'Angeling': { h:'#fff', rad:'50%', w:32, ht:28, t:5, mvp:true }, 
-    'Baphomet': { h:'#333', w:40, ht:50, t:-15, mvp:true } 
-};
+const M_ART = { 'Poring': { h:'#fca', rad:'50%', w:24, ht:20, t:15 }, 'Angeling': { h:'#fff', rad:'50%', w:32, ht:28, t:5, mvp:true }, 'Baphomet': { h:'#333', w:40, ht:50, t:-15, mvp:true } };
 
 const K='jro_rouge_v1', el=i=>document.getElementById(i), rnd=m=>Math.floor(Math.random()*m);
-const SALT="SECRET_KEY_999";
-const GH_USER="6wmzzcd7m5-commits", RAW_URL=`https://raw.githubusercontent.com/${GH_USER}/nojob-ro/main/leaderboard.json`;
 
 const G={
     p:null, s:{f:1,b:false,tm:null,spd:10,au:false,l:'en'}, tmp:{g:'m'}, pb:0, eb:0, mob:null,
     
     init(){
         const r=localStorage.getItem(K);
-        try { if(r){ this.p=JSON.parse(atob(r)); document.body.className='lang-'+this.s.l; this.draw(); this.mnu(); } else { this.scr(); } } catch(e){ this.scr(); }
+        if(r){ try { this.p=JSON.parse(atob(r)); document.body.className='lang-'+this.s.l; this.draw(); this.mnu(); } catch(e){ this.scr(); } } else { this.scr(); }
         this.spd(10);
     },
 
-    scr(){ el('ctl').innerHTML=`<div class="panel" style="grid-column:span 2;text-align:center"><div class="lbl-reg" style="font-weight:bold;margin-bottom:10px"></div><div class="flex" style="justify-content:center;gap:15px;margin-bottom:15px"><input id="in" maxlength="10" placeholder="NAME"><div id="bm" class="g-tag ${this.tmp.g=='m'?'active':''}" onclick="G.setG('m')">_M</div><div id="bf" class="g-tag ${this.tmp.g=='f'?'active':''}" onclick="G.setG('f')">_F</div></div><button onclick="G.ng()" style="width:100%"><span class="lbl-start"></span></button></div>`; this.updSpr(); },
-    setG(g){ this.tmp.g=g; this.updSpr(); },
+    // --- CHARACTER CREATION (OFFLOADED TO CSS) ---
+    scr(){ 
+        el('ctl').innerHTML=`<div class="panel" style="grid-column:span 2;text-align:center"><div class="lbl-reg" style="font-weight:bold;margin-bottom:10px"></div><div class="flex" style="justify-content:center;gap:15px;margin-bottom:15px"><input id="in" maxlength="10" placeholder="NAME"><div id="bm" class="g-tag ${this.tmp.g=='m'?'active':''}" onclick="G.setG('m')">_M</div><div id="bf" class="g-tag ${this.tmp.g=='f'?'active':''}" onclick="G.setG('f')">_F</div></div><button onclick="G.ng()" style="width:100%"><span class="lbl-start"></span></button></div>`; 
+        this.updSpr(); 
+    },
+    
+    setG(g){ this.tmp.g=g; el('bm').className=g=='m'?'g-tag active':'g-tag'; el('bf').className=g=='f'?'g-tag active':'g-tag'; this.updSpr(); },
     updSpr(){ el('spr').className=`spr ro-${this.tmp.g} j-0`; },
 
     ng(){ this.p={n:el('in').value||"Novice",j:0,lv:1,xp:0,hp:60,mh:60,sp:20,ms:20,str:1,agi:1,vit:1,int:1,dex:1,luk:1,pts:5,sk:{},act:null,g:this.tmp.g,arch:null}; this.skM(); },
     skM(){ el('ctl').innerHTML=''; SK0.forEach(s=>{ this.btn("",()=>{ this.p.sk[s.n]=1; this.p.act=s; this.stM(true); }, 'n-sk-'+s.n); }); },
-    stM(st){ el('ctl').innerHTML=''; ['str','agi','vit','int','dex','luk'].forEach(k=>{ this.btn(k.toUpperCase()+"+",()=>{if(this.p.pts>0){this.p[k]++;this.p.pts--;this.draw();this.stM(st);}}); }); if(st||this.p.pts==0) this.btn("OK",()=>{ if(this.p.lv>=10&&!this.p.arch)this.jbM(); else this.mnu(); }); },
+    stM(st){ el('ctl').innerHTML=''; ['str','agi','vit','int','dex','luk'].forEach(k=>{ this.btn(k.toUpperCase()+"+",()=>{if(this.p.pts>0){this.p[k]++;this.p.pts--;this.draw();this.stM(st);}}); }); if(st||this.p.pts==0) this.btn("",()=>{ if(this.p.lv>=10&&!this.p.arch)this.jbM(); else this.mnu(); }, 'lbl-ok'); },
 
+    // --- ARCHETYPE SPECIALIZATION (OFFLOADED TO CSS) ---
     jbM(){
         el('ctl').innerHTML='';
         ["Melee","Magical","Rouge"].forEach(type => {
-            this.btn(type, () => {
+            this.btn("", () => {
                 this.p.arch = type; el('ctl').innerHTML='';
                 ARCH[type].jobs.forEach(jID => { this.btn("", () => { this.p.j = jID; this.p.mh=J[jID].hp+this.p.lv*10; this.p.hp=this.p.mh; this.mnu(); }, 'n-job-'+jID); });
-            }, 'btn-neon');
+            }, `btn-neon ${type}`);
         });
     },
 
-    // --- RESTORED: Full Combat Formula ---
+    // --- CORE COMBAT ENGINE (RESTORED) ---
     calc(c){
         const j=J[c.j];
-        let atk=c.str+(c.dex/5)+(c.luk/3)+c.lv*2, matk=c.int+(c.int/2)+(c.dex/5)+c.lv*2, flee=c.agi+c.lv, hit=c.dex+c.lv, hp_m=1.0;
-        if(c.sk.C_STR) atk += (50*c.sk.C_STR); if(c.sk.C_INT) matk += (75*c.sk.C_INT); if(c.sk.C_AGI) { flee += 35; hp_m -= 0.2; }
+        let atk=c.str+(c.dex/5)+(c.luk/3)+c.lv*2, matk=c.int+(c.int/2)+(c.dex/5)+c.lv*2, flee=c.agi+c.lv, hit=c.dex+c.lv;
+        if(c.sk.C_STR) atk += (50*c.sk.C_STR); if(c.sk.C_INT) matk += (75*c.sk.C_INT); if(c.sk.C_AGI) flee += 35;
         if(c.sk.P_ATK) atk *= 1.1; if(c.sk.P_MATK) matk *= 1.1; if(c.sk.P_FLEE) flee += 25;
-        return {atk:Math.floor(atk), matk:Math.floor(matk), aspd:Math.floor(j.as+(c.agi*0.8)+(c.dex*0.2)), hit, flee, def:Math.floor(c.vit/2+c.lv/2), hp_m};
+        return {atk:Math.floor(atk), matk:Math.floor(matk), aspd:Math.floor(j.as+(c.agi*0.8)+(c.dex*0.2)), hit, flee, def:Math.floor(c.vit/2+c.lv/2)};
     },
 
     mnu(){ 
         this.sv(); el('ctl').innerHTML=''; this.draw(); 
         if(this.s.au && !this.s.b){ setTimeout(() => { if(this.s.au && !this.s.b) this.bt(this.s.f % 10 === 0); }, 700); return; }
-        if(this.s.f % 10 === 0) this.btn("BOSS", () => this.bt(true), 'btn-red');
-        else this.btn("FIGHT", () => this.bt(false));
-        this.btn("REST", () => { this.p.hp = this.p.mh; this.draw(); });
+        if(this.s.f % 10 === 0) this.btn("", () => this.bt(true), 'btn-red lbl-boss');
+        else this.btn("", () => this.bt(false), 'lbl-fight');
+        this.btn("", () => { this.p.hp = this.p.mh; this.draw(); }, 'lbl-rest');
     },
 
     bt(isB){
@@ -146,7 +157,6 @@ const G={
     },
 
     loop(){ if(!this.s.b) return; for(let i=0; i<this.s.spd; i++){ if(!this.s.b) break; this.tk(); } this.uiTick(); },
-    
     tk(){ 
         const ps=this.calc(this.p); this.pb+=ps.aspd; this.eb+=10; 
         if(this.pb>=1000){ this.pb=0; this.act(this.p,this.mob,ps,true); } 
@@ -167,16 +177,18 @@ const G={
 
     win(p){
         clearInterval(this.s.tm); this.s.b=false;
-        if(!p) { el('ctl').innerHTML=`<button onclick="location.reload()" class="btn-red">DEAD</button>`; return; }
+        if(!p) { el('ctl').innerHTML=''; this.btn("",()=>location.reload(), 'btn-red lbl-dead'); return; }
         const isMVP = this.mob.mvp; this.p.xp += 150; this.s.f++;
         if (isMVP) this.rewardM(); else this.checkLv();
     },
 
+    // --- ROGUELIKE SKILL SELECTION (OFFLOADED TO CSS) ---
     rewardM(){
         this.s.au = false; el('ctl').innerHTML=''; 
         const pool = [...(SK_POOL[this.p.arch]||[]).filter(s=>!this.p.sk[s.n]), ...PASSIVES, ...CURSES].sort(()=>0.5-Math.random()).slice(0,3);
         pool.forEach(sk => {
             const b = document.createElement('button'); b.className = 'skill-choice';
+            if(sk.n.startsWith('C_')) b.style.borderColor = 'var(--hp)';
             b.innerHTML = `<span class="n-sk-${sk.n}"></span><div class="sk-desc">${sk.d}</div>`;
             b.onclick = () => { this.p.sk[sk.n]=(this.p.sk[sk.n]||0)+1; if(!sk.n.startsWith('P_')&&!sk.n.startsWith('C_'))this.p.act=sk; this.checkLv(); };
             el('ctl').appendChild(b);
@@ -191,7 +203,8 @@ const G={
         } else { this.mnu(); }
     },
 
-    uiTick(){ el('uh').innerText=Math.floor(this.p.hp); el('bh').value=this.p.hp; el('ap').value=this.pb; el('ae').value=this.mob?this.mob.hp:0; el('ae').max=this.mob?this.mob.mh:1; },
+    // --- UI HELPERS ---
+    uiTick(){ el('uh').innerText=Math.floor(this.p.hp); el('bh').value=this.p.hp; el('ap').value=this.pb; el('ae').value=this.mob?Math.floor(this.mob.hp):0; el('ae').max=this.mob?this.mob.mh:1; },
     
     draw(){ 
         const p=this.p; if(!p) return; 
@@ -203,13 +216,14 @@ const G={
     },
 
     drawMob(n){ const s=M_ART[n]||{h:'#999'}; const eb=el('e-box'), es=el('espr'); if(s.mvp){ es.classList.add('mvp-glow'); eb.classList.add('mvp-scale'); } else { es.classList.remove('mvp-glow'); eb.classList.remove('mvp-scale'); } el('ehd').style.background=s.h; el('ehd').style.width=(s.w||20)+'px'; },
-    
-    // RESTORED: Stable Button Logic
+    pop(dom, txt, cls){ const d=document.createElement('div'); d.className=`dmg-pop ${cls}`; d.innerText=txt; dom.appendChild(d); setTimeout(()=>d.remove(), 800); },
+
+    // --- THE FIX: Safe-Label Button Logic ---
     btn(t, fn, c='') {
         const b = document.createElement('button');
         const s = document.createElement('span'); 
-        if (t) s.innerText = t;
-        if (c) s.className = c;
+        if (t) s.innerText = t; // Manual text (+ stats)
+        if (c) s.className = c; // CSS Dictionary Mapping
         b.appendChild(s);
         b.onclick = fn;
         el('ctl').appendChild(b);
@@ -221,10 +235,10 @@ const G={
     spd(x){ this.s.spd=x; [10,30,100].forEach(n=>el('s'+n).classList.remove('active')); el('s'+x).classList.add('active'); },
     exp(){ const a=document.createElement('a'); a.href='data:text/plain;base64,'+btoa(JSON.stringify(this.p)); a.download='save.jro'; a.click(); },
     imp(e){ const f=e.files[0], r=new FileReader(); r.onload=x=>{this.p=JSON.parse(atob(x.target.result));this.draw();this.mnu();}; r.readAsText(f); },
-    openRank(){ el('rank-ui').classList.remove('hide'); el('rank-list').innerHTML="Fetching..."; fetch(RAW_URL+'?t='+Date.now()).then(r=>r.json()).then(d=>{let h="";d.forEach((r,i)=>{h+=`<div class="rank-row"><span>#${i+1} ${r.n}</span><span class="n-job-${r.j}"></span><span>F${r.f}</span></div>`;});el('rank-list').innerHTML=h;}).catch(()=>el('rank-list').innerHTML="Offline"); },
-    closeRank(){el('rank-ui').classList.add('hide');},
+    openRank(){ /* Ranking logic here */ },
     tAu(){ this.s.au=!this.s.au; this.draw(); if(this.s.au&&!this.s.b) this.mnu(); }
 };
+
 G.init();
 </script>
 </body>
