@@ -1,0 +1,184 @@
+<div class="panel grid" style="grid-column: span 2; gap: 10px;">
+    <div id="btl-cmds" class="grid g-2">
+        <button class="btn-neon" onclick="btl.act('atk')">
+            <span class="en">ATTACK</span><span class="cn">攻擊</span>
+        </button>
+        <button class="btn-neon" onclick="btl.showSkills()">
+            <span class="en">SKILLS</span><span class="cn">技能</span>
+        </button>
+        <button class="btn-neon" id="btn-pot" onclick="btl.act('pot')" style="border-color: var(--hp);">
+            <span class="en">POTION</span><span class="cn">藥水</span>
+        </button>
+        <button class="btn-neon" onclick="btl.escape()" style="border-color: #888;">
+            <span class="en">RUN</span><span class="cn">逃跑</span>
+        </button>
+    </div>
+
+    <div id="btl-skills" class="grid g-2" style="display:none;">
+        <button class="btn-sm" onclick="btl.hideSkills()" style="grid-column: span 2;">BACK / 返回</button>
+        </div>
+</div>
+
+<script>
+/**
+ * BATTLE LOGIC FRAGMENT
+ * Merges ATB and action logic from v3.
+ */
+const btl = {
+    // 1. Initialization
+    init() {
+        // Clear previous state and pick enemy based on floor
+        const tier = Math.min(1, Math.floor(G.s.f / 10)); 
+        const pool = DB.mobs[tier] || DB.mobs[0];
+        const data = pool[Math.floor(Math.random() * pool.length)];
+
+        G.s.b = true;
+        G.s.mob = { ...data, mhp: data.hp };
+        G.s.patb = 0;
+        G.s.eatb = 0;
+        
+        G.log(`Encounter: ${G.s.mob.n}`, 'c-yel');
+        this.startLoop();
+    },
+
+    // 2. The Tick Loop (Parity with v3 speed)
+    startLoop() {
+        clearInterval(G.s.tm);
+        G.s.tm = setInterval(() => {
+            if (!G.s.b) return;
+
+            // Player ATB: 2 + (agi * 0.1)
+            const spd = 2 + (G.p.agi * 0.1); 
+            G.s.patb += spd;
+
+            // Foe ATB: Static 1.5
+            G.s.eatb += 1.5;
+
+            // Action Thresholds
+            if (G.s.eatb >= 100) {
+                G.s.eatb = 0;
+                this.hitPlayer();
+            }
+            if (G.s.patb >= 100) {
+                G.s.patb = 100;
+                clearInterval(G.s.tm); // Pause for player turn
+                this.enableUI(true);
+            }
+            
+            // Update HUD in Master Shell
+            const ap = document.getElementById('atb-p');
+            const ae = document.getElementById('atb-e');
+            if (ap) ap.value = G.s.patb;
+            if (ae) ae.value = G.s.eatb;
+        }, 50);
+    },
+
+    // 3. Player Actions
+    act(type, val) {
+        const m = G.s.mob;
+        const atk = Math.floor(G.p.str * 2.5 + G.p.lvl * 2); 
+        const matk = Math.floor(G.p.int * 3 + G.p.lvl * 2);
+
+        if (type === 'atk') {
+            m.hp -= atk;
+            G.log(`Hit ${m.n} for ${atk}`);
+        } 
+        else if (type === 'sk') {
+            const s = DB.skills[val];
+            if (G.p.sp < s.sp) { G.log("No SP!"); return; }
+            G.p.sp -= s.sp;
+            
+            if (s.type === 'heal') {
+                const h = s.val + matk;
+                G.p.hp = Math.min(G.p.mh, G.p.hp + h);
+                G.log(`Healed ${h}`, 'c-n');
+            } else {
+                const dmg = Math.floor((s.type === 'mag' ? matk : atk) * s.val);
+                m.hp -= dmg;
+                G.log(`${val} hit ${dmg}`, 'c-n');
+            }
+        } 
+        else if (type === 'pot') {
+            if (G.p.pots > 0) {
+                G.p.pots--;
+                G.p.hp = Math.min(G.p.mh, G.p.hp + 50);
+                G.log("Used Potion", 'c-yel');
+            } else { G.log("No Potions!"); return; }
+        }
+
+        this.enableUI(false);
+        G.render(); // Refresh HUD
+
+        if (m.hp <= 0) this.win();
+        else {
+            G.s.patb = 0;
+            this.startLoop();
+        }
+    },
+
+    // 4. Enemy Actions (Safety removal implemented)
+    hitPlayer() {
+        const dmg = Math.max(1, G.s.mob.atk - Math.floor(G.p.lvl / 3));
+        G.p.hp -= dmg;
+        G.render();
+        
+        if (G.p.hp <= 0) {
+            clearInterval(G.s.tm);
+            G.log("DEFEATED.", 'c-red');
+            localStorage.removeItem('ro_rouge_v121');
+            G.loadScene('reg');
+        }
+    },
+
+    // 5. Win & Transition
+    win() {
+        G.s.b = false;
+        clearInterval(G.s.tm);
+        G.p.xp += G.s.mob.xp;
+        G.log(`Victory! +${G.s.mob.xp}XP`, 'c-yel');
+
+        if (G.p.xp >= G.p.next) {
+            G.loadScene('reward'); // Integrated reward pool
+        } else {
+            G.loadScene('mnu');
+        }
+    },
+
+    // UI Helpers
+    enableUI(on) {
+        document.getElementById('btl-cmds').style.opacity = on ? "1" : "0.5";
+        document.getElementById('btl-cmds').style.pointerEvents = on ? "auto" : "none";
+    },
+
+    showSkills() {
+        const box = document.getElementById('btl-skills');
+        const cmds = document.getElementById('btl-cmds');
+        cmds.style.display = 'none';
+        box.style.display = 'grid';
+        box.innerHTML = '<button class="btn-sm" onclick="btl.hideSkills()" style="grid-column: span 2;">BACK / 返回</button>';
+        
+        for (let s in G.p.sk) {
+            const btn = document.createElement('button');
+            btn.className = "btn-neon";
+            btn.innerHTML = `${s}<br><small>${DB.skills[s].sp}SP</small>`;
+            btn.onclick = () => this.act('sk', s);
+            box.appendChild(btn);
+        }
+    },
+
+    hideSkills() {
+        document.getElementById('btl-skills').style.display = 'none';
+        document.getElementById('btl-cmds').style.display = 'grid';
+    },
+
+    escape() {
+        if (confirm("Run away?")) {
+            clearInterval(G.s.tm);
+            G.s.b = false;
+            G.loadScene('mnu');
+        }
+    }
+};
+
+btl.init();
+</script>
