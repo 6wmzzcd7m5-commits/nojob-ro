@@ -1,13 +1,12 @@
 :root { 
     --bg:#050505; --p:#0a0a0a; 
-    --bd:#39ff14; /* NEON GREEN */
+    --bd:#39ff14; 
     --n:#39ff14; --t:#ffffff; --d:#aaaaaa; 
     --hp:#ff4444; --sp:#4488ff; --r:#ffff00; 
     --font:'Tahoma', 'Arial', sans-serif; 
 }
 * { box-sizing:border-box; user-select:none; -webkit-tap-highlight-color:transparent; }
 
-/* FIX: Allow typing in inputs */
 input { user-select: text !important; -webkit-user-select: text !important; }
 
 body {
@@ -31,8 +30,6 @@ body {
 .c-n { color:var(--n); text-shadow: 0 0 2px var(--n); } 
 .c-h { color:var(--hp); } .c-d { color:var(--d); } .c-r { color:var(--r); }
 .panel { border:1px solid var(--bd); background:var(--p); padding:6px; border-radius:2px; z-index: 10; }
-
-/* FIX: Ensure hidden elements don't block clicks */
 .hide { display:none !important; visibility: hidden !important; pointer-events: none !important; }
 
 button {
@@ -63,9 +60,15 @@ input { background:#000; border:1px solid var(--bd); color:#fff; padding:8px; wi
 .hr { width:24px; height:10px; background:#853; position:absolute; left:3px; top:-2px; z-index:6; transition: all 0.2s; }
 .bd { width:18px; height:16px; background:#eee; position:absolute; left:6px; top:16px; z-index:2; border-radius:2px 2px 5px 5px; transition: all 0.2s; }
 
-/* Player Variants */
-.ro-m .hr { border-radius:4px 4px 0 0; } 
-.ro-f .hr { width:26px; left:2px; border-radius:8px 8px 0 0; }
+/* Player Variants - FIXED VISUALS */
+.ro-m .hr { 
+    border-radius:4px 4px 0 0; /* Short/Boxy */
+} 
+.ro-f .hr { 
+    width: 28px; left: 1px; top: -3px; height: 12px;
+    border-radius: 12px 12px 4px 4px; /* Rounder/Longer */
+    box-shadow: 0 2px 0 rgba(0,0,0,0.2); /* Depth */
+}
 
 /* Job Colors */
 .j-0 .bd{background:linear-gradient(to bottom,#fff 60%,#dca 60%)}
