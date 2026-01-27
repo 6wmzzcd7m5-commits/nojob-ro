@@ -219,18 +219,18 @@
                 if (skillData) {
                     UI.log(`${DB.txt('skill')}! : ${DB.getName('skills', skillName)}`, "c-yel");
 
-                    // Determine Skill Color
+                    // Determine Skill Color based on Element
                     let sCol = 'c-yel';
-                    if (skillData.type === 'fire') sCol = 'c-ora';
-                    if (skillData.type === 'water' || skillData.type === 'cold' || skillData.type === 'wind') sCol = 'c-blu';
-                    if (skillData.type === 'heal' || skillData.type === 'poison') sCol = 'c-grn';
+                    if (skillData.element === 'fire') sCol = 'c-ora';
+                    if (skillData.element === 'water' || skillData.element === 'cold' || skillData.element === 'wind') sCol = 'c-blu';
+                    if (skillData.element === 'poison') sCol = 'c-grn'; // Keep green for poison
 
-                    // Special: Healing Skills
-                    if (skillData.type === 'heal') {
+                    // Special: Healing Skills (Canonical Effect: recover hp)
+                    if (skillData.effect === 'heal') {
                         const healAmt = Math.floor(baseDmg * skillData.mult);
                         this.p.hp = Math.min(this.p.mh, this.p.hp + healAmt);
                         UI.render(this.p, this.s);
-                        UI.pop(healAmt, 'p-box', sCol);
+                        UI.pop(healAmt, 'p-box', 'c-grn'); // Use green for healing
                         return;
                     }
 

@@ -150,7 +150,7 @@ window.DB = {
     skills: {
         melee: {
             'Bash': { mode: 'act', mult: 2.8, hits: 1, tier: 1 },
-            'Magnum Break': { mode: 'act', mult: 3.5, hits: 1, tier: 1, type: 'fire' },
+            'Magnum Break': { mode: 'act', mult: 3.5, hits: 1, tier: 1, element: 'fire' },
             'Pierce': { mode: 'act', mult: 1.2, hits: 1, tier: 1, bonus: { target: 'MVP', hits: 3 } },
             'Spear Stab': { mode: 'act', mult: 2.5, hits: 1, tier: 1 },
             'Sword Mastery': { mode: 'pas', stats: { str: 5 }, tier: 1 },
@@ -161,26 +161,26 @@ window.DB = {
             'Weapon Perfection': { mode: 'pas', stats: { str: 10, dex: 5 }, tier: 2 }
         },
         magical: {
-            'Fire Bolt': { mode: 'act', mult: 1.2, hits: 5, tier: 1, type: 'fire' },
-            'Cold Bolt': { mode: 'act', mult: 1.2, hits: 5, tier: 1, type: 'cold' },
-            'Lightning Bolt': { mode: 'act', mult: 1.2, hits: 5, tier: 1, type: 'wind' },
+            'Fire Bolt': { mode: 'act', mult: 1.2, hits: 5, tier: 1, element: 'fire' },
+            'Cold Bolt': { mode: 'act', mult: 1.2, hits: 5, tier: 1, element: 'cold' },
+            'Lightning Bolt': { mode: 'act', mult: 1.2, hits: 5, tier: 1, element: 'wind' },
             'Increase SP Recovery': { mode: 'pas', stats: { int: 5 }, tier: 1 },
-            'Heal': { mode: 'act', mult: 5.0, hits: 1, tier: 1, type: 'heal' },
-            'Storm Gust': { mode: 'act', mult: 1.5, hits: 4, tier: 2, type: 'cold' },
-            'Lord of Vermilion': { mode: 'act', mult: 1.5, hits: 4, tier: 2, type: 'wind' },
-            'Meteor Storm': { mode: 'act', mult: 1.8, hits: 4, tier: 2, type: 'fire' },
+            'Heal': { mode: 'act', mult: 5.0, hits: 1, tier: 1, effect: 'heal' },
+            'Storm Gust': { mode: 'act', mult: 1.5, hits: 4, tier: 2, element: 'cold' },
+            'Lord of Vermilion': { mode: 'act', mult: 1.5, hits: 4, tier: 2, element: 'wind' },
+            'Meteor Storm': { mode: 'act', mult: 1.8, hits: 4, tier: 2, element: 'fire' },
             'Meditation': { mode: 'pas', stats: { int: 10, vit: 5 }, tier: 2 },
             'Turn Undead': { mode: 'act', mult: 15.0, hits: 1, tier: 2 }
         },
         rogue: {
-            'Envenom': { mode: 'act', mult: 2.2, hits: 1, tier: 1, type: 'poison' },
+            'Envenom': { mode: 'act', mult: 2.2, hits: 1, tier: 1, element: 'poison' },
             'Double Strafe': { mode: 'act', mult: 1.8, hits: 2, tier: 1 },
             'Owl\'s Eye': { mode: 'pas', stats: { dex: 5 }, tier: 1 },
             'Vulture\'s Eye': { mode: 'pas', stats: { dex: 5 }, tier: 1 },
             'Improve Concentration': { mode: 'pas', stats: { agi: 5, dex: 5 }, tier: 1 },
             'Sonic Blow': { mode: 'act', mult: 0.8, hits: 8, tier: 2 },
             'Falcon Assault': { mode: 'act', mult: 5.8, hits: 1, tier: 2 },
-            'Venom Splasher': { mode: 'act', mult: 6.0, hits: 1, tier: 2, type: 'poison' },
+            'Venom Splasher': { mode: 'act', mult: 6.0, hits: 1, tier: 2, element: 'poison' },
             'Back Stab': { mode: 'act', mult: 5.5, hits: 1, tier: 2 },
             'Slasher': { mode: 'pas', stats: { agi: 15 }, tier: 2 }
         }
