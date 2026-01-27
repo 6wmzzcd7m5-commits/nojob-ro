@@ -25,7 +25,7 @@ body {
 }
 
 /* --- 2. CSS LOCALIZATION DICTIONARY --- */
-/* Default: English [cite: 1, 6] */
+/* English Labels */
 .lbl-rst::after   { content: "RST"; }
 .lbl-save::after  { content: "SAV"; }
 .lbl-load::after  { content: "LOD"; }
@@ -61,7 +61,7 @@ body {
 .lbl-top::after   { content: "TOP 10"; }
 .lbl-loading::after { content: "Loading..."; }
 
-/* Chinese (RO Authentic Naming) Overrides */
+/* Chinese / RO Terms */
 .lang-cn .lbl-rst::after   { content: "重置"; }
 .lang-cn .lbl-save::after  { content: "存檔"; }
 .lang-cn .lbl-load::after  { content: "讀檔"; }
@@ -70,10 +70,6 @@ body {
 .lang-cn .lbl-spd1::after  { content: "倍速"; }
 .lang-cn .lbl-spd3::after  { content: "三倍"; }
 .lang-cn .lbl-max::after   { content: "極速"; }
-.lang-cn .lbl-w::after     { content: "武:"; }
-.lang-cn .lbl-a::after     { content: "防:"; }
-.lang-cn .lbl-lv::after    { content: "等級"; }
-.lang-cn .lbl-flr::after   { content: "樓層"; }
 .lang-cn .lbl-str::after   { content: "力量"; }
 .lang-cn .lbl-agi::after   { content: "敏捷"; }
 .lang-cn .lbl-vit::after   { content: "體質"; }
@@ -88,39 +84,32 @@ body {
 .lang-cn .lbl-flee::after  { content: "迴避"; }
 .lang-cn .lbl-plr::after   { content: "玩家"; }
 .lang-cn .lbl-trg::after   { content: "目標"; }
-.lang-cn .lbl-atb::after   { content: "冷卻"; }
 .lang-cn .lbl-reg::after   { content: "冒險者登錄"; }
 .lang-cn .lbl-start::after { content: "開始冒險"; }
-.lang-cn .lbl-top::after   { content: "英雄榜"; }
-.lang-cn .lbl-loading::after { content: "讀取中..."; }
 
-/* --- 3. SPRITE ENGINE & HAIR FIX [cite: 5, 26] --- */
+/* --- 3. SPRITE ENGINE & HAIR FIX --- */
 #stage {
     height: 120px; background: #111; border-bottom: 1px dashed var(--bd);
     display: flex; justify-content: space-between; align-items: flex-end;
     padding: 20px 40px; position: relative; overflow: hidden;
 }
 
-.avatar-box { width: 40px; height: 60px; position: relative; }
-.spr { width:30px; height:40px; position:absolute; bottom:0; left:5px; animation: idle 1s infinite steps(2); transition: all 0.2s; }
-.hd { width:20px; height:18px; background:#fca; position:absolute; left:5px; top:0; z-index:5; border-radius:4px; }
-.bd { width:18px; height:16px; background:#eee; position:absolute; left:6px; top:16px; z-index:3; border-radius:2px 2px 5px 5px; }
-.hr { background:#853; position:absolute; transition: all 0.2s; }
+.avatar-box { width: 40px; height: 60px; position: relative; transition: transform 0.3s; }
+.spr { width:30px; height:40px; position:absolute; bottom:0; left:5px; animation: idle 1s infinite steps(2); transition: all 0.2s;}
+.hd { width:20px; height:18px; background:#fca; position:absolute; left:5px; top:0; z-index:5; border-radius:4px;}
+.bd { width:18px; height:16px; background:#eee; position:absolute; left:6px; top:16px; z-index:3; border-radius:2px 2px 5px 5px;}
+.hr { background:#853; position:absolute; transition: all 0.2s;}
 
-/* Male Hair (Short/Spiky) [cite: 26] */
-.ro-m .hr { 
-    width:24px; height:10px; left:3px; top:-2px; z-index:6;
-    border-radius:4px 4px 0 0; 
-} 
+/* Hair Variations */
+.ro-m .hr { width:24px; height:10px; left:3px; top:-2px; z-index:6; border-radius:4px 4px 0 0; } 
+.ro-f .hr { width: 28px; height: 26px; left: 1px; top: -3px; z-index: 2; border-radius: 12px 12px 6px 6px; box-shadow: 0 4px 0 rgba(0,0,0,0.3); }
 
-/* Female Hair (FIXED: Long Hair Falling Behind) */
-.ro-f .hr { 
-    width: 28px; height: 26px; left: 1px; top: -3px; z-index: 2; /* Z-index 2 puts it behind body/head */
-    border-radius: 12px 12px 6px 6px;
-    box-shadow: 0 4px 0 rgba(0,0,0,0.3);
-}
+/* MVP Boss Visuals */
+.mvp-glow { filter: drop-shadow(0 0 10px var(--r)); animation: mvp-pulse 1s infinite alternate ease-in-out; }
+@keyframes mvp-pulse { 0% { filter: drop-shadow(0 0 5px var(--r)); } 100% { filter: drop-shadow(0 0 15px #fff); } }
+.mvp-scale { transform: scale(1.4) !important; transform-origin: bottom; }
 
-/* --- 4. JOB COSTUMES (Gradients) [cite: 27] --- */
+/* --- 4. JOB COSTUMES (Gradients) --- */
 .j-0 .bd{background:linear-gradient(to bottom,#fff 60%,#dca 60%)}
 .j-1 .bd{background:linear-gradient(to bottom,#d84 50%,#468 50%);border-top:2px solid #b62}
 .j-2 .bd{background:linear-gradient(90deg,#348 20%,#eee 20%,#eee 80%,#348 80%);border-bottom:3px solid #642}
@@ -128,28 +117,47 @@ body {
 .j-4 .bd{background:linear-gradient(to bottom,#473 60%,#db9 60%);border-left:2px solid #fca}
 .j-5 .bd{background:linear-gradient(90deg,#fff 40%,#d44 40%,#d44 60%,#fff 60%)}
 .j-6 .bd{background:linear-gradient(90deg,#eee 30%,#a44 30%,#a44 70%,#eee 70%);border-bottom:2px solid #334}
+/* 2nd Classes */
+.j-7 .bd{background:linear-gradient(to bottom,#ccc 40%,#445 40%);border-top:2px solid #889}
+.j-8 .bd{background:linear-gradient(90deg,#426 20%,#eef 20%,#eef 80%,#426 80%);border-bottom:4px solid #da4}
+.j-9 .bd{background:linear-gradient(to bottom,#223 50%,#112 50%);border-left:2px solid #546;border-right:2px solid #546}
+.j-10 .bd{background:linear-gradient(to bottom,#564 30%,#db9 30%,#db9 70%,#453 70%)}
+.j-11 .bd{background:linear-gradient(90deg,#fff 30%,#224 30%,#224 70%,#fff 70%);border-top:2px solid #00f}
+.j-12 .bd{background:linear-gradient(to bottom,#eee 40%,#a44 40%);border-bottom:3px solid #555}
 
-/* 2nd Class Visuals */
-.j-7 .bd{background:linear-gradient(to bottom,#ccc 40%,#445 40%);border-top:2px solid #889} /* Knight */
-.j-8 .bd{background:linear-gradient(90deg,#426 20%,#eef 20%,#eef 80%,#426 80%);border-bottom:4px solid #da4} /* Wizard */
-.j-9 .bd{background:linear-gradient(to bottom,#223 50%,#112 50%);border-left:2px solid #546;border-right:2px solid #546} /* Assassin */
-.j-10 .bd{background:linear-gradient(to bottom,#564 30%,#db9 30%,#db9 70%,#453 70%)} /* Hunter */
-.j-11 .bd{background:linear-gradient(90deg,#fff 30%,#224 30%,#224 70%,#fff 70%);border-top:2px solid #00f} /* Priest */
-.j-12 .bd{background:linear-gradient(to bottom,#eee 40%,#a44 40%);border-bottom:3px solid #555} /* Blacksmith */
-
-/* --- 5. NEON GENDER SELECTION BUTTONS --- */
-.g-tag { 
-    padding: 10px 20px; border: 2px solid #222; cursor: pointer; 
-    color: #444; background: #000; font-weight: bold;
-    text-transform: uppercase; transition: all 0.2s ease;
-}
+/* --- 5. ROGUELIKE UI & SELECTION --- */
+/* Gender Neon Selection */
+.g-tag { padding: 10px 20px; border: 2px solid #222; cursor: pointer; color: #444; background: #000; font-weight: bold; text-transform: uppercase; transition: 0.2s; }
 .g-tag:hover { border-color: var(--n); color: var(--n); }
-.g-tag.active { 
-    border-color: var(--n); background: var(--n); color: #000; 
-    box-shadow: 0 0 15px var(--n); 
-}
+.g-tag.active { border-color: var(--n); background: var(--n); color: #000; box-shadow: 0 0 15px var(--n); }
 
-/* --- 6. ANIMATIONS & POPUPS [cite: 28, 29] --- */
+/* Skill Selection Buttons (Roguelike Choice) */
+.skill-choice {
+    text-align: left; display: flex; flex-direction: column; padding: 10px;
+    border: 2px solid var(--bd); background: #000; cursor: pointer;
+    transition: transform 0.1s; margin-bottom: 5px; width: 100%;
+}
+.skill-choice:hover { border-color: var(--r); transform: scale(1.02); }
+.skill-choice [class^="n-sk-"] { font-size: 13px; font-weight: bold; color: var(--n); margin-bottom: 2px; }
+.sk-desc { font-size: 10px; color: var(--d); font-style: italic; }
+
+/* --- 6. CORE UI & ANIMATIONS --- */
+.flex { display:flex; justify-content:space-between; align-items:center; }
+.grid { display:grid; gap:4px; } .g-2 { grid-template-columns:1fr 1fr; } .g-6 { grid-template-columns:repeat(6,1fr); }
+.panel { border:1px solid var(--bd); background:var(--p); padding:6px; border-radius:2px; z-index: 10;}
+.hide { display:none !important;}
+
+button {
+    background: #000; color: var(--n); border: 1px solid var(--bd);
+    padding: 10px; font: inherit; font-weight: bold; cursor: pointer; 
+    text-transform: uppercase; box-shadow: 0 0 5px rgba(57, 255, 20, 0.1);
+}
+button:active, button.active { background: var(--n); color:#000; box-shadow: 0 0 10px var(--n);}
+.btn-sm { padding:4px 8px; font-size:10px;}
+.btn-red { border-color:var(--hp); color:var(--hp);}
+button#b-au.active:after { content: ": ON" !important; }
+.lang-cn button#b-au.active:after { content: ":開" !important; }
+
 @keyframes idle { 0%,100%{transform:translateY(0)} 50%{transform:translateY(2px)} }
 @keyframes shake { 0%,100%{transform:translate(0)} 20%,60%{transform:translate(-2px,1px)} 40%,80%{transform:translate(2px,-1px)} }
 @keyframes lung { 0%,100%{transform:translateX(0)} 50%{transform:translateX(20px)} }
@@ -160,39 +168,10 @@ body {
 .anim-atk-p { animation: lung 0.2s; }
 .anim-atk-e { animation: lung-e 0.2s; }
 
-.dmg-pop { position: absolute; font-weight: bold; font-size: 16px; text-shadow: 2px 2px 0 #000; animation: floatUp 0.8s forwards; pointer-events: none; z-index: 20; width: 100px; text-align: center; left: -30px; top: -10px; }
-.dmg-w { color: #fff; } 
-.dmg-c { color: #ff0; font-family: 'Impact'; font-size: 20px; text-shadow: 2px 2px 0 #f00; }
-.dmg-m { color: #aaa; font-style: italic; }
+.dmg-pop { position: absolute; font-weight: bold; font-size: 16px; text-shadow: 2px 2px 0 #000; animation: floatUp 0.8s forwards; pointer-events: none; z-index: 20; width: 100px; text-align: center; left: -30px; top: -10px;}
+.dmg-w { color: #fff;} 
+.dmg-c { color: #ff0; font-family: 'Impact'; font-size: 20px; text-shadow: 2px 2px 0 #f00;}
+.dmg-m { color: #aaa; font-style: italic;}
 
-/* --- 7. CORE UI ELEMENTS --- */
-.flex { display:flex; justify-content:space-between; align-items:center; }
-.grid { display:grid; gap:4px; } .g-2 { grid-template-columns:1fr 1fr; } .g-6 { grid-template-columns:repeat(6,1fr); }
-.panel { border:1px solid var(--bd); background:var(--p); padding:6px; border-radius:2px; z-index: 10; }
-.hide { display:none !important; }
-
-button {
-    background: #000; color: var(--n); border: 1px solid var(--bd);
-    padding: 10px; font: inherit; font-weight: bold; cursor: pointer; 
-    text-transform: uppercase; box-shadow: 0 0 5px rgba(57, 255, 20, 0.1);
-}
-button:active, button.active { background: var(--n); color:#000; box-shadow: 0 0 10px var(--n); }
-.btn-sm { padding:4px 8px; font-size:10px; }
-.btn-red { border-color:var(--hp); color:var(--hp); }
-button#b-au.active:after { content: ": ON" !important; }
-.lang-cn button#b-au.active:after { content: ":開" !important; }
-
-progress { width:100%; height:6px; appearance:none; border:none; background:#222; display:block; }
-progress::-webkit-progress-bar { background:#222; }
-#bh::-webkit-progress-value { background:var(--hp); }
-#bs::-webkit-progress-value { background:var(--sp); }
-#ap::-webkit-progress-value { background:var(--n); }
-#ae::-webkit-progress-value { background:var(--hp); }
-
-#log { flex:1; overflow-y:auto; font-size:10px; border-top:1px solid var(--bd); padding-top:5px; display:flex; flex-direction:column-reverse; font-family:'Courier New',mono; }
-.lr { padding:1px 0; border-bottom:1px solid #111; }
-.stat-cell { text-align:center; font-size:9px; color:#888; border-right:1px solid #222; }
-.stv { color: #fff; font-weight: bold; display: block; font-size: 11px; }
-.sec-stat { font-size:10px; color:var(--n); text-align:center; }
-.eq-row { font-size:10px; color:#aaa; border-bottom:1px dashed #333; padding-bottom:4px; margin-bottom:4px;}
-.eq-v { color:#fff; font-weight:bold; margin-left:2px;}
+#log { flex:1; overflow-y:auto; font-size:10px; border-top:1px solid var(--bd); padding-top:5px; display:flex; flex-direction:column-reverse; font-family:'Courier New',mono;}
+.lr { padding:1px 0; border-bottom:1px solid #111;}
