@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jobless RO v4.9 | Ultimate Edition</title>
+    <title>Jobless RO v5.0 | Ultimate Edition</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="lang-en" style="background:#000;">
@@ -91,7 +91,6 @@ const G = {
         UI.render(this.p, this.s);
     },
 
-    // Registration State Helpers
     setG(val) { this.s.tmpG = val; el('g-m').classList.toggle('active', val==='m'); el('g-f').classList.toggle('active', val==='f'); },
 
     initChar() {
@@ -136,11 +135,30 @@ const G = {
     },
 
     pAttack() {
-        const dmg = Math.max(1, parseInt(el('ui-atk').innerText) - (this.s.mob.def || 0));
+        let dmg = Math.max(1, parseInt(el('ui-atk').innerText) - (this.s.mob.def || 0));
+        let skillName = "";
+        
+        // 5% Skill Trigger logic
+        if (Math.random() < 0.05) {
+            let cat = "";
+            for (let c in DB.jobs) if (DB.jobs[c][this.p.job]) cat = c;
+            if (cat && DB.skills[cat]) {
+                const sKeys = Object.keys(DB.skills[cat]);
+                skillName = sKeys[Math.floor(Math.random() * sKeys.length)];
+                dmg = Math.floor(dmg * DB.skills[cat][skillName].mult);
+                UI.log(`SKILL: ${DB.getName('skills', skillName)}!`, "c-yel");
+            }
+        }
+        
+        // Critical Hit (RO Formula)
+        const criRate = parseFloat(el('ui-cri').innerText) / 100;
+        const isCrit = !skillName && Math.random() < criRate;
+        if (isCrit) { dmg = Math.floor(dmg * 1.5); UI.log("CRITICAL HIT!", "c-yel"); }
+
         el('p-spr').classList.add('lung'); setTimeout(() => el('p-spr').classList.remove('lung'), 150);
         this.s.mob.hp -= dmg;
         el('e-hp-fill').style.width = (this.s.mob.hp / this.s.mob.mhp * 100) + "%";
-        UI.pop(dmg, 'e-box');
+        UI.pop(dmg, 'e-box', (skillName || isCrit) ? 'c-yel' : '');
         if(this.s.mob.hp <= 0) this.resolveWin();
     },
 
@@ -157,6 +175,17 @@ const G = {
     resolveWin() {
         this.s.b = false; clearInterval(this.s.loop);
         DB_ITEMS.pool.forEach(i => { if(Math.random() < i.rate) { this.p.inv.push(i.n); UI.log(`+ ${DB_ITEMS.getName(i.n)}`, "c-yel"); }});
+        
+        // 10% Random Event trigger
+        if (Math.random() < 0.10) {
+            const events = [
+                { effect: () => { this.p.str += 1; UI.log("EVENT: Permanent ATK +1", "c-n"); }},
+                { effect: () => { this.p.int += 1; UI.log("EVENT: Permanent MATK +1", "c-n"); }},
+                { effect: () => { this.p.mh += 10; UI.log("EVENT: Permanent MaxHP +10", "c-n"); }}
+            ];
+            events[Math.floor(Math.random() * events.length)].effect();
+        }
+
         this.p.lvl++; this.s.f++; this.p.floor = this.s.f;
         this.p.hp = this.p.mh;
         UI.loadScene( (this.p.lvl === 10 || this.p.lvl === 50) ? 'job' : 'mnu', this.p, this.s);
@@ -179,7 +208,6 @@ const G = {
     },
 
     startBattle() {
-        // Random Mob Selection Logic
         const isBoss = (this.s.f % 10 === 0);
         let mobIndex;
         if (isBoss) {
@@ -192,7 +220,6 @@ const G = {
 
         this.s.mob = DB.mobs.scaling(this.s.f);
         this.s.mob.n = DB.mobs.names[mobIndex];
-        // Apply Difficulty Stat Multiplier
         this.s.mob.hp *= (this.p.diff || 1.0); 
         this.s.mob.atk *= (this.p.diff || 1.0); 
         this.s.mob.mhp = this.s.mob.hp;
