@@ -54,6 +54,10 @@
         <div id="e-box" class="avatar-box">
             <div id="e-spr" class="spr"><div class="hd"></div><div class="bd"></div></div>
             <small id="e-name" style="position:absolute; bottom:-15px; font-size:9px; color:var(--hp)"></small>
+            <div style="position:absolute; top:-20px; width:100%;">
+                <div class="bar-container" style="height:4px;"><div id="e-hp-fill" class="fill" style="background:var(--hp); width:100%;"></div></div>
+                <div class="bar-container" style="height:2px; border:none; background:transparent;"><div id="e-atb-fill" style="width:0%; height:100%; background:rgba(255,255,255,0.3);"></div></div>
+            </div>
         </div>
     </section>
 
@@ -71,13 +75,13 @@ const el = i => document.getElementById(i);
 
 const G = {
     p: null, 
-    s: { f:1, b:false, atb:0, loop:null, mob:null, spd: 1, repo: "6wmzzcd7m5-commits/nojob-ro" },
+    s: { f:1, b:false, atb:0, eatb:0, loop:null, mob:null, spd: 1, repo: "6wmzzcd7m5-commits/nojob-ro" },
 
     boot() {
         const saved = localStorage.getItem('ro_prime_v3');
         if(saved) {
             this.p = JSON.parse(atob(saved));
-            if(!this.p.inv) this.p.inv = []; // Ensure inventory exists
+            if(!this.p.inv) this.p.inv = [];
             this.s.f = this.p.floor || 1;
             this.loadScene('mnu');
         } else {
@@ -87,9 +91,10 @@ const G = {
     },
 
     toggleLang() {
-        document.body.classList.toggle('lang-tc'); // Matches style.css lang class
+        document.body.classList.toggle('lang-tc');
         this.render();
-        this.loadScene(this.s.b ? 'btl' : 'mnu');
+        if(this.s.scene === 'job') this.loadScene('job');
+        else this.loadScene(this.s.b ? 'btl' : 'mnu');
     },
 
     setSpd(val) {
@@ -101,100 +106,104 @@ const G = {
 
     startLoop() {
         if(this.s.loop) clearInterval(this.s.loop);
-        const tickRate = Math.max(1, 30 / this.s.spd); // Tick system
+        const tickRate = Math.max(1, 30 / this.s.spd);
         this.s.loop = setInterval(() => {
             if(!this.s.b) return;
             
+            // Player ATB logic
             const jobData = DB.getJob(this.p.job);
-            const fillRate = (jobData.aspd || 150) + (this.p.agi * 0.8) + (this.p.dex * 0.2); // Fill Rate
-            this.s.atb += (fillRate / 10);
+            const pFill = (jobData.aspd || 150) + (this.p.agi * 0.8) + (this.p.dex * 0.2);
+            this.s.atb += (pFill / 10);
             el('atb-fill').style.width = Math.min(100, this.s.atb / 10) + "%";
 
-            if(this.s.atb >= 1000) {
-                this.s.atb = 0;
-                this.executeAction();
-            }
+            // Enemy ATB logic (Debugged: Play Cycle)
+            const eFill = 150 + (this.s.f * 2); 
+            this.s.eatb += (eFill / 10);
+            el('e-atb-fill').style.width = Math.min(100, this.s.eatb / 10) + "%";
+
+            if(this.s.atb >= 1000) { this.s.atb = 0; this.pAttack(); }
+            if(this.s.eatb >= 1000) { this.s.eatb = 0; this.eAttack(); }
         }, tickRate);
     },
 
-    executeAction() {
-        // Physical Damage Formula
+    pAttack() {
         const atk = this.p.str + Math.floor(this.p.dex/5) + Math.floor(this.p.luk/3) + (this.p.lvl * 2);
         const dmg = Math.max(1, atk - (this.s.mob.def || 0));
-        
-        const spr = el('p-spr');
-        spr.classList.remove('lung');
-        void spr.offsetWidth; 
-        spr.classList.add('lung'); //
-
+        el('p-spr').classList.remove('lung'); void el('p-spr').offsetWidth; el('p-spr').classList.add('lung');
         this.s.mob.hp -= dmg;
+        el('e-hp-fill').style.width = Math.max(0, (this.s.mob.hp / this.s.mob.mhp) * 100) + "%";
         this.pop(dmg, 'e-box');
-        
         if(this.s.mob.hp <= 0) this.resolveWin();
     },
 
-    resolveWin() {
-        this.s.b = false;
-        clearInterval(this.s.loop);
+    eAttack() {
+        const def = (this.p.vit / 2) + (this.p.lvl / 2);
+        const dmg = Math.max(1, this.s.mob.atk - def);
+        el('e-spr').classList.remove('lung'); void el('e-spr').offsetWidth; el('e-spr').classList.add('lung');
+        this.p.hp -= dmg;
+        el('hp-fill').style.width = Math.max(0, (this.p.hp / this.p.mh) * 100) + "%";
+        this.pop(dmg, 'p-box', 'c-red');
+        if(this.p.hp <= 0) this.resolveLoss();
+    },
 
-        // Loot Drop Logic
+    resolveWin() {
+        this.s.b = false; clearInterval(this.s.loop);
+        // Loot logic
         DB_ITEMS.pool.forEach(item => {
             if(Math.random() < item.rate) {
                 this.p.inv.push(item.n);
-                this.log(`${DB.txt('clear')} + ${DB_ITEMS.getName(item.n)}`, "c-yel");
+                this.log(`+ ${DB_ITEMS.getName(item.n)}`, "c-yel");
             }
         });
-
         this.p.lvl++; this.s.f++; this.p.floor = this.s.f;
-        this.sv(); this.render(); this.loadScene('mnu');
+        this.p.hp = this.p.mh; // Restore HP on win
+        const currentJob = DB.getJob(this.p.job);
+        if((this.p.lvl === 10 || this.p.lvl === 50) && currentJob.next.length > 0) this.loadScene('job');
+        else this.loadScene('mnu');
+        this.sv(); this.render();
+    },
+
+    resolveLoss() {
+        this.s.b = false; clearInterval(this.s.loop);
+        this.log("DEFEATED! RETREAT TO TOWN.", "c-red");
+        this.p.hp = this.p.mh;
+        this.loadScene('mnu');
+        this.render();
     },
 
     rank() {
-        const hash = getSecureHash(this.p); // Security Hashing
+        const hash = getSecureHash(this.p);
         const payload = { name: this.p.n, job: this.p.job, floor: this.s.f, lvl: this.p.lvl, hash: hash };
-        const body = encodeURIComponent(JSON.stringify(payload));
-        window.open(`https://github.com/${this.s.repo}/issues/new?title=RANK_SUBMISSION&body=${body}`, '_blank');
+        window.open(`https://github.com/${this.s.repo}/issues/new?title=RANK_SUBMISSION&body=${encodeURIComponent(JSON.stringify(payload))}`, '_blank');
     },
 
     render() {
         if(!this.p) return;
-        // Language aware UI
         el('btn-save').innerText = DB.txt('save');
         el('btn-rank').innerText = DB.txt('rank');
         el('lbl-flr').innerText = DB.txt('flr');
         el('lbl-lv').innerText = DB.txt('lv');
-
         el('ui-job').innerText = DB.getName('jobs', this.p.job);
         el('ui-lvl').innerText = this.p.lvl;
         el('ui-floor').innerText = this.s.f;
-        el('hp-fill').style.width = "100%";
-        el('p-spr').className = `spr j-${this.p.job}`; // Job visuals
-        
+        el('hp-fill').style.width = (this.p.hp / this.p.mh * 100) + "%";
+        el('p-spr').className = `spr j-${this.p.job}`;
         ['str','agi','vit','int','dex','luk'].forEach(k => el('ui-'+k).innerText = this.p[k]);
-
-        // Render Inventory HUD
-        el('inv-hud').innerHTML = this.p.inv.map(n => `
-            <div class="stat-cell" title="${DB_ITEMS.getDesc(n)}">
-                <b>${DB_ITEMS.getName(n)}</b>
-            </div>
-        `).join('');
+        el('inv-hud').innerHTML = this.p.inv.map(n => `<div class="stat-cell" title="${DB_ITEMS.getDesc(n)}">${DB_ITEMS.getName(n)}</div>`).join('');
     },
 
     loadScene(name) {
-        const c = el('ctl');
+        this.s.scene = name; const c = el('ctl');
         if(name === 'reg') {
-            c.innerHTML = `<div class="panel grid g-1">
-                <input id="pname" placeholder="${DB.txt('init')}" class="panel">
-                <button onclick="G.initChar()">${DB.txt('create')}</button>
-            </div>`;
+            c.innerHTML = `<div class="panel grid g-1"><input id="pname" placeholder="${DB.txt('init')}" class="panel"><button onclick="G.initChar()">${DB.txt('create')}</button></div>`;
         } else if(name === 'mnu') {
-            c.innerHTML = `<button onclick="G.startBattle()" class="panel" style="width:100%; padding:20px;">
-                ${DB.txt('warp')} ${this.s.f}
-            </button>`;
+            c.innerHTML = `<button onclick="G.startBattle()" class="panel" style="width:100%; padding:20px;">${DB.txt('warp')} ${this.s.f}</button>`;
         } else if(name === 'btl') {
-            c.innerHTML = `<div class="panel" style="text-align:center; color:var(--hp); border-style:dotted;">
-                ${DB.txt('combat')}
-            </div>`;
+            c.innerHTML = `<div class="panel" style="text-align:center; color:var(--hp); border-style:dotted;">${DB.txt('combat')}</div>`;
+        } else if(name === 'job') {
+            const nextJobs = DB.getJob(this.p.job).next;
+            let btns = nextJobs.map(j => `<button onclick="G.changeJob('${j}')" class="panel">${DB.getName('jobs', j)}</button>`).join('');
+            c.innerHTML = `<div class="panel grid g-1"><div style="text-align:center; margin-bottom:5px;">JOB_OFFICE</div>${btns}</div>`;
         }
     },
 
@@ -204,25 +213,29 @@ const G = {
         this.sv(); this.render(); this.loadScene('mnu');
     },
 
-    startBattle() {
-        this.s.mob = DB.mobs.scaling(this.s.f); // Scaling
-        const tier = Math.ceil(this.s.f / 10);
-        el('e-box').setAttribute('data-tier', tier); // Mob tiers
-        
-        // MVP Visuals
-        el('e-spr').className = `spr ${this.s.mob.n.includes('[MVP]') ? 'spr-mvp' : ''}`;
-        el('e-name').innerText = this.s.mob.n;
-        
-        this.s.b = true; this.s.atb = 0;
-        this.startLoop();
-        this.loadScene('btl');
+    changeJob(newJob) {
+        this.p.job = newJob;
+        ['str','agi','vit','int','dex','luk'].forEach(s => this.p[s] += 5);
+        this.p.mh += 100; this.p.hp = this.p.mh;
+        this.log(`PROMOTED: ${newJob}!`, "c-n");
+        this.sv(); this.render(); this.loadScene('mnu');
     },
 
-    pop(amt, id) {
-        const d = document.createElement('div');
-        d.className = 'dmg-pop'; d.innerText = amt;
-        el(id).appendChild(d);
-        setTimeout(() => d.remove(), 800 / this.s.spd);
+    startBattle() {
+        this.s.mob = DB.mobs.scaling(this.s.f);
+        this.s.mob.mhp = this.s.mob.hp; 
+        const tier = Math.ceil(this.s.f / 10);
+        el('e-box').setAttribute('data-tier', tier);
+        el('e-spr').className = `spr ${this.s.mob.n.includes('[MVP]') ? 'spr-mvp' : ''}`;
+        el('e-name').innerText = this.s.mob.n;
+        el('e-hp-fill').style.width = "100%";
+        this.s.b = true; this.s.atb = 0; this.s.eatb = 0;
+        this.startLoop(); this.loadScene('btl');
+    },
+
+    pop(amt, id, col='') {
+        const d = document.createElement('div'); d.className = 'dmg-pop '+col; d.innerText = amt;
+        el(id).appendChild(d); setTimeout(() => d.remove(), 800 / this.s.spd);
     },
     log(m, c) { el('log').insertAdjacentHTML('afterbegin', `<div class="entry ${c}">> ${m}</div>`); },
     sv() { localStorage.setItem('ro_prime_v3', btoa(JSON.stringify(this.p))); },
