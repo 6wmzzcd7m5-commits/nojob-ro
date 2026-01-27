@@ -39,19 +39,19 @@ window.DB_ITEMS = {
         },
         tc: { // Traditional Chinese
             items: {
-                'Red Potion': '赤色藥水', 'Orange Potion': '橙色藥水',
+                'Red Potion': '紅色藥水', 'Orange Potion': '橙色藥水',
                 'White Potion': '白色藥水', 'Blue Potion': '藍色藥水',
                 'Yggdrasil Berry': '天地樹果實', 'Awakening Potion': '覺醒藥水',
                 'Katana': '武士刀', 'Broadsword': '闊劍', 'Claymore': '雙手巨劍',
                 'Rod': '手杖', 'Wizardry Staff': '巫師之杖', 'Hunter Bow': '獵弓',
                 'Adventurer Suit': '冒險衣', 'Chain Mail': '鎖子甲', 'Full Plate': '全身鎧甲',
-                'Poring Card': '波利卡片', 'Fabre Card': '法布爾卡片', 'Lunatic Card': '瘋兔卡片',
+                'Poring Card': '波利卡片', 'Fabre Card': '綠棉蟲卡片', 'Lunatic Card': '瘋兔卡片',
                 'Chonchon Card': '蒼蠅卡片', 'Roda Frog Card': '羅達蛙卡片', 'Spore Card': '蘑菇卡片',
-                'Tarou Card': '塔羅牌卡片', 'Poison Spore Card': '毒蘑菇卡片', 'Wormtail Card': '土波利卡片',
+                'Tarou Card': '塔魯安卡片', 'Poison Spore Card': '毒蘑菇卡片', 'Wormtail Card': '土波利卡片',
                 'Angeling Card': '天使波利卡片', 'Zombie Card': '殭屍卡片', 'Skeleton Card': '邪骸戰士卡片',
-                'Poporing Card': '土波利卡片', 'Hydra Card': '海葵卡片', 'Vadon Card': '螃蟹卡片',
-                'Marina Card': '馬琳卡片', 'Thief Bug Card': '盜蟲卡片',
-                'Soldier Skeleton Card': '邪骸戰士隊長卡片', 'Archer Skeleton Card': '邪骸弓箭手卡片', 'GTB Card': '黃金盜蟲卡片'
+                'Poporing Card': '波波利卡片', 'Hydra Card': '海葵卡片', 'Vadon Card': '螃蟹卡片',
+                'Marina Card': '瑪麗娜卡片', 'Thief Bug Card': '盜蟲卡片',
+                'Soldier Skeleton Card': '邪骸士兵卡片', 'Archer Skeleton Card': '邪骸弓箭手卡片', 'GTB Card': '黃金盜蟲卡片'
             },
             desc: {
                 'Red Potion': '恢復 100 HP', 'Orange Potion': '恢復 300 HP',

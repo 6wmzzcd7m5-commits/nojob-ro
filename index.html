@@ -400,7 +400,8 @@
                 if (pool.length > 0) {
                     const s = pool[Math.floor(Math.random() * pool.length)];
                     this.p.skills.push(s);
-                    UI.log(DB.getLang() === 'en' ? `LEARNED: ${s}!` : `獲得技能: ${DB.getName('skills', s)}!`, "c-yel");
+                    const msg = DB.getLang() === 'en' ? `LEARNED: ${s}!` : `學會技能: ${DB.getName('skills', s)}!`;
+                    UI.log(msg, "c-yel");
                 }
             },
 
@@ -428,8 +429,7 @@
             },
 
             sv() { localStorage.setItem('ro_prime_v3', btoa(JSON.stringify(this.p))); },
-            exp() { const a = document.createElement('a'); a.href = 'data:text/plain;base64,' + btoa(JSON.stringify(this.p)); a.download = 'save.jro'; a.click(); },
-            rank() { window.open(`https://github.com/${this.s.repo}/issues/new?title=RANK_SUBMISSION&body=${encodeURIComponent(JSON.stringify({ ...this.p, hash: getSecureHash(this.p) }))}`, '_blank'); }
+            exp() { const a = document.createElement('a'); a.href = 'data:text/plain;base64,' + btoa(JSON.stringify(this.p)); a.download = 'save.jro'; a.click(); }
         };
         window.onload = () => G.boot();
     </script>
