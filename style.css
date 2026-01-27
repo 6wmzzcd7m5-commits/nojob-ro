@@ -25,7 +25,7 @@ body {
 }
 
 /* --- 2. CSS LOCALIZATION DICTIONARY --- */
-/* Default: English */
+/* Default: English [cite: 1, 6] */
 .lbl-rst::after   { content: "RST"; }
 .lbl-save::after  { content: "SAV"; }
 .lbl-load::after  { content: "LOD"; }
@@ -94,7 +94,7 @@ body {
 .lang-cn .lbl-top::after   { content: "英雄榜"; }
 .lang-cn .lbl-loading::after { content: "讀取中..."; }
 
-/* --- 3. SPRITE ENGINE & HAIR FIX --- */
+/* --- 3. SPRITE ENGINE & HAIR FIX [cite: 5, 26] --- */
 #stage {
     height: 120px; background: #111; border-bottom: 1px dashed var(--bd);
     display: flex; justify-content: space-between; align-items: flex-end;
@@ -107,21 +107,20 @@ body {
 .bd { width:18px; height:16px; background:#eee; position:absolute; left:6px; top:16px; z-index:3; border-radius:2px 2px 5px 5px; }
 .hr { background:#853; position:absolute; transition: all 0.2s; }
 
-/* Male Hair (Short/Spiky) */
+/* Male Hair (Short/Spiky) [cite: 26] */
 .ro-m .hr { 
     width:24px; height:10px; left:3px; top:-2px; z-index:6;
     border-radius:4px 4px 0 0; 
 } 
 
-/* Female Hair (FIXED: Long Hair) */
+/* Female Hair (FIXED: Long Hair Falling Behind) */
 .ro-f .hr { 
     width: 28px; height: 26px; left: 1px; top: -3px; z-index: 2; /* Z-index 2 puts it behind body/head */
     border-radius: 12px 12px 6px 6px;
-    box-shadow: 0 4px 0 rgba(0,0,0,0.3); /* Adds depth to the length */
+    box-shadow: 0 4px 0 rgba(0,0,0,0.3);
 }
 
-/* --- 4. JOB COSTUMES (Gradients) --- */
-/* 1st Classes */
+/* --- 4. JOB COSTUMES (Gradients) [cite: 27] --- */
 .j-0 .bd{background:linear-gradient(to bottom,#fff 60%,#dca 60%)}
 .j-1 .bd{background:linear-gradient(to bottom,#d84 50%,#468 50%);border-top:2px solid #b62}
 .j-2 .bd{background:linear-gradient(90deg,#348 20%,#eee 20%,#eee 80%,#348 80%);border-bottom:3px solid #642}
@@ -130,7 +129,7 @@ body {
 .j-5 .bd{background:linear-gradient(90deg,#fff 40%,#d44 40%,#d44 60%,#fff 60%)}
 .j-6 .bd{background:linear-gradient(90deg,#eee 30%,#a44 30%,#a44 70%,#eee 70%);border-bottom:2px solid #334}
 
-/* 2nd Classes  */
+/* 2nd Class Visuals */
 .j-7 .bd{background:linear-gradient(to bottom,#ccc 40%,#445 40%);border-top:2px solid #889} /* Knight */
 .j-8 .bd{background:linear-gradient(90deg,#426 20%,#eef 20%,#eef 80%,#426 80%);border-bottom:4px solid #da4} /* Wizard */
 .j-9 .bd{background:linear-gradient(to bottom,#223 50%,#112 50%);border-left:2px solid #546;border-right:2px solid #546} /* Assassin */
@@ -138,7 +137,19 @@ body {
 .j-11 .bd{background:linear-gradient(90deg,#fff 30%,#224 30%,#224 70%,#fff 70%);border-top:2px solid #00f} /* Priest */
 .j-12 .bd{background:linear-gradient(to bottom,#eee 40%,#a44 40%);border-bottom:3px solid #555} /* Blacksmith */
 
-/* --- 5. ANIMATIONS & POPUPS --- */
+/* --- 5. NEON GENDER SELECTION BUTTONS --- */
+.g-tag { 
+    padding: 10px 20px; border: 2px solid #222; cursor: pointer; 
+    color: #444; background: #000; font-weight: bold;
+    text-transform: uppercase; transition: all 0.2s ease;
+}
+.g-tag:hover { border-color: var(--n); color: var(--n); }
+.g-tag.active { 
+    border-color: var(--n); background: var(--n); color: #000; 
+    box-shadow: 0 0 15px var(--n); 
+}
+
+/* --- 6. ANIMATIONS & POPUPS [cite: 28, 29] --- */
 @keyframes idle { 0%,100%{transform:translateY(0)} 50%{transform:translateY(2px)} }
 @keyframes shake { 0%,100%{transform:translate(0)} 20%,60%{transform:translate(-2px,1px)} 40%,80%{transform:translate(2px,-1px)} }
 @keyframes lung { 0%,100%{transform:translateX(0)} 50%{transform:translateX(20px)} }
@@ -154,7 +165,7 @@ body {
 .dmg-c { color: #ff0; font-family: 'Impact'; font-size: 20px; text-shadow: 2px 2px 0 #f00; }
 .dmg-m { color: #aaa; font-style: italic; }
 
-/* --- 6. CORE UI ELEMENTS --- */
+/* --- 7. CORE UI ELEMENTS --- */
 .flex { display:flex; justify-content:space-between; align-items:center; }
 .grid { display:grid; gap:4px; } .g-2 { grid-template-columns:1fr 1fr; } .g-6 { grid-template-columns:repeat(6,1fr); }
 .panel { border:1px solid var(--bd); background:var(--p); padding:6px; border-radius:2px; z-index: 10; }
