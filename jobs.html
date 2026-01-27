@@ -1,0 +1,28 @@
+<script>
+window.DB_JOBS = {
+    // --- BASIC CLASS ---
+    'Novice': { 
+        hp: 100, sp: 30, 
+        stats: [2, 2, 2, 2, 2, 2], // STR, AGI, VIT, INT, DEX, LUK
+        next: ['Swordman', 'Mage', 'Thief', 'Archer', 'Acolyte', 'Merchant'] 
+    },
+
+    // --- 1ST JOBS ---
+    'Swordman': { hp: 350, sp: 60, stats: [10, 5, 10, 2, 6, 2], next: ['Knight'] },
+    'Mage':     { hp: 160, sp: 300, stats: [2, 8, 4, 20, 10, 2], next: ['Wizard'] },
+    'Thief':    { hp: 200, sp: 120, stats: [6, 18, 4, 4, 14, 6], next: ['Assassin'] },
+    'Archer':   { hp: 180, sp: 140, stats: [4, 15, 4, 4, 20, 6], next: ['Hunter'] },
+    'Acolyte':  { hp: 220, sp: 200, stats: [4, 5, 10, 15, 12, 10], next: ['Priest'] },
+    'Merchant': { hp: 300, sp: 80, stats: [12, 4, 8, 2, 8, 12], next: ['Blacksmith'] },
+
+    // --- 2ND JOBS (Endgame Goals) ---
+    'Knight':     { hp: 1500, sp: 250, stats: [35, 15, 30, 5, 20, 10], next: [] },
+    'Wizard':     { hp: 600, sp: 1000, stats: [5, 20, 12, 65, 30, 10], next: [] },
+    'Assassin':   { hp: 900, sp: 450, stats: [25, 65, 12, 10, 35, 25], next: [] },
+    'Hunter':     { hp: 800, sp: 500, stats: [15, 55, 12, 10, 65, 25], next: [] },
+    'Priest':     { hp: 1000, sp: 900, stats: [12, 15, 25, 50, 30, 30], next: [] },
+    'Blacksmith': { hp: 1300, sp: 300, stats: [45, 10, 20, 5, 25, 35], next: [] }
+};
+
+console.log("AEGIS_JOBS: EVOLUTION_TREE_LOADED");
+</script>
