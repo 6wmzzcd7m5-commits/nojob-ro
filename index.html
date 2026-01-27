@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jobless RO: Rouge Edition v1.1.3</title>
+    <title>Jobless RO: Rouge Edition v1.1.4</title>
     <style>
         :root { --bg:#050505; --p:#0a0a0a; --bd:#39ff14; --n:#39ff14; --t:#ffffff; --d:#aaaaaa; --hp:#ff4444; --sp:#4488ff; --r:#ffff00; --font:'Tahoma', sans-serif; }
         * { box-sizing:border-box; user-select:none; -webkit-tap-highlight-color:transparent; }
@@ -18,9 +18,10 @@
         .btn-neon { border: 2px solid var(--bd) !important; box-shadow: 0 0 15px rgba(57, 255, 20, 0.4); }
         .panel { border:1px solid var(--bd); background:var(--p); padding:6px; }
         .flex { display:flex; justify-content:space-between; align-items:center; }
-        .grid { display:grid; gap:4px; } .g-2 { grid-template-columns:1fr 1fr; } .g-6 { grid-template-columns:repeat(6,1fr); }
-        .stat-cell { text-align:center; font-size:9px; color:#666; border-right:1px solid #222; padding: 2px 0; }
-        .stv { color: #fff; font-weight: bold; display: block; font-size: 11px; }
+        .grid { display:grid; gap:4px; } .g-2 { grid-template-columns:1fr 1fr; } .g-6 { grid-template-columns:repeat(6,1fr); } .g-5 { grid-template-columns:repeat(5,1fr); }
+        .stat-cell { text-align:center; font-size:8px; color:#666; border-right:1px solid #222; padding: 2px 0; }
+        .stv { color: #fff; font-weight: bold; display: block; font-size: 10px; }
+        .sub-stat { color: #0f0; font-size: 10px; font-weight: bold; }
         #stage { height: 120px; background: #111; border-bottom: 1px dashed var(--bd); display: flex; justify-content: space-between; align-items: flex-end; padding: 20px 40px; position: relative; }
         .avatar-box { width: 40px; height: 60px; position: relative; display: flex; justify-content: center; align-items: flex-end; }
         .spr { width:30px; height:40px; position:absolute; bottom:0; animation: idle 1.2s infinite steps(2); }
@@ -32,8 +33,6 @@
         [data-mob="Poring"] .hd { background: #fca; border-radius: 50%; width: 24px; height: 20px; top: 15px; }
         [data-mob="Angeling"] .hd { background: #fff; border-radius: 50%; width: 32px; height: 28px; top: 5px; box-shadow: 0 0 10px #fff; }
         [data-mob="Baphomet"] .hd { background: #333; border-radius: 5px; width: 42px; height: 52px; top: -18px; }
-        [data-mvp="true"] { transform: scale(1.3); }
-        [data-mvp="true"] .spr { filter: drop-shadow(0 0 10px var(--r)); }
         @keyframes idle { 0%,100%{transform:translateY(0)} 50%{transform:translateY(2px)} }
         @keyframes shake { 0%,100%{transform:translate(0)} 25%{transform:translate(-3px,1px)} 75%{transform:translate(3px,-1px)} }
         .anim-shake { animation: shake 0.4s; }
@@ -42,9 +41,6 @@
         progress { width:100%; height:8px; appearance:none; border:none; background:#222; margin-top:2px; }
         #bh::-webkit-progress-value, #ae::-webkit-progress-value { background:var(--hp); }
         #ap::-webkit-progress-value { background:var(--n); }
-        .hide { display:none !important; }
-        .skill-choice { flex-direction: column; align-items: flex-start; text-align: left; padding: 10px; }
-        .sk-desc { font-size: 10px; color: var(--d); font-style: italic; }
     </style>
 </head>
 <body class="lang-en">
@@ -76,7 +72,8 @@
                 </div>
             </div>
         </div>
-        <div class="grid g-6" id="stat-row"></div>
+        <div class="grid g-6" id="stat-row" style="background: rgba(0,0,0,0.5); padding: 2px;"></div>
+        <div class="grid g-5" id="sub-stat-row" style="border-top: 1px solid #333; padding-top: 4px;"></div>
     </header>
     <section id="btl" class="panel">
         <div id="stage">
@@ -104,11 +101,21 @@ const G={
     setG(g){ this.tmp.g=g; el('spr').className=`spr ro-${g} j-0`; },
     ng(){ this.p={n:el('in').value||"Novice",j:0,lv:1,xp:0,hp:60,mh:60,sp:20,str:1,agi:1,vit:1,int:1,dex:1,luk:1,pts:5,sk:{},act:null,g:this.tmp.g,arch:null}; this.skM(); },
     skM(){ el('ctl').innerHTML=''; SK0.forEach(s=>{ this.btn(`<span class="en">${s.en}</span><span class="cn">${s.cn}</span>`, ()=>{ this.p.sk[s.n]=1; this.p.act=s; this.stM(true); }); }); },
-    stM(st){ el('ctl').innerHTML=''; ['str','agi','vit','int','dex','luk'].forEach(k=>{ this.btn(k.toUpperCase()+"+",()=>{if(this.p.pts>0){this.p[k]++;this.p.pts--;this.draw();this.stM(st);}}); }); if(st||this.p.pts==0) this.btn(`<span class="en">OK</span><span class="cn">確定</span>`,()=>{ if(this.p.lv>=10&&!this.p.arch)this.jbM(); else this.mnu(); }); },
+    stM(st){ el('ctl').innerHTML=''; ['str','agi','vit','int','dex','luk'].forEach(k=>{ this.btn(k.toUpperCase()+"+",()=>{if(this.p.pts>0){this.p[k]++;this.p.pts--;this.draw();this.stM(st);}}); }); if(st||this.p.pts==0) this.btn(`<span class="en">OK (PTS: ${this.p.pts})</span><span class="cn">確定 (餘下: ${this.p.pts})</span>`,()=>{ if(this.p.lv>=10&&!this.p.arch)this.jbM(); else this.mnu(); }); },
     jbM(){ el('ctl').innerHTML=''; ["Melee","Magical","Rouge"].forEach(type => { this.btn(`<span class="en">${type}</span>`, () => { this.p.arch = type; el('ctl').innerHTML=''; ARCH[type].filter(id=>id<7).forEach(jID => { this.btn(`JOB ${jID}`, () => { this.p.j = jID; this.p.mh+=100; this.p.hp=this.p.mh; this.mnu(); }); }); }, 'btn-neon'); }); },
-    calc(c){ const j=J[c.j]; let atk=c.str+(c.dex/5)+c.lv*2, flee=c.agi+c.lv; return {atk:Math.floor(atk), aspd:Math.floor(j.as+(c.agi*0.8)), hit:c.dex+c.lv, flee, def:Math.floor(c.vit/2)}; },
     
-    // --- AUTO PROGRESSION FIX ---
+    // --- UPDATED CALCULATIONS ---
+    calc(c){
+        const j=J[c.j];
+        const atk = Math.floor(c.str * 2.5 + (c.dex * 0.5) + c.lv * 2);
+        const matk = Math.floor(c.int * 3 + (c.dex * 0.5) + c.lv * 2);
+        const hit = Math.floor(c.dex + c.lv);
+        const flee = Math.floor(c.agi + c.lv);
+        const crit = Math.floor(c.luk * 0.5);
+        const aspd = Math.floor(j.as + (c.agi * 0.8) + (c.dex * 0.2));
+        return {atk, matk, hit, flee, crit, aspd, def: Math.floor(c.vit / 2)};
+    },
+
     mnu(){ 
         this.sv(); el('ctl').innerHTML=''; this.draw(); 
         if(this.s.au && !this.s.b){
@@ -116,8 +123,7 @@ const G={
                 this.btn(`<span class="en">LOW HP - REST</span><span class="cn">血量過低 - 休息</span>`, ()=>{this.p.hp=this.p.mh; this.mnu();}, 'btn-red');
                 return;
             }
-            setTimeout(()=>this.bt(this.s.f%10==0), 700); 
-            return; 
+            setTimeout(()=>this.bt(this.s.f%10==0), 700); return; 
         } 
         this.btn(`<span class="en">${this.s.f%10==0?'BOSS':'FIGHT'}</span><span class="cn">${this.s.f%10==0?'首領':'戰鬥'}</span>`, ()=>this.bt(this.s.f%10==0), this.s.f%10==0?'btn-red':'');
         this.btn(`<span class="en">REST</span><span class="cn">休息</span>`, ()=>{this.p.hp=this.p.mh; this.draw();});
@@ -127,28 +133,20 @@ const G={
     loop(){ for(let i=0; i<this.s.spd; i++){ if(!this.s.b) break; this.tk(); } this.uiTick(); },
     tk(){ const ps = this.calc(this.p); this.pb += ps.aspd; this.eb += 10; if(this.pb>=1000){ this.pb=0; this.act(this.p,this.mob,ps,true); } if(this.eb>=1000){ this.eb=0; this.act(this.mob,this.p,{hit:80+(this.s.f*1.5),atk:this.mob.a},false); } },
     act(s, t, st, p){ const targetBox = p ? el('e-box') : el('p-box'); const tflee = p ? 0 : this.calc(this.p).flee; if (Math.random() * 100 > Math.max(5, 80 + (st.hit - tflee))) { this.pop(targetBox,"MISS"); return; } let d = Math.max(1, (st.atk * (this.p.act?.v||1)) - (p ? 0 : st.def)); t.hp -= Math.floor(d); if(this.s.spd <= 30) { this.pop(targetBox, Math.floor(d)); targetBox.classList.add('anim-shake'); setTimeout(()=>targetBox.classList.remove('anim-shake'), 400); } if (t.hp <= 0) this.win(p); },
+    win(p){ clearInterval(this.s.tm); this.s.b=false; if(!p) { el('ctl').innerHTML=`<button onclick="location.reload()"><span class="en">REBORN</span><span class="cn">復活</span></button>`; return; } this.p.xp += 150; this.s.f++; this.mnu(); },
+    uiTick(){ el('uh').innerText=Math.floor(this.p.hp); el('bh').value=this.p.hp; el('bh').max=this.p.mh; el('ae').value=this.mob?Math.floor(this.mob.hp):0; el('ae').max=this.mob?this.mob.mh:1; el('ap').value=this.pb; },
     
-    win(p){ 
-        clearInterval(this.s.tm); this.s.b=false; 
-        if(!p) { el('ctl').innerHTML=`<button onclick="location.reload()"><span class="en">REBORN</span><span class="cn">復活</span></button>`; return; } 
-        this.p.xp += 150; this.s.f++; 
-        if (this.mob.mvp) { this.s.au = false; this.rewardM(); } else { this.checkLv(); }
+    // --- UPDATED DRAW (6 BASE + 5 SUB) ---
+    draw(){ 
+        const stats = this.calc(this.p);
+        el('un').innerText=this.p.n; el('ul').innerText=this.p.lv; el('ufl').innerText=this.s.f; el('spr').className = `spr ro-${this.p.g} j-${this.p.j}`;
+        el('stat-row').innerHTML = ['str','agi','vit','int','dex','luk'].map(k=>`<div class="stat-cell">${k.toUpperCase()}<br><b class="stv">${this.p[k]}</b></div>`).join('');
+        el('sub-stat-row').innerHTML = [
+            {l:'ATK',v:stats.atk}, {l:'MATK',v:stats.matk}, {l:'HIT',v:stats.hit}, {l:'FLEE',v:stats.flee}, {l:'CRT',v:stats.crit+'%'}
+        ].map(s => `<div class="stat-cell">${s.l}<br><span class="sub-stat">${s.v}</span></div>`).join('');
+        el('b-au').className=this.s.au?'btn-sm active':'btn-sm'; 
     },
 
-    rewardM(){
-        el('ctl').innerHTML=''; 
-        const pool = [{n:'P_ATK',d:'ATK +10%'},{n:'P_LIFE',d:'HP +20%'}].sort(()=>0.5-Math.random());
-        pool.forEach(sk => {
-            const b = document.createElement('button'); b.className = 'skill-choice';
-            b.innerHTML = `<b>${sk.n}</b><br><small class="sk-desc">${sk.d}</small>`;
-            b.onclick = () => { this.p.sk[sk.n]=1; this.checkLv(); };
-            el('ctl').appendChild(b);
-        });
-    },
-
-    checkLv(){ if(this.p.xp >= this.p.lv*100){ this.p.lv++; this.p.xp=0; this.p.pts+=3; this.p.mh+=20; this.p.hp=this.p.mh; } this.mnu(); },
-    uiTick(){ el('uh').innerText=Math.floor(this.p.hp); el('bh').value=this.p.hp; el('bh').max=this.p.mh; el('ae').value=this.mob.hp; el('ae').max=this.mob.mh; el('ap').value=this.pb; },
-    draw(){ el('un').innerText=this.p.n; el('ul').innerText=this.p.lv; el('ufl').innerText=this.s.f; el('spr').className = `spr ro-${this.p.g} j-${this.p.j}`; el('stat-row').innerHTML = ['str','agi','vit','int','dex','luk'].map(k=>`<div class="stat-cell">${k.toUpperCase()}<br><b class="stv">${this.p[k]}</b></div>`).join(''); el('b-au').className=this.s.au?'btn-sm active':'btn-sm'; },
     pop(dom, txt){ const d=document.createElement('div'); d.className=`dmg-pop`; d.innerText=txt; dom.appendChild(d); setTimeout(()=>d.remove(), 800); },
     btn(t, fn, c=''){ const b=document.createElement('button'); b.innerHTML=t; b.onclick=fn; if(c) b.className=c; el('ctl').appendChild(b); },
     lang(){ this.s.l=this.s.l=='en'?'cn':'en'; document.body.className='lang-'+this.s.l; this.draw(); if(!this.s.b) this.mnu(); },
