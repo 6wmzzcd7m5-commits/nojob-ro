@@ -1,0 +1,56 @@
+<script>
+window.DB_MOBS = {
+    // --- 1. DIFFICULTY CONFIGURATION ---
+    // Change these values to re-balance the entire game instantly.
+    CONFIG: {
+        hp_base: 40,      // Starting HP at Floor 1
+        hp_gain: 28,      // HP added per floor
+        atk_base: 8,      // Starting ATK at Floor 1
+        atk_gain: 14,     // ATK added per floor
+        stat_gain: 5,     // HIT/FLEE added per floor
+        zeny_gain: 15,    // Zeny added per floor
+        boss_multi: 4.5   // Power multiplier for Every 10th Floor (MVPs)
+    },
+
+    // --- 2. THE 50-FLOOR ROSTER ---
+    // Mapped to iconic RO progression.
+    names: [
+        "Poring", "Fabre", "Lunatic", "Chonchon", "Roda Frog", "Spore", "Tarou", "Poison Spore", "Wormtail", "Angeling [MVP]",
+        "Zombie", "Skeleton", "Poporing", "Hydra", "Vadon", "Marina", "Thief Bug Male", "Soldier Skeleton", "Archer Skeleton", "Golden Thief Bug [MVP]",
+        "Orc Warrior", "Orc Lady", "Mantis", "Flora", "Drainliar", "Kobold", "Sandman", "High Orc", "Orc Archer", "Orc Hero [MVP]",
+        "Raydric", "Khalitzburg", "Evil Druid", "Wanderer", "Injustice", "Minorous", "Hunter Fly", "Anubis", "Mimic", "Dark Lord [MVP]",
+        "Nightmare", "Seyren Windsor", "Eremes Guile", "Margaretha Sorin", "Cecil Damon", "Lava Golem", "Kasa", "Salamander", "Ifrit [MVP]", "Baphomet [FINAL_BOSS]"
+    ]
+};
+
+/**
+ * AEGIS GENERATOR: getMonster(floor)
+ * Calculates stats on the fly to save memory and allow easy nerfing/buffing.
+ */
+window.getMonster = (floor) => {
+    const c = window.DB_MOBS.CONFIG;
+    const isBoss = (floor % 10 === 0);
+    const multi = isBoss ? c.boss_multi : 1;
+    
+    // Core Math Logic
+    const hp = (c.hp_base + (floor * c.hp_gain)) * multi;
+    const atk = (c.atk_base + (floor * c.atk_gain)) * multi;
+    const hit = 5 + (floor * c.stat_gain);
+    const flee = 5 + (floor * c.stat_gain);
+    const zeny = (floor * c.zeny_gain) * multi;
+
+    // Get Name from Array (Index = Floor - 1)
+    let name = window.DB_MOBS.names[floor - 1] || `Void Spectre #${floor}`;
+    
+    return { 
+        n: name, 
+        hp: Math.floor(hp), 
+        atk: Math.floor(atk), 
+        hit: hit, 
+        flee: flee, 
+        zeny: Math.floor(zeny) 
+    };
+};
+
+console.log("AEGIS_MOBS: ENTITY_CORE_LOADED");
+</script>
