@@ -1,94 +1,94 @@
-<div class="panel grid" style="grid-column: span 2; gap: 12px; text-align: center;">
-    <div id="mnu-header" style="margin-bottom: 5px;">
-        <h3 class="c-n" style="margin: 0;">
-            <span class="en">FLOOR HUB</span><span class="cn">樓層中心</span>
-        </h3>
-        <small style="color: #888;">
-            <span class="en">Current Floor:</span><span class="cn">當前樓層：</span>
-            F<span id="mnu-floor-txt">1</span>
-        </small>
+<div class="panel grid g-1" style="grid-column: span 2; text-align: center;">
+    <div style="padding: 10px 0;">
+        <h4 class="c-n" style="margin: 0; letter-spacing: 2px;">
+            <span class="en">COMMAND_CENTER</span>
+            <span class="cn">指令中心</span>
+        </h4>
+        <p style="font-size: 0.7rem; color: #555;">SYSTEM_STATUS: STABLE</p>
     </div>
 
-    <div id="mnu-cmds" class="grid g-1" style="gap: 10px;">
-        <button class="btn-neon" onclick="mnu.explore()" style="padding: 20px; font-size: 1.2rem;">
-            <span class="en">EXPLORE NEXT</span><span class="cn">探索下一層</span>
-        </button>
+    <button onclick="mnu.warp()" style="padding: 30px 10px; border-width: 2px;">
+        <span class="en">WARP_TO_FLOOR_<span class="f-num"></span></span>
+        <span class="cn">傳送至第 <span class="f-num"></span> 層</span>
+    </button>
 
-        <div class="grid g-2" style="gap: 10px;">
-            <button class="btn-neon" onclick="mnu.rest()" style="border-color: var(--sp);">
-                <span class="en">REST / HEAL</span><span class="cn">休息 / 恢復</span>
-            </button>
-            <button class="btn-neon" onclick="G.loadScene('stat')" style="border-color: #aaa;">
-                <span class="en">ATTRIBUTES</span><span class="cn">分配屬性</span>
-            </button>
-        </div>
-        
-        <button id="btn-job-change" class="btn-neon" onclick="G.loadScene('jobs')" 
-                style="display:none; border-color: gold; animation: pulse 1s infinite;">
-            <span class="en">JOB CHANGE AVAILABLE!</span><span class="cn">轉職啟動！</span>
-        </button>
+    <button onclick="mnu.rest()" class="btn-sm" style="width: 100%; margin-top: 10px;">
+        <span class="en">INN_REST (FULL_RECOVERY)</span>
+        <span class="cn">旅店休息 (完全恢復)</span>
+    </button>
+
+    <div id="job-change-box" style="display: none; margin-top: 15px; border-top: 1px dashed var(--neon); padding-top: 15px;">
+        <p class="c-yel" style="font-size: 0.8rem; font-weight: bold;">[!] JOB_EVOLUTION_AVAILABLE</p>
+        <div id="job-options" class="grid g-1"></div>
     </div>
 </div>
 
 <script>
-/**
- * MAIN MENU LOGIC
- * Coordinates exploration and floor events.
- */
+// Update the floor display on the buttons
+document.querySelectorAll('.f-num').forEach(e => e.innerText = G.s.f.toString().padStart(2, '0'));
+
 const mnu = {
-    init() {
-        document.getElementById('mnu-floor-txt').innerText = G.s.f;
-        this.checkJobStatus();
-        G.render(); // Ensure HUD is current
-    },
-
-    checkJobStatus() {
-        // Job change requirements: Lv 10 for First Job, Lv 30 for Second Job
-        const jd = DB.jobs[G.p.job];
-        const req = jd.next.length > 1 ? 10 : 30;
-        
-        if (G.p.lvl >= req && jd.next.length > 0 && !G.p.arch) {
-            document.getElementById('btn-job-change').style.display = 'block';
-        }
-    },
-
-    explore() {
-        G.s.f++; // Advance floor
-        
-        // Every 10th floor is a Boss floor
+    // Warp logic: Check if it's an MVP floor to trigger a warning
+    warp() {
         if (G.s.f % 10 === 0) {
-            G.log("BOSS DETECTED!", 'c-red');
-            // Boss data parity from v3
-            G.bt({ n: 'Angeling', hp: 800, atk: 40, xp: 500 });
-            return;
-        }
-
-        // Random Event logic
-        const roll = Math.random();
-        if (roll < 0.25) {
-            // Safe Area / Free Healing event
-            G.log("Safe area found. HP/SP Restored.", 'c-n');
-            G.p.hp = G.p.mh;
-            G.p.sp = G.p.msp;
-            G.render();
-            document.getElementById('mnu-floor-txt').innerText = G.s.f;
+            G.triggerWarning(() => G.loadScene('btl'));
         } else {
-            // Standard Monster Encounter
-            const tier = Math.min(1, Math.floor(G.s.f / 10));
-            const pool = DB.mobs[tier] || DB.mobs[0];
-            const mob = pool[Math.floor(Math.random() * pool.length)];
-            G.bt(mob); 
+            G.loadScene('btl');
         }
     },
 
+    // Recovery logic: Costs nothing in this roguelike build for now
     rest() {
-        // Rest cost logic could be added here, but v3 is free healing
         G.p.hp = G.p.mh;
         G.p.sp = G.p.msp;
-        G.log("Rested and ready.", 'c-n');
         G.render();
+        G.log("RECOVERY_SYNC_COMPLETE", "c-n");
+    },
+
+    // Check for Job advancement
+    checkJob() {
+        const currentJobData = window.DB_JOBS[G.p.job];
+        // Trigger job change at Level 10 (1st Job) and Level 40 (2nd Job)
+        if (currentJobData && currentJobData.next.length > 0) {
+            if ((G.p.job === 'Novice' && G.p.lvl >= 10) || (G.p.lvl >= 40)) {
+                const box = el('job-change-box');
+                const opt = el('job-options');
+                box.style.display = 'block';
+                opt.innerHTML = '';
+                
+                currentJobData.next.forEach(j => {
+                    const b = document.createElement('button');
+                    b.className = 'btn-sm';
+                    b.style.borderColor = 'var(--rare)';
+                    b.innerText = `EVOLVE_TO_${j.toUpperCase()}`;
+                    b.onclick = () => this.evolve(j);
+                    opt.appendChild(b);
+                });
+            }
+        }
+    },
+
+    evolve(newJob) {
+        const jobData = window.DB_JOBS[newJob];
+        G.p.job = newJob;
+        // Apply Job Bonuses
+        G.p.mh += jobData.hp;
+        G.p.msp += jobData.sp;
+        G.p.hp = G.p.mh;
+        G.p.sp = G.p.msp;
+        // Boost Stats
+        G.p.str += jobData.stats[0];
+        G.p.agi += jobData.stats[1];
+        G.p.vit += jobData.stats[2];
+        G.p.int += jobData.stats[3];
+        G.p.dex += jobData.stats[4];
+        G.p.luk += jobData.stats[5];
+        
+        G.log(`EVOLUTION_SUCCESS: ${newJob.toUpperCase()}`, "c-rare");
+        G.sv();
+        G.loadScene('mnu');
     }
 };
 
-mnu.init();
+mnu.checkJob();
 </script>
