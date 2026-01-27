@@ -103,12 +103,12 @@ const T={
     cn:{st:"身分登錄",ph:"輸入名稱",ea:"簡單",ha:"困難",mi:"任務: 遊玩以解鎖秘密",on:"自動:開",off:"自動:關",lv:"等級",pts:"點數",ok:"確認",stb:"開始",mvp:"MVP出現!",fi:"戰鬥",re:"休息",nx:"下一層",win:"區域清除",vic:"任務完成",go:"任務失敗",rs:"重來",wipe:"刪除存檔?",sel:"選擇技能:",jc:"可轉職!",rank:"排行榜",sub:"上傳分數",evt_atk:"鐵匠精煉成功! +1 ATK",evt_matk:"賢者升級法杖! +1 MATK",evt_hp:"牧師祝福! +10 HP上限"}
 };
 
-// --- MONSTER VISUAL ASSETS (CSS GEN) ---
+// --- VISUAL ASSETS ---
 const M_ART = {
     // Poring Family
     'Poring': { h:'#fca', hr:'none', b:'none', rad:'50%', w:24, ht:20, t:15 },
-    'Poporing': { h:'#8f8', hr:'none', b:'none', rad:'50%', w:24, ht:20, t:15 },
-    'Marin': { h:'#8cf', hr:'none', b:'none', rad:'50%', w:24, ht:20, t:15 },
+    'Poporing': { h:'#5f5', hr:'none', b:'none', rad:'50%', w:24, ht:20, t:15 },
+    'Marin': { h:'#5af', hr:'none', b:'none', rad:'50%', w:24, ht:20, t:15 },
     
     // Bosses
     'Angeling': { h:'#fff', hr:'#ff9', b:'none', rad:'50%', w:28, ht:24, t:12, glow:true },
@@ -125,24 +125,28 @@ const M_ART = {
     'Thanatos': { h:'#406', hr:'#fff', b:'#204', rad:'2px', op:0.7 }
 };
 
-const K='jro_neon_v2', el=i=>document.getElementById(i), rnd=m=>Math.floor(Math.random()*m);
+const K='jro_neon_v4', el=i=>document.getElementById(i), rnd=m=>Math.floor(Math.random()*m);
 const GH_USER="6wmzzcd7m5-commits", GH_REPO="nojob-ro", RAW_URL=`https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/main/leaderboard.json`, SALT="SECRET_KEY_999";
 
 const G={
-    p:null, s:{f:1,b:false,tm:null,spd:10,au:false,l:'en'}, tmp:{g:'m'},
+    p:null, s:{f:1,b:false,tm:null,spd:10,au:false,l:'en'}, tmp:{g:'m'}, tm_scr:null,
     
     init(){
         const r=localStorage.getItem(K);
         if(r){
-            try{ this.p=JSON.parse(atob(r)); this.s.b=false; clearInterval(this.s.tm);
-                if(this.s.spd<10)this.s.spd=10; this.spd(this.s.spd); this.draw();
+            try{ 
+                const d=JSON.parse(atob(r));
+                if(!d.eq) d.eq = {w:null,a:null};
+                if(!d.b) d.b = {atk:0,matk:0};
+                this.p=d; this.s.b=false; clearInterval(this.s.tm);
+                if(this.s.spd<10)this.s.spd=10; this.spd(this.s.spd); 
+                this.draw();
                 if(this.p.pts>0&&!this.s.au) return this.stM(this.s.f==1);
                 this.mnu();
-            }catch(e){this.scr();}
-        }else{this.scr();}
+            }catch(e){ console.error(e); this.scr(); }
+        }else{ this.scr(); }
     },
     
-    // Floor 9 = Lv 10 (~1000 XP). Floor 29 = Lv 40 (~10000 XP)
     xpReq(){ return this.p.lv * 100; },
     mobXp(){ return this.s.f * 120; },
 
@@ -152,16 +156,31 @@ const G={
     submitRank(){const now=Date.now(),last=localStorage.getItem('last_sub')||0;if(now-last<60000){alert("Wait 60s.");return;}localStorage.setItem('last_sub',now);const raw=`${this.p.n}-${this.p.j}-${this.s.f}-${SALT}`;let hash=0;for(let i=0;i<raw.length;i++){hash=((hash<<5)-hash)+raw.charCodeAt(i);hash|=0;}const d=JSON.stringify({n:this.p.n,j:this.p.j,f:this.s.f,h:hash.toString()});const t=encodeURIComponent(`SCORE: ${this.p.n}`);const b=encodeURIComponent("```json\n"+d+"\n```");window.open(`https://github.com/${GH_USER}/${GH_REPO}/issues/new?title=${t}&body=${b}`,'_blank');},
 
     scr(){
-        const c=el('ctl'); c.innerHTML=`<div class="panel" style="grid-column:span 2;text-align:center"><div class="c-n" style="font-weight:bold;margin-bottom:10px">${this.txt('st')}</div><div class="flex" style="justify-content:center;gap:5px;margin-bottom:10px"><input id="in" placeholder="${this.txt('ph')}" maxlength="10"><div id="bm" class="g-tag active" onclick="G.setG('m')">_m</div><div id="bf" class="g-tag" onclick="G.setG('f')">_f</div></div><button onclick="G.ng()" style="width:100%">${this.txt('stb')}</button></div>`;
+        if(!this.s) this.s = {l:'en'};
+        const c=el('ctl'); 
+        c.innerHTML=`<div class="panel" style="grid-column:span 2;text-align:center"><div class="c-n" style="font-weight:bold;margin-bottom:10px">${this.txt('st')}</div><div class="flex" style="justify-content:center;gap:5px;margin-bottom:10px"><input id="in" placeholder="${this.txt('ph')}" maxlength="10"><div id="bm" class="g-tag active" onclick="G.setG('m')">_m</div><div id="bf" class="g-tag" onclick="G.setG('f')">_f</div></div><button onclick="G.ng()" style="width:100%">${this.txt('stb')}</button></div>`;
         this.tmp.g='m'; this.updSpr();
+        
+        // Start Monster Cycle
+        if(this.tm_scr) clearInterval(this.tm_scr);
+        this.tm_scr = setInterval(() => {
+            const keys = Object.keys(M_ART);
+            const r = keys[Math.floor(Math.random() * keys.length)];
+            this.drawMob(r);
+            el('en').innerText = r;
+        }, 3000);
+        this.drawMob('Poring'); el('en').innerText='Poring';
     },
     setG(g){ this.tmp.g=g; el('bm').className=g=='m'?'g-tag active':'g-tag'; el('bf').className=g=='f'?'g-tag active':'g-tag'; this.updSpr(); },
     updSpr(){ el('spr').className=`spr ro-${this.tmp.g} j-0`; },
 
     ng(){
+        if(this.tm_scr) clearInterval(this.tm_scr); // Stop cycling
+        el('en').innerText = "TARGET";
         const n=el('in').value||"Novice";
         this.p={n:n,j:0,lv:1,xp:0,nx:100,hp:60,mh:60,sp:20,ms:20,str:1,agi:1,vit:1,int:1,dex:1,luk:1,pts:5,pots:3,b:{atk:0,matk:0},eq:{w:null,a:null},sk:{},act:null,g:this.tmp.g};
-        this.s={f:1,b:false,spd:10,au:false,l:'en'};
+        const curLang = this.s && this.s.l ? this.s.l : 'en';
+        this.s={f:1,b:false,spd:10,au:false,l:curLang};
         this.skM();
     },
     skM(){
@@ -203,7 +222,6 @@ const G={
             const b = B[Math.min(4, ((this.s.f/10)-1)%5)];
             this.mob = { n: this.s.l=='cn'?b.c:b.n, h:b.h*mScale, a:b.a*mScale, x:this.mobXp()*10, vis:b.n };
         } else {
-            // Logic for Poring/Poporing/Marin
             let mn, vis;
             if(this.s.f <= 9) {
                 if(this.s.f <= 3) { mn='Poring'; vis='Poring'; }
@@ -212,7 +230,7 @@ const G={
             } else {
                 const idx = Math.min(4, Math.ceil((this.s.f-10)/10)-1);
                 mn = this.s.l=='cn'?MON_CN[idx]:MON_EN[idx];
-                vis = MON_EN[idx]; // Use English key for visual lookup
+                vis = MON_EN[idx];
             }
             this.mob = { n:mn, h:this.s.f*25*mScale, a:(this.s.f*3+5)*mScale, x:this.mobXp(), vis:vis };
         }
@@ -225,7 +243,6 @@ const G={
         
         if(this.s.tm)clearInterval(this.s.tm); this.s.tm=setInterval(()=>this.loop(),30);
     },
-    // --- DRAW MONSTER ---
     drawMob(name) {
         const s = M_ART[name] || { h:'#999', hr:'#555', b:'#333' };
         const es = el('espr'), hd = el('ehd'), hr = el('ehr'), bd = el('ebd');
@@ -352,7 +369,7 @@ const G={
     },
     autoDist(){ while(this.p.pts>0){ const k=['str','agi','vit','int','dex','luk'][rnd(6)]; this.p[k]++; this.p.pts--; } this.draw(); },
     tAu(){ this.s.au=!this.s.au; this.draw(); if(this.s.au&&this.p.pts>0)this.autoDist(); if(this.s.au&&!this.s.b)this.mnu(); },
-    lang(){ this.s.l=this.s.l=='en'?'cn':'en'; this.draw(); if(this.p.pts>0)this.stM(); else if(!this.s.b)this.mnu(); },
+    lang(){ this.s.l=this.s.l=='en'?'cn':'en'; this.draw(); if(this.p && this.p.pts>0)this.stM(); else if(this.p && !this.s.b)this.mnu(); else this.scr(); },
     sv(){ localStorage.setItem(K, btoa(JSON.stringify(this.p))); },
     wipe(){ if(confirm("Reset?")) { localStorage.removeItem(K); location.reload(); } },
     spd(x){ this.s.spd=x; [10,30,100].forEach(n=>el('s'+n).className='btn-sm'); el('s'+x).className='btn-sm active'; },
