@@ -53,6 +53,7 @@
             <small id="e-name" style="position:absolute; bottom:-15px; font-size:9px; color:var(--hp)"></small>
             <div style="position:absolute; top:-20px; width:100%;">
                 <div class="bar-container" style="height:4px; border-color:var(--neon);"><div id="e-hp-fill" class="fill" style="background:var(--hp); width:100%;"></div></div>
+                <div class="bar-container" style="height:2px; border:none; background:transparent;"><div id="e-atb-fill" style="width:0%; height:100%; background:rgba(255,255,255,0.3);"></div></div>
             </div>
         </div>
     </section>
@@ -71,7 +72,7 @@
 const el = i => document.getElementById(i);
 const G = {
     p: null, 
-    s: { f:1, b:false, atb:0, loop:null, mob:null, spd: 1, repo: "6wmzzcd7m5-commits/nojob-ro" },
+    s: { f:1, b:false, atb:0, eatb:0, loop:null, mob:null, spd: 1, repo: "6wmzzcd7m5-commits/nojob-ro" },
 
     boot() {
         const saved = localStorage.getItem('ro_prime_v3');
@@ -103,10 +104,18 @@ const G = {
         this.s.loop = setInterval(() => {
             if(!this.s.b) return;
             const job = DB.getJob(this.p.job);
-            // ATB Fill Rate Logic
+            
+            // Player ATB logic
             this.s.atb += ((job.aspd + (this.p.agi * 0.8) + (this.p.dex * 0.2)) / 10);
             el('atb-fill').style.width = Math.min(100, this.s.atb / 10) + "%";
+
+            // Enemy ATB logic
+            const eFill = 150 + (this.s.f * 2);
+            this.s.eatb += (eFill / 10);
+            el('e-atb-fill').style.width = Math.min(100, this.s.eatb / 10) + "%";
+
             if(this.s.atb >= 1000) { this.s.atb = 0; this.pAttack(); }
+            if(this.s.eatb >= 1000) { this.s.eatb = 0; this.eAttack(); }
         }, 30 / this.s.spd);
     },
 
@@ -119,17 +128,31 @@ const G = {
         if(this.s.mob.hp <= 0) this.resolveWin();
     },
 
+    eAttack() {
+        const def = parseInt(el('ui-def').innerText);
+        const dmg = Math.max(1, this.s.mob.atk - def);
+        el('e-spr').classList.add('lung'); setTimeout(() => el('e-spr').classList.remove('lung'), 150);
+        this.p.hp -= dmg;
+        UI.render(this.p, this.s); // Update player HP bar
+        UI.pop(dmg, 'p-box', 'c-red');
+        if(this.p.hp <= 0) this.resolveLoss();
+    },
+
     resolveWin() {
         this.s.b = false; clearInterval(this.s.loop);
-        // Loot logic
         DB_ITEMS.pool.forEach(i => { if(Math.random() < i.rate) { this.p.inv.push(i.n); UI.log(`+ ${DB_ITEMS.getName(i.n)}`, "c-yel"); }});
-        
         this.p.lvl++; this.s.f++; this.p.floor = this.s.f;
         this.p.hp = this.p.mh;
-        
-        // Tiered Job Check
         UI.loadScene( (this.p.lvl === 10 || this.p.lvl === 50) ? 'job' : 'mnu', this.p, this.s);
         this.sv(); UI.render(this.p, this.s);
+    },
+
+    resolveLoss() {
+        this.s.b = false; clearInterval(this.s.loop);
+        UI.log("DEFEATED! RETREAT TO TOWN.", "c-red");
+        this.p.hp = this.p.mh; // Restore HP for next attempt
+        UI.loadScene('mnu', this.p, this.s);
+        UI.render(this.p, this.s);
     },
 
     initChar() {
@@ -149,7 +172,8 @@ const G = {
         el('e-box').setAttribute('data-tier', Math.ceil(this.s.f / 10));
         el('e-spr').className = `spr ${this.s.mob.n.includes('[MVP]') ? 'spr-mvp' : ''}`;
         el('e-name').innerText = this.s.mob.n; el('e-hp-fill').style.width = "100%";
-        this.s.b = true; this.s.atb = 0; this.startLoop(); UI.loadScene('btl', this.p, this.s);
+        this.s.b = true; this.s.atb = 0; this.s.eatb = 0;
+        this.startLoop(); UI.loadScene('btl', this.p, this.s);
     },
 
     sv() { localStorage.setItem('ro_prime_v3', btoa(JSON.stringify(this.p))); },
