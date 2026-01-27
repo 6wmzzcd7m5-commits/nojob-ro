@@ -1,100 +1,80 @@
-<div class="panel grid" style="grid-column: span 2; gap: 15px; text-align: center;">
-    <h2 class="c-yel" style="margin: 0; text-shadow: 0 0 10px rgba(255,215,0,0.5);">
-        <span class="en">LEVEL UP REWARD</span>
-        <span class="cn">升級獎勵</span>
-    </h2>
+<div class="panel grid g-1" style="grid-column: span 2; text-align: center; border-color: var(--rare);">
+    <div style="padding: 10px 0;">
+        <h3 class="c-n" style="margin: 0; letter-spacing: 4px; text-shadow: 0 0 10px var(--glow);">
+            <span class="en">LEVEL_UP_REWARD</span>
+            <span class="cn">等級提升獎勵</span>
+        </h3>
+        <p style="font-size: 0.7rem; color: #666; margin-top: 5px;">[ SELECT ONE UPGRADE TO INTEGRATE ]</p>
+    </div>
 
-    <p style="font-size: 0.9rem; margin-bottom: 5px;">
-        <span class="en">Select one blessing for your journey:</span>
-        <span class="cn">請選擇一項冒險加護：</span>
-    </p>
-
-    <div id="reward-container" class="grid g-1" style="gap: 10px;">
-        </div>
+    <div id="reward-list" class="grid g-1"></div>
+    
+    <div style="margin-top: 15px; font-size: 0.6rem; color: #444; letter-spacing: 1px;">
+        DATA_SYNC_PENDING_SELECTION...
+    </div>
 </div>
 
 <script>
-/**
- * REWARD POOL LOGIC
- * Merged from v3 engine: Skill learning and Supply restoration.
- * Integrates v1.2.2 Manual Stat Point system.
- */
-(function() {
-    const container = document.getElementById('reward-container');
-    
-    // Helper to create a reward card
-    const createReward = (titleEn, titleCn, descEn, descCn, color, fn) => {
-        const btn = document.createElement('button');
-        btn.className = "btn-neon reward-btn";
-        btn.style.borderColor = color;
-        btn.innerHTML = `
-            <div style="font-weight:bold; font-size:1.1rem;">
-                <span class="en">${titleEn}</span><span class="cn">${titleCn}</span>
-            </div>
-            <div style="font-size:0.75rem; opacity:0.8; margin-top:4px;">
-                <span class="en">${descEn}</span><span class="cn">${descCn}</span>
-            </div>
-        `;
-        btn.onclick = () => {
-            fn();
-            G.sv(); // Auto-save after choosing
-        };
-        container.appendChild(btn);
-    };
+const rewardScene = {
+    init() {
+        // 1. Generate 3 random choices using the Item DB logic
+        const draft = window.generateDraft();
+        const container = el('reward-list');
+        
+        draft.forEach(item => {
+            const card = document.createElement('div');
+            // Apply special styling if it's a Rare Monster Card
+            card.className = `choice-card ${item.cat === 'card' ? 'rare' : ''}`;
+            
+            let flavor = item.cat.toUpperCase();
+            let title = item.n;
+            let desc = item.desc || "STRENGTHENS_THE_VESSEL";
 
-    // --- OPTION 1: SKILL (From Job Pool) ---
-    const currentJobData = DB.jobs[G.p.job];
-    const availableSkills = currentJobData.pool.filter(s => !G.p.sk[s]);
-    
-    if (availableSkills.length > 0) {
-        const nextSkill = availableSkills[0];
-        createReward(
-            `LEARN: ${nextSkill}`, `學習：${nextSkill}`,
-            "Expand your combat options.", "擴展你的戰鬥手段。",
-            "var(--sp)",
-            () => { 
-                G.p.sk[nextSkill] = 1;
-                G.log(`Learned ${nextSkill}!`, 'c-n');
-                G.loadScene('mnu'); 
+            card.innerHTML = `
+                <div style="font-size: 0.6rem; opacity: 0.6; margin-bottom: 5px;">// ${flavor}</div>
+                <div style="font-weight: bold; font-size: 1.1rem; color: var(--neon);">${title}</div>
+                <div style="font-size: 0.75rem; color: #888; margin-top: 8px; line-height: 1.2;">${desc}</div>
+            `;
+
+            card.onclick = () => this.claim(item);
+            container.appendChild(card);
+        });
+        
+        G.log("REWARD_DRAFT_GENERATED", "c-n");
+    },
+
+    claim(item) {
+        // --- 1. HANDLE SKILLS ---
+        if (item.cat === 'skill') {
+            // Adds to the auto-proc pool in btl.html
+            G.p.sk[item.n] = (G.p.sk[item.n] || 0) + 1;
+            G.log(`SKILL_INTEGRATED: ${item.n}`, "c-rare");
+        } 
+        // --- 2. HANDLE ITEMS & CARDS ---
+        else if (item.cat === 'item' || item.cat === 'card') {
+            if (item.type === 'heal') {
+                G.p.hp = Math.min(G.p.mh, G.p.hp + item.val);
+            } else if (item.type === 'full') {
+                G.p.hp = G.p.mh; 
+                G.p.sp = G.p.msp;
+            } else {
+                // Apply permanent stat bonus
+                // (Matches stats: str, agi, vit, int, dex, luk, mh, msp)
+                G.p[item.stat] += item.val;
+                
+                // If Max HP/SP increased, give current HP/SP a boost too
+                if (item.stat === 'mh') G.p.hp += item.val;
+                if (item.stat === 'msp') G.p.sp += item.val;
             }
-        );
-    } else {
-        // Fallback if all job skills are learned
-        createReward(
-            "MASTERY", "精通",
-            "Gain +1 to all base stats.", "所有基礎屬性 +1。",
-            "#fff",
-            () => {
-                ['str','agi','vit','int','dex','luk'].forEach(s => G.p[s]++);
-                G.log("Mastery attained: All stats +1", 'c-n');
-                G.loadScene('mnu');
-            }
-        );
+            G.log(`RELIQ_SYNCHRONIZED: ${item.n}`, "c-n");
+        }
+
+        // Save progress and return to Hub
+        G.sv();
+        G.loadScene('mnu');
     }
+};
 
-    // --- OPTION 2: STAT POINTS (Manual Allocation) ---
-    createReward(
-        "STAT POINTS", "屬性點數",
-        "Gain +5 points for manual growth.", "獲得 5 點自由分配屬性。",
-        "var(--c-n)",
-        () => {
-            G.p.pts += 5;
-            G.log("Gained 5 Stat Points", 'c-n');
-            G.loadScene('stat'); // Redirect to manual allocation scene
-        }
-    );
-
-    // --- OPTION 3: SUPPLIES (Potions) ---
-    createReward(
-        "SUPPLIES", "補給物資",
-        "Restock +2 HP Potions.", "補給 2 瓶生命藥水。",
-        "var(--hp)",
-        () => {
-            G.p.pots += 2;
-            G.log("Supplies restocked", 'c-yel');
-            G.loadScene('mnu');
-        }
-    );
-
-})();
+// Start scene logic
+rewardScene.init();
 </script>
