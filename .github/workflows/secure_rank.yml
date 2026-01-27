@@ -1,0 +1,85 @@
+name: Secure Leaderboard Update
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  update-leaderboard:
+    if: contains(github.event.issue.title, 'RANK_SUBMISSION')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Process Submission
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          # Ensure this matches the SALT in your items.js
+          SECRET_SALT: "RO_AEGIS_ULTIMATE_2026" 
+        run: |
+          node -e "
+          const fs = require('fs');
+          const body = process.env.ISSUE_BODY;
+          const salt = process.env.SECRET_SALT;
+
+          try {
+            const data = JSON.parse(body);
+            
+            // 1. Recalculate Hash (Anti-Tamper Section 4.B)
+            const dataString = data.name + data.job + data.floor + salt;
+            let hash = 5381;
+            for (let i = 0; i < dataString.length; i++) {
+              hash = ((hash << 5) + hash) + dataString.charCodeAt(i);
+            }
+            const serverHash = (hash >>> 0).toString(16);
+
+            if (serverHash !== data.hash) {
+              console.log('Integrity Check Failed');
+              process.exit(1);
+            }
+
+            // 2. Update leaderboard.json
+            let leaderboard = [];
+            if (fs.existsSync('leaderboard.json')) {
+              leaderboard = JSON.parse(fs.readFileSync('leaderboard.json'));
+            }
+
+            leaderboard.push({
+              name: data.name,
+              job: data.job,
+              floor: data.floor,
+              lvl: data.lvl,
+              date: new Date().toISOString()
+            });
+
+            // Sort by Floor (High Score)
+            leaderboard.sort((a, b) => b.floor - a.floor);
+            
+            // Keep top 50
+            leaderboard = leaderboard.slice(0, 50);
+
+            fs.writeFileSync('leaderboard.json', JSON.stringify(leaderboard, null, 2));
+          } catch (e) {
+            console.log('Invalid JSON payload');
+            process.exit(1);
+          }
+          "
+
+      - name: Commit and Push Changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Leaderboard-Bot"
+          git add leaderboard.json
+          git commit -m "Update Leaderboard: ${{ github.event.issue.user.login }}"
+          git push
+
+      - name: Close Issue
+        uses: peter-evans/close-issue@v2
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          comment: "Rank Successfully Integrated into the Leaderboard! System Synchronized."
