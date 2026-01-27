@@ -8,7 +8,7 @@
 </head>
 <body class="lang-en">
 
-<div id="app">
+<div id="app" style="height: 100dvh; display: flex; flex-direction: column;">
     <header class="panel" style="border-color: var(--neon);">
         <div class="flex" style="border-bottom:1px solid #333; padding-bottom:5px; margin-bottom:5px;">
             <div class="flex" style="gap:5px">
@@ -27,7 +27,7 @@
             <div style="flex:1;">
                 <div class="flex">
                     <b id="ui-job" class="c-n">Novice</b>
-                    <div>Lv <span id="ui-lvl">1</span></div>
+                    <div style="font-size: 9px;">Lv <span id="ui-lvl">1</span></div>
                 </div>
                 <div class="bar-container"><div id="hp-fill" class="fill"></div></div>
                 <div class="bar-container" style="height:2px; margin-top:2px; border:none; background:transparent;">
@@ -47,7 +47,9 @@
     </header>
 
     <section id="stage" class="panel">
-        <div id="p-box" class="avatar-box"><div id="p-spr" class="spr"><div class="hd"></div><div class="bd"></div></div></div>
+        <div id="p-box" class="avatar-box">
+            <div id="p-spr" class="spr"><div class="hd"></div><div class="bd"></div></div>
+        </div>
         <div id="e-box" class="avatar-box">
             <div id="e-spr" class="spr"><div class="hd"></div><div class="bd"></div></div>
             <small id="e-name" style="position:absolute; bottom:-15px; font-size:9px; color:var(--hp)"></small>
@@ -55,7 +57,8 @@
     </section>
 
     <main id="ctl" class="grid" style="margin-top:10px; min-height:120px;"></main>
-    <footer id="log" class="panel"></footer>
+
+    <footer id="log" class="panel" style="flex: 1; overflow: hidden;"></footer>
 </div>
 
 <script src="db.js"></script>
@@ -79,23 +82,21 @@ const G = {
         }
     },
 
-    // DYNAMIC SPEED CONTROL
     setSpd(val) {
         this.s.spd = val;
         document.querySelectorAll('.spd-btn').forEach(b => b.classList.remove('active'));
         el('spd-' + val).classList.add('active');
-        if(this.s.b) this.startLoop(); // Restart loop with new speed if in battle
-        this.log("TIMELINE_ACCELERATION: " + val + "X", "c-yel");
+        if(this.s.b) this.startLoop();
+        this.log("SPEED_SET: " + val + "X", "c-yel");
     },
 
-    // 30ms LOOP SYSTEM (Section 2.B)
     startLoop() {
         if(this.s.loop) clearInterval(this.s.loop);
-        // Interval is shortened based on speed (30ms / speed)
-        const tickRate = Math.max(1, 30 / this.s.spd); 
+        const tickRate = Math.max(1, 30 / this.s.spd); // 30ms base [cite: 22]
         this.s.loop = setInterval(() => {
             if(!this.s.b) return;
             
+            // Fill Rate Formula [cite: 23]
             const fillRate = (DB.jobs[this.p.job].aspd || 150) + (this.p.agi * 0.8) + (this.p.dex * 0.2);
             this.s.atb += (fillRate / 10);
             el('atb-fill').style.width = Math.min(100, this.s.atb / 10) + "%";
@@ -108,13 +109,14 @@ const G = {
     },
 
     executeAction() {
+        // ATK Formula [cite: 22]
         const atk = this.p.str + Math.floor(this.p.dex/5) + Math.floor(this.p.luk/3) + (this.p.lvl * 2);
         const dmg = Math.max(1, atk - (this.s.mob.def || 0));
         
         const spr = el('p-spr');
         spr.classList.remove('lung');
         void spr.offsetWidth; 
-        spr.classList.add('lung');
+        spr.classList.add('lung'); // [cite: 29]
 
         this.s.mob.hp -= dmg;
         this.pop(dmg, 'e-box');
@@ -124,14 +126,14 @@ const G = {
 
     resolveWin() {
         this.s.b = false;
-        if(this.s.loop) clearInterval(this.s.loop);
+        clearInterval(this.s.loop);
         this.p.lvl++; this.s.f++; this.p.floor = this.s.f;
-        this.log(`TARGET ELIMINATED. FLOOR CLEAR!`, "c-n");
+        this.log(`FLOOR ${this.s.f - 1} CLEAR!`, "c-n");
         this.sv(); this.render(); this.loadScene('mnu');
     },
 
     rank() {
-        const hash = getSecureHash(this.p);
+        const hash = getSecureHash(this.p); // 
         const payload = { name: this.p.n, job: this.p.job, floor: this.s.f, lvl: this.p.lvl, hash: hash };
         const body = encodeURIComponent(JSON.stringify(payload));
         window.open(`https://github.com/${this.s.repo}/issues/new?title=RANK_SUBMISSION&body=${body}`, '_blank');
@@ -142,7 +144,7 @@ const G = {
         el('ui-job').innerText = this.p.job;
         el('ui-lvl').innerText = this.p.lvl;
         el('ui-floor').innerText = this.s.f;
-        el('hp-fill').style.width = Math.max(0, (this.p.hp / this.p.mh) * 100) + "%";
+        el('hp-fill').style.width = "100%";
         ['str','agi','vit','int','dex','luk'].forEach(k => el('ui-'+k).innerText = this.p[k]);
         el('p-spr').className = `spr j-${this.p.job}`;
     },
@@ -150,9 +152,9 @@ const G = {
     loadScene(name) {
         const c = el('ctl');
         if(name === 'reg') {
-            c.innerHTML = `<div class="panel grid g-1"><input id="pname" placeholder="IDENT_ID..." class="panel" style="width:100%; background:#000; color:var(--neon);"><button onclick="G.initChar()" class="panel" style="width:100%; color:var(--neon); background:#000;">BOOT_SYSTEM</button></div>`;
+            c.innerHTML = `<div class="panel grid g-1"><input id="pname" placeholder="ID_INIT..." class="panel" style="width:100%; background:#000; color:var(--neon);"><button onclick="G.initChar()" class="panel" style="width:100%; color:var(--neon); background:#000;">CREATE_VESSEL</button></div>`;
         } else if(name === 'mnu') {
-            c.innerHTML = `<button onclick="G.startBattle()" class="panel" style="width:100%; color:var(--neon); background:#000; padding:20px;">WARP_TO_FLOOR_${this.s.f}</button>`;
+            c.innerHTML = `<button onclick="G.startBattle()" class="panel" style="width:100%; color:var(--neon); background:#000; padding:20px;">WARP: FLOOR ${this.s.f}</button>`;
         }
     },
 
@@ -168,18 +170,18 @@ const G = {
         el('e-name').innerText = this.s.mob.n.toUpperCase();
         this.s.b = true; this.s.atb = 0;
         this.startLoop();
-        el('ctl').innerHTML = `<div class="panel" style="text-align:center; color:var(--hp)">AUTO_COMBAT_ACTIVE</div>`;
+        el('ctl').innerHTML = `<div class="panel" style="text-align:center; color:var(--hp); border-style:dotted;">COMBAT_IN_PROGRESS</div>`;
     },
 
     pop(amt, id) {
         const d = document.createElement('div');
         d.className = 'dmg-pop'; d.innerText = amt;
         el(id).appendChild(d);
-        setTimeout(() => d.remove(), 800 / this.s.spd); // Speed up popups too
+        setTimeout(() => d.remove(), 800 / this.s.spd); // [cite: 29]
     },
     log(m, c) { el('log').insertAdjacentHTML('afterbegin', `<div class="entry ${c}">> ${m}</div>`); },
-    sv() { localStorage.setItem('ro_prime_v3', btoa(JSON.stringify(this.p))); },
-    exp() { const a=document.createElement('a'); a.href='data:text/plain;base64,'+btoa(JSON.stringify(this.p)); a.download='save.jro'; a.click(); }
+    sv() { localStorage.setItem('ro_prime_v3', btoa(JSON.stringify(this.p))); }, // [cite: 9]
+    exp() { const a=document.createElement('a'); a.href='data:text/plain;base64,'+btoa(JSON.stringify(this.p)); a.download='save.jro'; a.click(); } // [cite: 10]
 };
 
 window.onload = () => G.boot();
