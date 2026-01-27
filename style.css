@@ -16,11 +16,11 @@
 body { 
     background: var(--bg); 
     color: var(--neon); 
-    font-family: 'Tahoma', 'Arial', sans-serif; /* Mimics RO UI */
+    font-family: 'Tahoma', 'Arial', sans-serif; /* Mimics RO UI aesthetic */
     font-size: 11px; 
     margin: 0 auto; 
     max-width: 500px; 
-    height: 100dvh; /* Dynamic Viewport Height for Mobile */
+    height: 100dvh; /* Dynamic Viewport Height for mobile compatibility */
     overflow: hidden; 
     display: flex; 
     flex-direction: column; 
@@ -130,10 +130,11 @@ button:active { transform: scale(0.98); }
 
 /* --- MONSTER SPECIFIC SPRITES --- */
 /* Regular Mobs by Floor Tier */
-#e-box[data-tier="1"] .bd { background: #8f8; border-radius: 50%; } 
-#e-box[data-tier="2"] .bd { background: #555; clip-path: polygon(50% 0%, 100% 100%, 0% 100%); } 
-#e-box[data-tier="3"] .bd { background: #a52a2a; border-radius: 10px 10px 0 0; } 
-#e-box[data-tier="4"] .bd { background: #483d8b; transform: skewY(10deg); } 
+#e-box[data-tier="1"] .bd { background: #8f8; border-radius: 50%; } /* Slime-style */
+#e-box[data-tier="2"] .bd { background: #555; clip-path: polygon(50% 0%, 100% 100%, 0% 100%); } /* Insect-style */
+#e-box[data-tier="3"] .bd { background: #a52a2a; border-radius: 10px 10px 0 0; } /* Undead-style */
+#e-box[data-tier="4"] .bd { background: #483d8b; transform: skewY(10deg); } /* Demon-style */
+#e-box[data-tier="5"] .bd { background: #000; border: 2px solid #f00; } /* Boss-style */
 
 /* MVP Special Effects */
 .spr-mvp {
@@ -168,7 +169,7 @@ button:active { transform: scale(0.98); }
 
 .dmg-pop { 
     position: absolute; 
-    font-family: var(--impact); /* Impact font for Critical hits */
+    font-family: var(--impact); /* Impact font for critical damage */
     font-size: 18px; 
     color: #fff; 
     text-shadow: 2px 2px #000; 
