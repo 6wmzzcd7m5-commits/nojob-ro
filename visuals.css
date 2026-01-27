@@ -1,194 +1,111 @@
-/* =========================================
-   VISUALS.CSS: THE ROUGE ENGINE v1.1.1
-   Handles Sprites, Monsters, and Animations
-   ========================================= */
+/* --- DB LAYER 1: UNIVERSAL TRANSLATIONS --- */
+:root {
+    /* Colors from v3 Engine */
+    --bg: #111; --panel: #222; --border: #444; --text: #eee;
+    --hp: #ff5555; --sp: #55aaff; --c-n: #55ff55; --bd: #444;
+    --r: #ffeb3b;
 
-/* --- 1. STABILITY TRANSLATION PATCH --- */
-/* Native toggle for the Twin-Label system. No more flickering ::after content. */
-.lang-en .cn, 
-.lang-cn .en { 
-    display: none !important; 
+    /* English Dictionary */
+    --t-save-en: "SAVE"; --t-load-en: "LOAD"; 
+    --t-fight-en: "FIGHT"; --t-start-en: "START JOURNEY";
+    
+    /* Chinese Dictionary */
+    --t-save-cn: "存檔"; --t-load-cn: "讀檔"; 
+    --t-fight-cn: "戰鬥"; --t-start-cn: "開啟冒險";
 }
 
-/* --- 2. SPRITE CORE ARCHITECTURE --- */
+/* Logic: Mapping based on Body Class */
+.lang-en { --u-save: var(--t-save-en); --u-fight: var(--t-fight-en); --u-start: var(--t-start-en); }
+.lang-cn { --u-save: var(--t-save-cn); --u-fight: var(--t-fight-cn); --u-start: var(--t-start-cn); }
+
+/* Automated Translation Injection */
+[data-t="save"]::before { content: var(--u-save); }
+[data-t="fight"]::before { content: var(--u-fight); }
+[data-t="start"]::before { content: var(--u-start); }
+
+/* --- CORE UI STYLING --- */
+body { 
+    background: var(--bg); color: var(--text); 
+    font-family: system-ui, monospace; margin: 0; padding: 10px;
+    display: flex; flex-direction: column; gap: 15px;
+}
+
+.panel { 
+    background: var(--panel); border: 1px solid var(--border); 
+    padding: 10px; border-radius: 8px;
+}
+
+progress { 
+    width: 100%; height: 8px; appearance: none; border: none;
+    background: #444; border-radius: 4px; overflow: hidden; display: block;
+}
+progress::-webkit-progress-bar { background: #444; }
+progress::-webkit-progress-value { transition: width 0.3s; }
+
+#hp-bar::-webkit-progress-value { background: var(--hp); }
+#sp-bar::-webkit-progress-value { background: var(--sp); }
+#atb-p::-webkit-progress-value { background: var(--c-n); }
+#atb-e::-webkit-progress-value { background: var(--hp); }
+
+/* --- LAYERED SPRITE SYSTEM --- */
 .avatar-box { 
-    width: 40px; 
-    height: 60px; 
-    position: relative; 
-    display: flex; 
-    justify-content: center; 
-    align-items: flex-end;
-    transition: transform 0.2s ease-out;
+    width: 60px; height: 80px; position: relative; 
+    display: flex; justify-content: center; align-items: flex-end;
 }
 
 .spr { 
-    width: 30px; 
-    height: 40px; 
-    position: absolute; 
-    bottom: 0; 
-    animation: idle 1.2s infinite steps(2); 
+    width: 32px; height: 44px; position: absolute; bottom: 5px; 
+    animation: idle 1.2s infinite ease-in-out;
 }
 
-.hd { 
-    width: 20px; 
-    height: 18px; 
-    background: #fca; 
-    position: absolute; 
-    left: 5px; 
-    top: 0; 
-    z-index: 5; 
-    border-radius: 4px; 
+.hd { /* Head Layer */
+    width: 22px; height: 20px; background: #fca; 
+    position: absolute; left: 5px; top: 0; z-index: 5; border-radius: 4px; 
 }
 
-.bd { 
-    width: 18px; 
-    height: 16px; 
-    background: #eee; 
-    position: absolute; 
-    left: 6px; 
-    top: 16px; 
-    z-index: 3; 
-    border-radius: 2px; 
+.bd { /* Body Layer */
+    width: 20px; height: 20px; background: #eee; 
+    position: absolute; left: 6px; top: 18px; z-index: 3; border-radius: 2px; 
 }
 
-.hr { 
-    background: #853; 
-    position: absolute; 
-}
+/* --- JOB COSTUME DB (Gradients) --- */
+.j-Novice .bd { background: linear-gradient(#fff, #dca); }
+.j-Swordman .bd { background: linear-gradient(#d84, #468); border: 1px solid #777; }
+.j-Mage .bd { background: linear-gradient(90deg, #348, #eee); }
+.j-Thief .bd { background: linear-gradient(#333, #525); }
 
-/* --- 3. HAIR & GENDER GEOMETRY --- */
-/* Male hair: Short/Spiky */
-.ro-m .hr { 
-    width: 24px; 
-    height: 10px; 
-    left: 3px; 
-    top: -2px; 
-    z-index: 6; 
-    border-radius: 4px 4px 0 0; 
-} 
-
-/* Female hair: Long/Flowing */
-.ro-f .hr { 
-    width: 28px; 
-    height: 26px; 
-    left: 1px; 
-    top: -3px; 
-    z-index: 2; 
-    border-radius: 12px; 
-    box-shadow: 0 4px 2px rgba(0,0,0,0.2); 
-}
-
-/* --- 4. MONSTER GEOMETRY (Offloaded) --- */
-/* Mapped via data-mob attribute in index.html */
-
-
-[data-mob="Poring"] .hd { 
-    background: #fca; border-radius: 50%; width: 24px; height: 20px; top: 15px; 
-}
+/* --- MONSTER GEOMETRY DB --- */
+[data-mob="Poring"] .hd { background: #fca; border-radius: 50%; width: 26px; height: 22px; top: 15px; }
+[data-mob="Lunatic"] .hd { background: #fff; border-radius: 50%; width: 24px; height: 22px; top: 15px; }
+[data-mob="Lunatic"]::after { content: 'V'; position: absolute; top: 5px; left: 8px; color: #fff; font-size: 12px; }
 
 [data-mob="Angeling"] .hd { 
-    background: #fff; border-radius: 50%; width: 32px; height: 28px; top: 5px; 
-    box-shadow: 0 0 15px #fff; 
+    background: #fff; border-radius: 50%; width: 34px; height: 30px; 
+    top: 5px; box-shadow: 0 0 15px #fff; 
 }
 
-[data-mob="GT Bug"] .hd { 
-    background: #fc0; border-radius: 4px; width: 35px; height: 30px; top: 0; 
-}
-
-[data-mob="Eddga"] .hd { 
-    background: #fa0; border-radius: 8px; width: 35px; height: 35px; top: -5px; 
-}
-
-[data-mob="Osiris"] .hd { 
-    background: #eee; border-radius: 2px; width: 30px; height: 45px; top: -10px; 
-}
-
-[data-mob="Baphomet"] .hd { 
-    background: #333; border-radius: 5px; width: 42px; height: 52px; top: -18px; 
-    border: 1px solid #555;
-}
-
-/* MVP Glow & Scaling */
-[data-mvp="true"] { 
-    transform: scale(1.35); 
-    transform-origin: bottom; 
-}
-
-[data-mvp="true"] .spr { 
-    filter: drop-shadow(0 0 10px #ffff00); 
-    animation: mvp-pulse 1s infinite alternate ease-in-out; 
-}
-
-@keyframes mvp-pulse { 
-    from { filter: brightness(1) drop-shadow(0 0 5px #ffff00); } 
-    to { filter: brightness(1.2) drop-shadow(0 0 15px #fff); } 
-}
-
-/* --- 5. JOB CLASS COSTUMES --- */
-/* T0: Novice */
-.j-0 .bd { background: linear-gradient(to bottom, #fff 60%, #dca 60%); }
-
-/* T1: First Classes */
-.j-1 .bd { background: linear-gradient(to bottom, #d84 50%, #468 50%); border-top: 2px solid #b62; } /* Swordman */
-.j-2 .bd { background: linear-gradient(90deg, #348 20%, #eee 20%, #eee 80%, #348 80%); } /* Mage */
-.j-3 .bd { background: linear-gradient(to bottom, #637 40%, #fca 40%, #fca 60%, #543 60%); } /* Thief */
-.j-4 .bd { background: linear-gradient(to bottom, #473 60%, #db9 60%); border-left: 2px solid #fca; } /* Archer */
-.j-5 .bd { background: linear-gradient(90deg, #fff 40%, #d44 40%, #d44 60%, #fff 60%); } /* Acolyte */
-.j-6 .bd { background: linear-gradient(90deg, #eee 30%, #a44 30%, #a44 70%, #eee 70%); border-bottom: 2px solid #334; } /* Merchant */
-
-/* T2: Advanced Classes */
-.j-7 .bd { background: #ccc; border-top: 3px solid #666; } /* Knight */
-.j-8 .bd { background: #426; border-bottom: 3px solid #da4; } /* Wizard */
-.j-9 .bd { background: #222; border: 1px solid #444; } /* Assassin */
-.j-10 .bd { background: #473; border-top: 2px solid #222; } /* Hunter */
-.j-11 .bd { background: #fff; border: 1px solid #642; } /* Priest */
-.j-12 .bd { background: #000; border: 1px solid #d44; } /* Blacksmith */
-
-/* --- 6. COMBAT ANIMATION LIBRARY --- */
+/* --- ANIMATIONS & UTILS --- */
 @keyframes idle { 
     0%, 100% { transform: translateY(0); } 
     50% { transform: translateY(2px); } 
 }
 
-@keyframes shake { 
-    0%, 100% { transform: translate(0); } 
-    20%, 60% { transform: translate(-4px, 2px); } 
-    40%, 80% { transform: translate(4px, -2px); } 
+.anim-shake { animation: shake 0.2s cubic-bezier(.36,.07,.19,.97) both; }
+@keyframes shake {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
 }
 
-@keyframes lung-p { 
-    0%, 100% { transform: translateX(0); } 
-    50% { transform: translateX(35px); } 
+.btn-neon {
+    background: #000; color: #fff; border: 1px solid var(--c-n);
+    padding: 10px; cursor: pointer; font-weight: bold; transition: 0.2s;
 }
+.btn-neon:active { background: var(--c-n); color: #000; }
 
-@keyframes lung-e { 
-    0%, 100% { transform: translateX(0); } 
-    50% { transform: translateX(-35px); } 
-}
+.grid { display: grid; gap: 10px; }
+.g-2 { grid-template-columns: 1fr 1fr; }
+.g-6 { grid-template-columns: repeat(6, 1fr); }
+.g-5 { grid-template-columns: repeat(5, 1fr); }
 
-/* Logic classes triggered by JavaScript */
-.anim-shake { animation: shake 0.4s ease-out; }
-.anim-atk-p { animation: lung-p 0.2s ease-in; }
-.anim-atk-e { animation: lung-e 0.2s ease-in; }
-
-/* Damage Popup Logic */
-.dmg-pop { 
-    position: absolute; 
-    font-weight: bold; 
-    font-size: 18px; 
-    text-shadow: 2px 2px 0 #000; 
-    animation: floatUp 0.8s forwards; 
-    pointer-events: none; 
-    z-index: 99; 
-    left: 50%;
-    margin-left: -15px;
-}
-
-@keyframes floatUp { 
-    0% { opacity: 1; transform: translateY(0); } 
-    100% { opacity: 0; transform: translateY(-45px); } 
-}
-
-.dmg-w { color: #ffffff; } /* Normal White */
-.dmg-c { color: #ffff00; font-size: 22px; } /* Critical Yellow */
-.dmg-m { color: #888888; font-style: italic; font-size: 14px; } /* Miss Grey */
+.flex { display: flex; justify-content: space-between; align-items: center; }
+.c-n { color: var(--c-n); } .c-red { color: var(--hp); } .c-yel { color: var(--r); }
