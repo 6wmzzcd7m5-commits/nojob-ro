@@ -1,0 +1,52 @@
+<script>
+window.DB_SKILLS = {
+    // --- NOVICE ---
+    'First Aid': { sp:3, val:0.1, type:'heal_pct', desc:'Restores 10% HP' },
+
+    // --- SWORDMAN / KNIGHT ---
+    'Bash': { sp:10, val:2.5, type:'phys', desc:'Strong blow. 250% DMG' },
+    'Magnum Break': { sp:30, val:3.5, type:'phys', desc:'Fire blast. 350% DMG' },
+    'Endure': { sp:10, val:10, type:'buff_mdef', desc:'MDEF +10' },
+    'Bowling Bash': { sp:35, val:7.0, type:'phys', desc:'Double hit art. 700% DMG' },
+    'Brandish Spear': { sp:25, val:5.5, type:'phys', desc:'Wide swing. 550% DMG' },
+    'Berserk': { sp:200, val:2.0, type:'buff_atk', desc:'Doubles ATK power' },
+
+    // --- MAGE / WIZARD ---
+    'Fire Bolt': { sp:15, val:3.5, type:'mag', desc:'Fire strike. 350% MATK' },
+    'Cold Bolt': { sp:15, val:3.5, type:'mag', desc:'Ice strike. 350% MATK' },
+    'Lightning Bolt': { sp:15, val:3.5, type:'mag', desc:'Bolt strike. 350% MATK' },
+    'Soul Strike': { sp:20, val:4.5, type:'mag', desc:'Holy spirit. 450% MATK' },
+    'Storm Gust': { sp:65, val:11.0, type:'mag', desc:'Blizzard. 1100% MATK' },
+    'Lord of Vermilion': { sp:60, val:9.5, type:'mag', desc:'Thunderstorm. 950% MATK' },
+    'Meteor Storm': { sp:60, val:10.0, type:'mag', desc:'Meteor rain. 1000% MATK' },
+
+    // --- THIEF / ASSASSIN ---
+    'Envenom': { sp:12, val:2.2, type:'phys', desc:'Poison strike. 220% DMG' },
+    'Sonic Blow': { sp:50, val:15.0, type:'phys', desc:'Fatal 8-hit. 1500% DMG' },
+    'Grimtooth': { sp:20, val:4.0, type:'phys', desc:'Shadow spike. 400% DMG' },
+    'Venom Splasher': { sp:40, val:8.0, type:'phys', desc:'Poison bomb. 800% DMG' },
+    'Double Attack': { sp:0, val:1.5, type:'passive_phys', desc:'Passive: 150% DMG' },
+
+    // --- ARCHER / HUNTER ---
+    'Double Strafe': { sp:15, val:3.5, type:'phys', desc:'Two arrows. 350% DMG' },
+    'Arrow Shower': { sp:25, val:4.5, type:'phys', desc:'Rain of arrows. 450% DMG' },
+    'Falcon Assault': { sp:45, val:9.0, type:'phys', desc:'Bird strike. 900% DMG' },
+    'Blast Mine': { sp:30, val:6.0, type:'mag', desc:'Fire trap. 600% MATK' },
+    'Improve Concentration': { sp:40, val:10, type:'buff_agi_dex', desc:'DEX/AGI +10' },
+
+    // --- ACOLYTE / PRIEST ---
+    'Heal': { sp:25, val:0.4, type:'heal_pct', desc:'Restores 40% HP' },
+    'Holy Light': { sp:15, val:2.5, type:'mag', desc:'Divine ray. 250% MATK' },
+    'Blessing': { sp:30, val:10, type:'buff_all', desc:'All Stats +10' },
+    'Increase AGI': { sp:30, val:15, type:'buff_flee', desc:'FLEE +15' },
+    'Magnus Exorcismus': { sp:80, val:12.0, type:'mag', desc:'Holy Purge. 1200% MATK' },
+
+    // --- MERCHANT / BLACKSMITH ---
+    'Mammonite': { sp:5, val:6.0, type:'phys', desc:'Gold strike. 600% DMG' },
+    'Cart Revolution': { sp:15, val:4.0, type:'phys', desc:'Cart swing. 400% DMG' },
+    'Power Thrust': { sp:50, val:1.25, type:'buff_dmg', desc:'DMG +25%' },
+    'Adrenaline Rush': { sp:40, val:1.5, type:'buff_spd', desc:'SPD +50%' }
+};
+
+console.log("AEGIS_SKILLS: ABILITY_POOL_LOADED");
+</script>
