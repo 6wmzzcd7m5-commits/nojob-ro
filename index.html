@@ -3,105 +3,119 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Jobless RO: Final</title>
+<title>Jobless RO: Origins</title>
 <style>
     :root { 
-        --bg:#050505; --p:#0a0f0a; --bd:#333; --n:#39ff14; 
-        --t:#eef; --d:#686; --hp:#f44; --sp:#4af; --r:#fd4; 
-        --m:#4af; --f:#f4a; --font:'Courier New',mono; 
+        --bg:#050505; --p:#1a1a1a; --bd:#4a4a4a; --n:#00ff00; 
+        --t:#ffffff; --d:#aaaaaa; --hp:#ff6666; --sp:#66ccff; --r:#ffff66; 
+        --m:#66ccff; --f:#ff99cc; 
+        /* RO uses Tahoma/Arial for UI. Impact fits the Damage numbers. */
+        --font:'Tahoma', 'Arial', sans-serif; 
     }
     * { box-sizing:border-box; user-select:none; -webkit-tap-highlight-color:transparent; }
     
     body {
-        background: var(--bg); color: var(--t); font-family: var(--font);
+        background: var(--bg); color: var(--t); font-family: var(--font); font-size: 11px;
         margin: 0; padding: 0; width: 100vw; height: 100dvh;
         display: flex; justify-content: center; align-items: center; overflow: hidden;
     }
 
-    /* Main App Container - Fixes Layout Issues */
     #app {
         width: 100%; max-width: 500px; height: 100%; 
-        display: flex; flex-direction: column; gap: 5px; padding: 10px;
-        background: var(--bg); position: relative;
+        display: flex; flex-direction: column; gap: 4px; padding: 8px;
+        background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjMDUwNTA1Ii8+CjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiMxMTEiLz4KPC9zdmc+'); /* Subtle pattern */
+        position: relative;
     }
 
     /* Utils */
     .flex { display:flex; justify-content:space-between; align-items:center; }
-    .grid { display:grid; gap:5px; } .g-2 { grid-template-columns:1fr 1fr; } .g-6 { grid-template-columns:repeat(6,1fr); }
-    .c-n { color:var(--n); } .c-h { color:var(--hp); } .c-d { color:var(--d); }
-    .panel { border:1px solid var(--bd); background:var(--p); padding:8px; border-radius:4px; }
+    .grid { display:grid; gap:4px; } .g-2 { grid-template-columns:1fr 1fr; } .g-6 { grid-template-columns:repeat(6,1fr); }
+    
+    /* RO Text Styles with Outlines */
+    .c-n { color:var(--n); text-shadow: 1px 1px 0 #000; } 
+    .c-h { color:var(--hp); text-shadow: 1px 1px 0 #000; } 
+    .c-d { color:var(--d); } 
+    .c-r { color:var(--r); font-weight:bold; text-shadow: 1px 1px 0 #000; }
+    
+    .panel { 
+        border:1px solid var(--bd); background:rgba(20,20,20,0.9); 
+        padding:6px; border-radius:3px; box-shadow: 2px 2px 5px rgba(0,0,0,0.5); 
+    }
     .hide { display:none!important; }
     
-    /* Interactive */
     button {
-        background:#0d1a0d; color:var(--n); border:1px solid #141; padding:12px; 
-        font:inherit; font-weight:bold; cursor:pointer; text-transform: uppercase;
+        background: linear-gradient(to bottom, #4a4a4a, #2a2a2a);
+        color: #fff; border: 1px solid #666; border-radius: 3px;
+        padding: 8px; font: inherit; font-weight: bold; cursor: pointer; 
+        text-transform: uppercase; text-shadow: 1px 1px 0 #000;
+        box-shadow: 0 2px 0 #111;
     }
-    button:active { background:#163016; color:#fff; }
-    button:disabled { opacity:0.5; pointer-events:none; }
-    .btn-sm { padding:4px 8px; font-size:10px; }
-    .btn-red { border-color:#522; color:#f55; background:#211; }
-    .btn-blue { border-color:#225; color:#55f; background:#112; }
+    button:active, button.active { 
+        background: #2a2a2a; color:#eee; border-color:#888; 
+        transform: translateY(2px); box-shadow: none;
+    }
+    .btn-sm { padding:3px 6px; font-size:10px; }
+    .btn-red { background: linear-gradient(to bottom, #844, #522); border-color:#a55; }
+    .btn-blue { background: linear-gradient(to bottom, #448, #225); border-color:#55a; }
     
     input { 
-        background:#000; border:1px solid var(--n); color:#fff; padding:10px; 
-        width:100%; font:inherit; text-transform:uppercase; 
+        background:#111; border:1px solid #555; color:#fff; padding:8px; 
+        width:100%; font:inherit; font-size: 12px;
     }
     
-    /* Start Screen Gender Tags */
-    .g-tag {
-        padding:10px 15px; border:1px solid #333; cursor:pointer; 
-        color:#555; font-weight:bold; background:#000; transition:0.2s;
+    /* UI Components */
+    .g-tag { 
+        padding:8px 12px; border:1px solid #444; cursor:pointer; 
+        color:#888; background:#111; transition:0.2s; font-weight:bold;
     }
-    .g-tag.m.active { color:var(--m); border-color:var(--m); box-shadow:0 0 8px var(--m); }
-    .g-tag.f.active { color:var(--f); border-color:var(--f); box-shadow:0 0 8px var(--f); }
+    .g-tag.m.active { color:#fff; background:#005577; border-color:var(--m); }
+    .g-tag.f.active { color:#fff; background:#770044; border-color:var(--f); }
 
-    /* Rank UI Overlay */
-    #rank-ui {
-        position:absolute; top:0; left:0; right:0; bottom:0; 
-        background:rgba(0,0,0,0.95); z-index:99; padding:20px; 
-        display:flex; flex-direction:column; justify-content:center; align-items:center;
-    }
-    #rank-box {
-        width:100%; max-width:400px; border:1px solid var(--n); background:#000; 
-        padding:15px; max-height:80%; overflow-y:auto;
-    }
-    .rank-row { 
-        display:flex; justify-content:space-between; border-bottom:1px solid #333; 
-        padding:5px 0; font-size:12px; 
-    }
+    #rank-ui { position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.9); z-index:99; padding:20px; display:flex; flex-direction:column; justify-content:center; align-items:center; }
+    #rank-box { width:100%; max-width:400px; border:1px solid #666; background:#1a1a1a; padding:15px; max-height:80%; overflow-y:auto; box-shadow: 0 0 20px #000; }
+    .rank-row { display:flex; justify-content:space-between; border-bottom:1px solid #333; padding:5px 0; font-size:11px; }
     
     /* Sprite Engine */
-    .cf { width:40px; height:40px; position:relative; overflow:hidden; border:1px solid #242; background:#000; border-radius:4px; margin-right:10px; flex-shrink:0; }
-    .spr { position:absolute; top:8px; left:10px; width:20px; height:30px; animation:i 1s infinite steps(2); }
-    .hd { width:14px; height:12px; background:#fca; position:absolute; left:3px; top:0; z-index:5; }
-    .hd::after { content:''; position:absolute; top:5px; left:3px; width:2px; height:2px; background:#000; box-shadow:6px 0 0 #000; }
+    .cf { width:32px; height:32px; position:relative; overflow:hidden; border:1px solid #444; background:#000; border-radius:2px; margin-right:8px; flex-shrink:0; }
+    .spr { position:absolute; top:4px; left:6px; width:20px; height:30px; animation:i 1s infinite steps(2); }
+    .hd { width:14px; height:12px; background:#fca; position:absolute; left:3px; top:0; z-index:5; border:1px solid rgba(0,0,0,0.2); border-bottom:none; }
     .hr { width:16px; height:7px; background:#853; position:absolute; left:2px; top:-2px; z-index:6; }
-    .ro-m .hr { border-radius:4px 4px 0 0; } 
-    .ro-f .hr { width:18px; left:1px; border-radius:8px 8px 0 0; }
-    .ro-f .hr::after { content:''; position:absolute; top:5px; left:-2px; width:3px; height:12px; background:inherit; box-shadow:19px 0 0 inherit; }
+    .ro-m .hr { border-radius:4px 4px 0 0; } .ro-f .hr { width:18px; left:1px; border-radius:8px 8px 0 0; }
     .bd { width:12px; height:11px; background:#eee; position:absolute; left:4px; top:11px; z-index:2; }
-    .bd::after { content:''; position:absolute; top:11px; left:1px; width:4px; height:4px; background:#fca; box-shadow:6px 0 0 #fca; }
     @keyframes i { 0%,100%{transform:translateY(0)} 50%{transform:translateY(1px)} }
     
-    /* Job Costumes */
-    .j-1 .bd{background:linear-gradient(to bottom,#d84 50%,#468 50%);border-top:2px solid #b62}.j-1 .bd::after{background:#532}
-    .j-2 .bd{background:linear-gradient(90deg,#348 20%,#eee 20%,#eee 80%,#348 80%);border-bottom:3px solid #642}.j-2 .bd::after{background:#333}
-    .j-3 .bd{background:linear-gradient(to bottom,#637 40%,#fca 40%,#fca 60%,#543 60%)}.j-3 .bd::after{background:#543}
-    .j-4 .bd{background:linear-gradient(to bottom,#473 60%,#db9 60%);border-left:2px solid #fca}.j-4 .bd::after{background:#432}
-    .j-5 .bd{background:linear-gradient(90deg,#fff 40%,#d44 40%,#d44 60%,#fff 60%)}.j-5 .bd::after{background:#333}
-    
-    /* HUD Bars */
-    progress { width:100%; height:6px; appearance:none; border:none; background:#111; display:block; }
-    progress::-webkit-progress-bar { background:#111; }
+    /* Job Colors */
+    .j-0 .bd{background:linear-gradient(to bottom,#fff 60%,#dca 60%)}
+    .j-1 .bd{background:linear-gradient(to bottom,#d84 50%,#468 50%);border-top:2px solid #b62}
+    .j-2 .bd{background:linear-gradient(90deg,#348 20%,#eee 20%,#eee 80%,#348 80%);border-bottom:3px solid #642}
+    .j-3 .bd{background:linear-gradient(to bottom,#637 40%,#fca 40%,#fca 60%,#543 60%)}
+    .j-4 .bd{background:linear-gradient(to bottom,#473 60%,#db9 60%);border-left:2px solid #fca}
+    .j-5 .bd{background:linear-gradient(90deg,#fff 40%,#d44 40%,#d44 60%,#fff 60%)}
+    .j-6 .bd{background:linear-gradient(90deg,#eee 30%,#a44 30%,#a44 70%,#eee 70%);border-bottom:2px solid #334}
+
+    /* Bars & Logs */
+    progress { width:100%; height:6px; appearance:none; border:none; background:#222; display:block; border-radius:2px; overflow:hidden; }
+    progress::-webkit-progress-bar { background:#222; } 
     progress::-webkit-progress-value { transition:width 0.1s linear; }
-    #bh::-webkit-progress-value { background:var(--hp); } #bs::-webkit-progress-value { background:var(--sp); }
-    #ap::-webkit-progress-value { background:var(--n); } #ae::-webkit-progress-value { background:var(--hp); }
+    #bh::-webkit-progress-value { background:linear-gradient(to bottom, #ff8888, #cc4444); } 
+    #bs::-webkit-progress-value { background:linear-gradient(to bottom, #88ccff, #4488cc); }
+    #ap::-webkit-progress-value { background:#55ff55; } #ae::-webkit-progress-value { background:#ff5555; }
     
-    /* Layout Areas */
-    #log { flex:1; overflow-y:auto; font-size:11px; border-top:1px solid var(--bd); padding-top:5px; display:flex; flex-direction:column-reverse; }
-    .lr { border-bottom:1px solid #111; padding:2px 0; }
-    .stat-cell { text-align:center; font-size:10px; border-top:1px dashed #242; padding-top:4px; }
+    #log { 
+        flex:1; overflow-y:auto; font-size:11px; 
+        border-top:1px solid #444; padding-top:5px; 
+        display:flex; flex-direction:column-reverse; 
+        background: rgba(0,0,0,0.3);
+    }
+    .lr { padding: 1px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    
+    /* Damage Numbers Style */
+    .l-dmg { color: #fff; font-weight: bold; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; }
+    .l-crit { font-family:'Impact',sans-serif; font-size:13px; color:#ffdd00; letter-spacing:1px; text-shadow: 2px 2px 0 #ff0000, -1px -1px 0 #000; }
+    .l-miss { color: #d00; opacity: 0.8; font-style: italic; }
+    
+    .stat-cell { text-align:center; font-size:10px; border-top:1px dashed #444; padding-top:4px; color:#aaa; }
+    .stv { color: #fff; font-weight: bold; display: block; font-size: 11px; }
 </style>
 </head>
 <body>
@@ -113,28 +127,30 @@
                 <span>TOP 10</span> <button class="btn-sm btn-red" onclick="G.closeRank()">X</button>
             </div>
             <div id="rank-list">Loading...</div>
-            <div style="font-size:10px; color:#666; margin-top:10px; text-align:center;">Updates every 60s.</div>
+            <div style="font-size:10px; color:#888; margin-top:10px; text-align:center;">Updates every 60s.</div>
         </div>
     </div>
 
     <header class="panel grid">
-        <div class="flex" style="border-bottom:1px dashed #242; padding-bottom:5px;">
-            <div class="flex" style="gap:5px">
+        <div class="flex" style="border-bottom:1px dashed #444; padding-bottom:5px;">
+            <div class="flex" style="gap:4px">
                 <button class="btn-sm btn-red" onclick="G.wipe()">[R]</button>
                 <button class="btn-sm btn-blue" onclick="G.exp()">[S]</button>
                 <button class="btn-sm btn-blue" onclick="document.getElementById('fi').click()">[L]</button>
                 <input type="file" id="fi" style="display:none" onchange="G.imp(this)">
-                <button class="btn-sm" onclick="G.tAu()">AUTO</button>
+                <button class="btn-sm" onclick="G.lang()">EN/中</button>
+                <button id="b-au" class="btn-sm" onclick="G.tAu()">AUTO</button>
             </div>
             <div class="flex" style="gap:2px">
-                <button class="btn-sm" id="s10" onclick="G.spd(10)">1X</button>
+                <button class="btn-sm" id="s10" onclick="G.spd(10)">1x</button>
+                <button class="btn-sm" id="s30" onclick="G.spd(30)">3x</button>
                 <button class="btn-sm" id="s99" onclick="G.spd(99)">MAX</button>
             </div>
         </div>
         <div class="flex" style="justify-content:flex-start;">
             <div class="cf"><div id="spr" class="spr ro-m"><div class="hr"></div><div class="hd"></div><div class="bd"></div></div></div>
             <div style="flex:1;">
-                <div class="flex"><div><b id="un" class="c-n"></b> <span id="uj" class="c-d" style="font-size:10px"></span></div><div style="font-size:11px">LV <span id="ul" class="c-r">1</span></div></div>
+                <div class="flex"><div><b id="un" class="c-n" style="font-size:12px"></b> <span id="uj" class="c-d" style="font-size:10px"></span></div><div style="font-size:11px">Lv. <span id="ul" class="c-r">1</span></div></div>
                 <div class="c-n" style="font-size:10px; margin-top:2px;" id="ulo"></div>
             </div>
         </div>
@@ -143,17 +159,17 @@
             <div style="font-size:10px"><div class="flex"><span>SP</span> <span id="us"></span></div><progress id="bs" value="20" max="20"></progress></div>
         </div>
         <div class="grid g-6">
-            <div class="stat-cell"><span class="c-d">STR</span><span id="vstr" style="color:#fff">1</span></div>
-            <div class="stat-cell"><span class="c-d">AGI</span><span id="vagi" style="color:#fff">1</span></div>
-            <div class="stat-cell"><span class="c-d">VIT</span><span id="vvit" style="color:#fff">1</span></div>
-            <div class="stat-cell"><span class="c-d">INT</span><span id="vint" style="color:#fff">1</span></div>
-            <div class="stat-cell"><span class="c-d">DEX</span><span id="vdex" style="color:#fff">1</span></div>
-            <div class="stat-cell"><span class="c-d">LUK</span><span id="vluk" style="color:#fff">1</span></div>
+            <div class="stat-cell">STR<span id="vstr" class="stv">1</span></div>
+            <div class="stat-cell">AGI<span id="vagi" class="stv">1</span></div>
+            <div class="stat-cell">VIT<span id="vvit" class="stv">1</span></div>
+            <div class="stat-cell">INT<span id="vint" class="stv">1</span></div>
+            <div class="stat-cell">DEX<span id="vdex" class="stv">1</span></div>
+            <div class="stat-cell">LUK<span id="vluk" class="stv">1</span></div>
         </div>
     </header>
 
     <section id="btl" class="panel hide">
-        <div class="flex"><span id="en" style="font-weight:bold; color:var(--hp)">TARGET</span> <span id="eh" class="c-d" style="font-size:10px"></span></div>
+        <div class="flex"><span id="en" style="font-weight:bold; color:var(--hp); text-shadow:1px 1px 0 #000;">TARGET</span> <span id="eh" class="c-d" style="font-size:10px"></span></div>
         <div class="grid" style="margin-top:5px;">
             <div class="flex" style="font-size:10px"><span class="c-n">ATB</span> <progress id="ap" value="0" max="1000" style="width:85%"></progress></div>
             <div class="flex" style="font-size:10px"><span class="c-h">FOE</span> <progress id="ae" value="0" max="1000" style="width:85%"></progress></div>
@@ -186,10 +202,10 @@ const LOC_CN=["普隆德拉","斐揚","獸人洞穴","古城","鐘塔","塔納�
 const MON_EN=["Poring","Wolf","Orc","Raydric","Alarm","Thanatos"];
 const MON_CN=["波利","狼","獸人","深淵騎士","朽魔","塔納托斯"];
 
-const T={en:{st:"ID REGISTRATION",ph:"ENTER NAME",ea:"EASY",ha:"HARD",mi:"MISSION: Play to unlock secrets.",on:"AUTO:ON",off:"AUTO:OFF",lv:"LV",pts:"PTS",ok:"OK",stb:"START",mvp:"MVP DETECTED!",fi:"FIGHT",re:"REST",nx:"NEXT FLOOR",win:"CLEARED",vic:"VICTORY",go:"GAME OVER",rs:"RESTART",wipe:"WIPE?",sel:"Select Skill:",jc:"Job Change!",rank:"RANKING",sub:"SUBMIT SCORE"},
-cn:{st:"身分登錄",ph:"輸入名稱",ea:"簡單",ha:"困難",mi:"任務: 遊玩以解鎖秘密",on:"自動:開",off:"自動:關",lv:"等級",pts:"點數",ok:"確認",stb:"開始",mvp:"MVP出現!",fi:"戰鬥",re:"休息",nx:"下一層",win:"區域清除",vic:"任務完成",go:"任務失敗",rs:"重來",wipe:"刪除存檔?",sel:"選擇技能:",jc:"可轉職!",rank:"排行榜",sub:"上傳分數"}};
+const T={en:{st:"ID REGISTRATION",ph:"ENTER NAME",ea:"EASY",ha:"HARD",mi:"MISSION: Play to unlock secrets.",on:"AUTO:ON",off:"AUTO:OFF",lv:"LV",pts:"PTS",ok:"OK",stb:"START",mvp:"MVP DETECTED!",fi:"FIGHT",re:"REST",nx:"NEXT FLOOR",win:"CLEARED",vic:"VICTORY",go:"GAME OVER",rs:"RESTART",wipe:"WIPE?",sel:"Select Skill:",jc:"Job Change!",rank:"RANKING",sub:"SUBMIT SCORE",evt_atk:"Blacksmith refined weapon! +1 ATK",evt_matk:"Sage refined staff! +1 MATK",evt_hp:"Priest blessed you! +10 MaxHP"},
+cn:{st:"身分登錄",ph:"輸入名稱",ea:"簡單",ha:"困難",mi:"任務: 遊玩以解鎖秘密",on:"自動:開",off:"自動:關",lv:"等級",pts:"點數",ok:"確認",stb:"開始",mvp:"MVP出現!",fi:"戰鬥",re:"休息",nx:"下一層",win:"區域清除",vic:"任務完成",go:"任務失敗",rs:"重來",wipe:"刪除存檔?",sel:"選擇技能:",jc:"可轉職!",rank:"排行榜",sub:"上傳分數",evt_atk:"鐵匠精煉成功! +1 ATK",evt_matk:"賢者升級法杖! +1 MATK",evt_hp:"牧師祝福! +10 HP上限"}};
 
-const K='jro_final_v2';
+const K='jro_ultimate_v1';
 const el=i=>document.getElementById(i);
 const rnd=m=>Math.floor(Math.random()*m);
 const H=t=>{let h=0;for(let i=0;i<t.length;i++)h=Math.imul(31,h)+t.charCodeAt(i)|0;return h.toString(16);}
@@ -202,6 +218,7 @@ const G={
         if(r){
             try{ const [d,h]=r.split('|'); if(H(d+SALT)!=h)throw new Error();
                 const o=JSON.parse(atob(d)); this.p=o.p; this.s=o.s;
+                if(!this.p.b) this.p.b = {atk:0,matk:0,hit:0,flee:0};
                 this.s.b=false; clearInterval(this.s.tm);
                 this.spd(this.s.spd); this.draw();
                 if(this.p.pts>0&&!this.s.au) return this.stM(this.s.f==1);
@@ -210,6 +227,7 @@ const G={
         }else{this.spd(10);this.scr();}
     },
     
+    // --- RANKING ---
     openRank(){
         el('rank-ui').classList.remove('hide'); el('rank-list').innerHTML="Fetching...";
         fetch(RAW_URL + '?t=' + Date.now())
@@ -231,15 +249,15 @@ const G={
         window.open(`https://github.com/${GH_USER}/${GH_REPO}/issues/new?title=${title}&body=${body}`,'_blank');
     },
 
+    // --- GAME SCREENS ---
     scr(){
         const c=el('ctl'); c.className='grid';
         window.setG=(g)=>{
             this.tmp.g=g; 
             el('bm').className=g=='m'?'g-tag m active':'g-tag m'; 
             el('bf').className=g=='f'?'g-tag f active':'g-tag f';
-            el('spr').className=`spr ro-${g} j-0`; // Updates Header Avatar
+            el('spr').className=`spr ro-${g} j-0`;
         };
-        // Clean Start Screen (No Avatar)
         c.innerHTML=`<div class="panel" style="grid-column:span 2;text-align:center">
         <div class="c-n" style="font-weight:bold;margin-bottom:10px">${this.txt('st')}</div>
         <div style="margin-bottom:10px;text-align:right"><button class="btn-sm" onclick="G.openRank()">🏆 ${this.txt('rank')}</button></div>
@@ -251,7 +269,6 @@ const G={
         <div class="grid g-2"><button onclick="G.ng(0)">${this.txt('ea')}</button><button class="btn-red" onclick="G.ng(1)">${this.txt('ha')}</button></div>
         <div style="font-size:9px;margin-top:10px;color:#464">${this.txt('mi')}</div></div>`;
         this.tmp.g='m';
-        // Reset header to default novice
         el('spr').className=`spr ro-m j-0`;
     },
     ng(d){
@@ -288,9 +305,19 @@ const G={
     },
     mnu(){
         this.sv(); el('ctl').innerHTML=''; el('btl').classList.add('hide'); this.draw();
+        
+        if(this.s.au) {
+            setTimeout(() => {
+                if(this.s.f%10==0) this.bt(true);
+                else this.bt(false);
+            }, 500);
+            return;
+        }
+
         if(this.s.f%10==0 && this.s.f<=50){
             this.log(this.txt('mvp'),'c-h'); this.btn("BOSS",()=>this.bt(true),'btn-red'); return;
         }
+        
         const loc=Math.min(5,Math.ceil(this.s.f/10)-1);
         const mn = this.s.f > 50 ? "Endless Tower" : (this.s.l=='cn'?LOC_CN[loc]:LOC_EN[loc]);
         this.log(`${mn} F${this.s.f}`);
@@ -304,8 +331,10 @@ const G={
         const tier = Math.min(5, Math.ceil(this.s.f/10)-1);
         
         if(isB){
-            const b = B[Math.min(4, (this.s.f/10)-1)];
-            this.mob = { n:this.s.l=='cn'?b.c:b.n, h:b.h, a:b.a, x:b.x, agi:this.s.f*2, dex:this.s.f };
+            const bIdx = this.s.f > 50 ? ((this.s.f/10)-1)%5 : (this.s.f/10)-1;
+            const b = B[Math.min(4, bIdx)];
+            const name = this.s.l=='cn'?b.c:b.n;
+            this.mob = { n: this.s.f>50?name+" EX":name, h:b.h*mScale, a:b.a*mScale, x:b.x*mScale, agi:this.s.f*2, dex:this.s.f };
         } else {
             const mn = this.s.l=='cn'?MON_CN[tier]:MON_EN[tier];
             this.mob = { n:mn, h:this.s.f*25*mScale, a:(this.s.f*3+5)*mScale, x:this.s.f*10*mScale, agi:this.s.f, dex:this.s.f };
@@ -334,16 +363,32 @@ const G={
     act(s,t,st,p){
         let sk=p?this.p.act:null, type=sk?sk.t:'p', mul=sk?sk.v:1;
         let hit=type=='m'?100:(80+st.hit-(t.agi||0)), cr=p?(Math.random()*100<st.crit):false;
-        if(Math.random()*100>hit){if(this.s.spd<20)this.log("Miss");return;}
+        if(Math.random()*100>hit){if(this.s.spd<20)this.log("Miss","l-miss");return;}
         let d = type=='m' ? st.matk*mul : Math.max(1, (st.atk*mul*(cr?1.5:1)) - (p?0:st.def));
         t.hp -= Math.floor(d);
-        if(this.s.spd<20||cr||t.hp<=0) this.log(`${Math.floor(d)} ${cr?'!':''}`);
+        if(this.s.spd<20||cr||t.hp<=0) this.log(`${Math.floor(d)}${cr?'!':''}`, p?(cr?'l-crit':'l-dmg'):'l-dmg');
         if(p&&this.p.hp<this.p.mh*0.3&&this.p.pots>0){this.p.pots--;this.p.hp+=Math.floor(this.p.mh*0.5);}else if(!p)this.draw();
         if(t.hp<=0){if(p)this.win();else this.over();}
     },
     win(){
         clearInterval(this.s.tm); this.s.b=false; el('btl').classList.add('hide');
         this.p.xp+=this.mob.x;
+        
+        // --- RANDOM EVENTS ---
+        if(Math.random() < 0.3) {
+            const r = rnd(3);
+            if(r==0){ this.p.b.atk++; this.log(this.txt('evt_atk'),'c-r'); }
+            else if(r==1){ this.p.b.matk++; this.log(this.txt('evt_matk'),'c-r'); }
+            else { this.p.mh+=10; this.p.hp+=10; this.log(this.txt('evt_hp'),'c-r'); }
+        }
+
+        if(Math.random()<0.1) {
+            const type=rnd(2)?'w':'a', pl=DB.items[type], tr=Math.min(pl.length-1,Math.floor(this.s.f/8)), it=pl[tr];
+            if(!this.p.eq[type]||it.v>this.p.eq[type].v){
+                if(type=='a'){if(this.p.eq.a)this.p.mh-=this.p.eq.a.v;this.p.mh+=it.v;this.p.hp=this.p.mh;}
+                this.p.eq[type]=it; this.log(`GET ${it.n}`,'c-n');
+            }
+        }
         if(this.p.xp>=this.p.nx){
             this.p.lv++; this.p.xp=0; this.p.nx=Math.floor(this.p.nx*1.5);
             this.p.pts+=3; this.p.mh+=20; this.p.hp=this.p.mh;
@@ -353,6 +398,7 @@ const G={
     over(){clearInterval(this.s.tm);this.s.b=false;localStorage.removeItem(K);el('ctl').innerHTML=`<div class="panel" style="text-align:center"><div class="c-h">GAME OVER</div><button onclick="G.scr()">${this.txt('rs')}</button></div>`;},
     
     // --- HELPERS ---
+    txt(k){return T[this.s.l][k]||k},
     log(t,c=''){const l=el('log');l.insertAdjacentHTML('afterbegin',`<div class="lr ${c}">${t}</div>`);if(l.children.length>20)l.lastChild.remove();},
     btn(t,fn,c=''){const b=document.createElement('button');b.innerHTML=t;b.onclick=fn;if(c)b.className=c;el('ctl').appendChild(b);},
     draw(){
@@ -366,7 +412,10 @@ const G={
         el('b-au').innerText=this.s.au?(this.s.l=='cn'?'自動:開':'AUTO:ON'):(this.s.l=='cn'?'自動:關':'AUTO:OFF');
         el('b-au').classList.toggle('active',this.s.au);
     },
-    autoDist(){while(this.p.pts>0){const k=['str','agi','vit','int','dex','luk'][rnd(6)];this.p[k]++;this.p.pts--;if(k=='vit'){this.p.mh+=20;this.p.hp+=20;}}},
+    autoDist(){
+        while(this.p.pts>0){const k=['str','agi','vit','int','dex','luk'][rnd(6)];this.p[k]++;this.p.pts--;if(k=='vit'){this.p.mh+=20;this.p.hp+=20;}}
+        this.draw(); 
+    },
     tAu(){this.s.au=!this.s.au;this.draw();if(this.s.au&&this.p.pts>0){this.autoDist();this.draw();if(el('ctl').innerText.includes('PTS'))this.mnu();}},
     lang(){this.s.l=this.s.l=='en'?'cn':'en';this.draw();if(!this.p)this.scr();},
     sv(){const d=btoa(JSON.stringify({p:this.p,s:this.s}));localStorage.setItem(K,d+"|"+H(d+SALT));},
@@ -375,6 +424,10 @@ const G={
     exp(){this.sv();const a=document.createElement('a');a.href="data:text/plain;charset=utf-8,"+encodeURIComponent(localStorage.getItem(K));a.download=`JRO_${this.p.n}.sav`;document.body.appendChild(a);a.click();a.remove();},
     imp(el){const f=el.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{const raw=e.target.result;const [d,h]=raw.split('|');if(H(d+SALT)!=h)throw new Error();localStorage.setItem(K,raw);location.reload();}catch(e){alert(this.txt('err'))}};r.readAsText(f);}
 };
+
+// Item DB (Hidden)
+const DB={items:{w:[{n:'Knife',v:5},{n:'Blade',v:15},{n:'Katana',v:25},{n:'Saber',v:40},{n:'Muramasa',v:70},{n:'Excalibur',v:100}],a:[{n:'Shirt',v:10},{n:'Jacket',v:20},{n:'Coat',v:50},{n:'Mail',v:90},{n:'Plate',v:150},{n:'Suit',v:250}]}};
+
 G.init();
 </script>
 </body>
