@@ -98,7 +98,8 @@ window.DB = {
                 'Turn Undead': '轉生術', 'Envenom': '施毒', 'Double Strafe': '二連矢',
                 'Owl\'s Eye': '梟之眼', 'Vulture\'s Eye': '鵂鶹之眼', 'Improve Concentration': '集中力向上',
                 'Sonic Blow': '音速投擲', 'Falcon Assault': '獵鷹突擊', 'Venom Splasher': '毒性反彈',
-                'Back Stab': '背刺', 'Slasher': '斬擊', 'Increase HP Recovery': '生命力恢復', 'Two-Hand Mastery': '雙手劍修練'
+                'Back Stab': '背刺', 'Slasher': '斬擊', 'Increase HP Recovery': '生命力恢復', 'Two-Hand Mastery': '雙手劍修練',
+                'First Aid': '急救', 'Basic Skill': '基本技能'
             }
         }
     },
