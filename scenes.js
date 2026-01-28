@@ -1,4 +1,4 @@
-/* --- AEGIS_SCENE_DATABASE_V1.02 --- */
+/* --- AEGIS_SCENE_DATABASE_V1.03 (Repaired) --- */
 window.SCENES = {
     start: (p, s) => `
         <div class="panel grid g-1 scene-start">
