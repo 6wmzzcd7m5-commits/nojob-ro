@@ -57,7 +57,7 @@ window.DB = {
             st: { // UI Strings
                 save: "存檔", reset: "重置", rank: "排名", warp: "傳送: 地圖", init: "建立角色帳號",
                 create: "創建冒險者", combat: "戰鬥中...", clear: "清除!",
-                lv: "Lv", flr: "FLR", novice: "初學者", start: "開始冒險",
+                lv: "Lv", flr: "FLR", novice: "初心者", start: "開始冒險",
                 easy: "簡單", normal: "普通", hard: "困難", stats: "數值",
                 job_office: "轉職中心", confirm_reset: "重新開始冒險？",
                 speed: "倍速設定:", event_atk: "事件: 永久 ATK +1",
@@ -84,7 +84,7 @@ window.DB = {
                 "Marina": "瑪麗娜", "Thief Bug": "盜蟲", "Soldier Skeleton": "邪骸士兵", "Archer Skeleton": "邪骸弓箭手", "Golden Thief Bug [MVP]": "黃金盜蟲 [MVP]"
             },
             jobs: {
-                'Novice': '初學者', 'Swordman': '劍士', 'Knight': '騎士',
+                'Novice': '初心者', 'Swordman': '劍士', 'Knight': '騎士',
                 'Merchant': '商人', 'Blacksmith': '鐵匠', 'Mage': '魔法師',
                 'Wizard': '巫師', 'Acolyte': '服事', 'Priest': '祭司',
                 'Thief': '盜賊', 'Assassin': '刺客', 'Archer': '弓箭手', 'Hunter': '獵人'
