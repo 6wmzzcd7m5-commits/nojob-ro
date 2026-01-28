@@ -118,7 +118,8 @@
                     if (!this.p.items) this.p.items = {};
                     if (!this.p.hair) this.p.hair = `hsl(${Math.random() * 360}, 50%, 40%)`;
                     this.s.f = this.p.floor || 1;
-                    UI.loadScene('mnu', this.p, this.s);
+                    if (this.p.pts > 0) UI.loadScene('stats', this.p, this.s);
+                    else UI.loadScene('mnu', this.p, this.s);
                 } else {
                     const hair = `hsl(${Math.random() * 360}, 50%, 40%)`;
                     this.p = { n: "JOBLESS", job: "Novice", gender: 'm', lvl: 1, str: 1, agi: 1, vit: 1, int: 1, dex: 1, luk: 1, hp: 1, mh: 1, items: {}, hair };
