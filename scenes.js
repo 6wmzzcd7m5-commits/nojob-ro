@@ -46,14 +46,10 @@ window.SCENES = {
 
     // 2. Ported: Main Menu / Dungeon Warp
     mnu: (p, s) => {
-        const hasPts = p.pts > 0;
         return `
             <div class="grid g-1">
                 <button onclick="G.startBattle()" class="panel btn-block" style="border-color:var(--neon); padding:20px;">${DB.txt('warp_to')} ${DB.getLocation(s.f)}</button>
-                <div class="flex" style="gap:5px;">
-                    <button onclick="UI.loadScene('stats', G.p, G.s)" class="panel" style="flex:1; font-size:10px; border-color:${hasPts ? 'var(--neon)' : 'var(--sp)'}; color:${hasPts ? 'var(--neon)' : 'var(--sp)'}; padding:8px;">${DB.txt('stats')}${hasPts ? ' (!)' : ''}</button>
-                    <button onclick="G.loadRank()" class="panel" style="flex:1; font-size:10px; border-color:var(--sp); color:var(--sp); padding:8px;">${DB.txt('rank')}</button>
-                </div>
+                <button onclick="G.loadRank()" class="panel btn-block" style="font-size:10px; border-color:var(--sp); color:var(--sp); padding:8px;">${DB.txt('rank')}</button>
             </div>`;
     },
 
@@ -67,12 +63,14 @@ window.SCENES = {
             </div>
         `).join('');
 
+        const canContinue = p.pts <= 0;
         return `
             <div class="panel grid g-1">
-                <div style="text-align:center; color:var(--neon); font-weight:bold; margin-bottom:5px;">${DB.txt('stats')}</div>
-                <div style="font-size:10px; text-align:center; margin-bottom:10px;">${DB.txt('pts')} <b class="c-yel">${p.pts || 0}</b></div>
+                <div style="text-align:center; color:var(--neon); font-weight:bold; margin-bottom:5px;">${DB.txt('pts')} <b class="c-yel">${p.pts || 0}</b></div>
                 <div style="background:rgba(0,0,0,0.3); padding:5px; border-radius:4px;">${rows}</div>
-                <button onclick="UI.loadScene('mnu', G.p, G.s)" class="btn-block" style="margin-top:10px;">${DB.txt('back')}</button>
+                <button onclick="G.continueFlow()" class="btn-block" ${!canContinue ? 'disabled' : ''} style="margin-top:10px; border-color:${canContinue ? 'var(--neon)' : '#444'}; color:${canContinue ? 'var(--neon)' : '#444'};">
+                    ${canContinue ? 'CONTINUE' : 'ALLOCATE ALL POINTS'}
+                </button>
             </div>`;
     },
 

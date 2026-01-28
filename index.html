@@ -166,12 +166,12 @@
                 const d = parseFloat(el('pdiff').value) || 1.0;
                 const skills = ['First Aid', 'Basic Skill'];
                 const hair = `hsl(${Math.random() * 360}, 50%, 40%)`;
-                this.p = { n, gender: this.s.tmpG || 'm', diff: d, job: 'Novice', lvl: 1, str: 5, agi: 5, vit: 5, int: 5, dex: 5, luk: 5, hp: 1, mh: 1, floor: 1, items: {}, wpn: null, arm: null, skills, pts: 0, hair };
+                this.p = { n, gender: this.s.tmpG || 'm', diff: d, job: 'Novice', lvl: 1, str: 5, agi: 5, vit: 5, int: 5, dex: 5, luk: 5, hp: 1, mh: 1, floor: 1, items: {}, wpn: null, arm: null, skills, pts: 10, hair };
                 const base = DB.getJob('Novice');
                 this.p.mh = base.hp + (this.p.vit * 2);
                 this.p.hp = this.p.mh;
                 document.documentElement.style.setProperty('--hair', this.p.hair);
-                this.sv(); UI.render(this.p, this.s); UI.loadScene('mnu', this.p, this.s);
+                this.sv(); UI.render(this.p, this.s); UI.loadScene('stats', this.p, this.s);
             },
 
             toggleLang() {
@@ -353,7 +353,7 @@
                 } else if (this.p.lvl === 10 || this.p.lvl === 40) {
                     UI.loadScene('job', this.p, this.s);
                 } else {
-                    UI.loadScene('mnu', this.p, this.s);
+                    UI.loadScene('stats', this.p, this.s);
                 }
 
                 this.sv(); UI.render(this.p, this.s);
@@ -391,6 +391,11 @@
                 }
             },
 
+            continueFlow() {
+                if (this.p.pts > 0) return;
+                UI.loadScene('mnu', this.p, this.s);
+            },
+
             learnSkill(sn) {
                 if (!this.p.skills) this.p.skills = [];
                 this.p.skills.push(sn);
@@ -400,7 +405,7 @@
                 if (this.p.lvl === 10 || this.p.lvl === 40) {
                     UI.loadScene('job', this.p, this.s);
                 } else {
-                    UI.loadScene('mnu', this.p, this.s);
+                    UI.loadScene('stats', this.p, this.s);
                 }
                 this.sv();
             },
@@ -456,7 +461,7 @@
                 ['str', 'agi', 'vit', 'int', 'dex', 'luk'].forEach(s => this.p[s] += 5);
                 this.p.mh += 100; this.p.hp = this.p.mh;
                 this.grantSkill();
-                this.sv(); UI.render(this.p, this.s); UI.loadScene('mnu', this.p, this.s);
+                this.sv(); UI.render(this.p, this.s); UI.loadScene('stats', this.p, this.s);
             },
 
             grantSkill() {
