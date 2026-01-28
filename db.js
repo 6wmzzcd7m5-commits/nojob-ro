@@ -49,6 +49,7 @@ window.DB = {
                 'Owl\'s Eye': 'Owl\'s Eye', 'Vulture\'s Eye': 'Vulture\'s Eye', 'Improve Concentration': 'Improve Concentration',
                 'Sonic Blow': 'Sonic Blow', 'Falcon Assault': 'Falcon Assault', 'Venom Splasher': 'Venom Splasher',
                 'Back Stab': 'Back Stab', 'Slasher': 'Slasher',
+                'Increase HP Recovery': 'Increase HP Recovery', 'Two-Hand Mastery': 'Two-Hand Mastery',
                 'First Aid': 'First Aid', 'Basic Skill': 'Basic Skill'
             }
         },

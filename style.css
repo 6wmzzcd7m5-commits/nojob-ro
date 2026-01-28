@@ -118,6 +118,24 @@ body {
     transition: transform 0.2s;
 }
 
+.inventory-panel,
+.skill-panel {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    white-space: nowrap;
+    min-height: 45px;
+    align-items: center;
+}
+
+.inventory-panel {
+    border-color: var(--neon);
+}
+
+.skill-panel {
+    border-color: var(--sp);
+}
+
 button {
     background: rgba(0, 0, 0, 0.6);
     color: var(--neon);
@@ -306,6 +324,12 @@ button:active {
 
 .g-6 {
     grid-template-columns: repeat(6, 1fr);
+}
+
+@media screen and (max-width: 400px) {
+    .g-6 {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 .g-1 {
