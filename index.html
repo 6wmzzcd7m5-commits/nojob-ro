@@ -482,20 +482,10 @@
             },
 
             startBattle() {
-                const isBoss = (this.s.f % 10 === 0);
-                let mobIndex;
-                if (isBoss) {
-                    const bossPool = DB.mobs.names.filter(n => n.includes('[MVP]'));
-                    mobIndex = DB.mobs.names.indexOf(bossPool[Math.floor(Math.random() * bossPool.length)]);
-                } else {
-                    const regularPool = DB.mobs.names.filter(n => !n.includes('[MVP]'));
-                    mobIndex = DB.mobs.names.indexOf(regularPool[Math.floor(Math.random() * regularPool.length)]);
-                }
-
-                this.s.mob = DB.mobs.scaling(this.s.f);
-                this.s.mob.n = DB.mobs.names[mobIndex];
-                this.s.mob.hp *= (this.p.diff || 1.0);
-                this.s.mob.atk *= (this.p.diff || 1.0);
+                const mName = DB.mobs.getSpawn(this.s.f);
+                this.s.mob = DB.mobs.scaling(this.s.f, mName);
+                this.s.mob.hp = Math.floor(this.s.mob.hp * (this.p.diff || 1.0));
+                this.s.mob.atk = Math.floor(this.s.mob.atk * (this.p.diff || 1.0));
                 this.s.mob.mhp = this.s.mob.hp;
 
                 el('e-spr').className = `spr ${this.s.mob.n.includes('[MVP]') ? 'spr-mvp' : ''} m-${this.s.mob.n.replace(/ \[MVP\]/g, '').replace(/\s+/g, '-')}`;

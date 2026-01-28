@@ -209,33 +209,85 @@ window.DB = {
         }
     },
 
-    // 5. MONSTER ROSTER (Nerfed Logic Applied)
+    // 5. MONSTER ROSTER (Region-Locked & Rebalanced)
     mobs: {
+        // Map 0-9 corresponding to getLocation()
+        pools: {
+            0: ["Poring", "Fabre", "Lunatic", "Chonchon", "Roda Frog"], // Prontera Field
+            1: ["Spore", "Wormtail", "Poison Spore", "Poporing", "Zomibe"], // Payon Cave (Zombie sneak peek)
+            2: ["Tarou", "Thief Bug", "Poison Spore", "Golden Thief Bug [MVP]"], // Culvert
+            3: ["Vadon", "Marina", "Hydra", "Thief Bug"], // Byalan
+            4: ["Soldier Skeleton", "Archer Skeleton", "Zombie", "Skeleton"], // Orc Dungeon (Undead mix)
+            5: ["Zombie", "Skeleton", "Soldier Skeleton", "Archer Skeleton"], // Glast Heim
+            6: ["Magma Dungeon"], // Placeholder - will reuse sprites due to lack of assets
+            7: ["Ice Dungeon"],
+            8: ["Abyss Lake"],
+            9: ["Thanatos Tower"]
+        },
+
+        // Flattened list for preview/fallback
         names: [
             "Poring", "Fabre", "Lunatic", "Chonchon", "Roda Frog",
             "Spore", "Tarou", "Poison Spore", "Wormtail", "Angeling [MVP]",
             "Zombie", "Skeleton", "Poporing", "Hydra", "Vadon",
             "Marina", "Thief Bug", "Soldier Skeleton", "Archer Skeleton", "Golden Thief Bug [MVP]"
         ],
+
         cards: {
             "Poring": "Poring Card", "Fabre": "Fabre Card", "Lunatic": "Lunatic Card", "Chonchon": "Chonchon Card", "Roda Frog": "Roda Frog Card",
             "Spore": "Spore Card", "Tarou": "Tarou Card", "Poison Spore": "Poison Spore Card", "Wormtail": "Wormtail Card", "Angeling [MVP]": "Angeling Card",
             "Zombie": "Zombie Card", "Skeleton": "Skeleton Card", "Poporing": "Poporing Card", "Hydra": "Hydra Card", "Vadon": "Vadon Card",
             "Marina": "Marina Card", "Thief Bug": "Thief Bug Card", "Soldier Skeleton": "Soldier Skeleton Card", "Archer Skeleton": "Archer Skeleton Card", "Golden Thief Bug [MVP]": "GTB Card"
         },
-        scaling: (floor) => {
+
+        getSpawn: (floor) => {
+            const mapIdx = Math.min(Math.floor((floor - 1) / 10), 9);
+            // Default to pool or fallback to random if pool empty/undefined
+            let pool = window.DB.mobs.pools[mapIdx];
+
+            // Fallback mechanics for higher maps with no sprites yet
+            if (!pool || pool[0].includes("Dungeon")) pool = window.DB.mobs.names;
+
+            // Boss Floor Logic (Every 10 floors)
+            if (floor % 10 === 0) return "Golden Thief Bug [MVP]"; // Temporary generic boss for now
+            if (floor % 10 === 5 && mapIdx === 0) return "Angeling [MVP]"; // Mini-boss for map 1
+
+            return pool[Math.floor(Math.random() * pool.length)];
+        },
+
+        scaling: (floor, mobName) => {
             const isBoss = (floor % 10 === 0);
-            const multi = isBoss ? 4 : 1;
-            const NERF = 0.65;
-            const mName = window.DB.mobs.names[Math.min(floor - 1, 19)] || `Void Spectre #${floor}`;
+            const isMini = mobName.includes('[MVP]') && !isBoss;
+
+            const baseHP = 12; // Started at 12
+            const baseATK = 2; // Started at 2
+
+            let hp = Math.floor(baseHP + (floor * 3));
+            let atk = Math.floor(baseATK + (floor * 0.8));
+            let def = Math.floor(floor * 0.2);
+            let xp = Math.floor(floor * 1.5);
+            let zeny = Math.floor(floor * 5);
+
+            if (isBoss) {
+                hp *= 8;
+                atk *= 2.5;
+                xp *= 10;
+                zeny *= 10;
+            } else if (isMini) {
+                hp *= 4;
+                atk *= 1.5;
+                xp *= 5;
+                zeny *= 5;
+            }
 
             return {
-                n: mName,
-                hp: Math.floor(((40 + (floor * 20)) * multi) * NERF),
-                atk: Math.floor(((8 + (floor * 4)) * multi) * NERF),
-                def: Math.floor((floor * 1.0) * NERF),
-                zeny: floor * 20,
-                card: window.DB.mobs.cards[mName] || null
+                n: mobName,
+                hp: hp,
+                mhp: hp,
+                atk: atk,
+                def: def,
+                zeny: zeny,
+                card: window.DB.mobs.cards[mobName] || null
             };
         }
     },
