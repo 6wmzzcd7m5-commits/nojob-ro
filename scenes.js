@@ -3,11 +3,11 @@ window.SCENES = {
     start: (p, s) => `
         <div class="panel grid g-1" style="text-align:center; padding: 30px 20px;">
             <div class="ascii-title">
- _  ____  ____  _      _____ ____ ____  ____  ____ 
-/ |/  _ \\/  _ \\/ \\    /  __// __Y ___\\/  __\\/  _ \\
-| || / \\|| | //| |    |  \\  | /  |    \\|  \\/|| / \\|
-/| || \\_/|| |_\\\\| |_/\\ |  /_ | \\_|\\___ ||  __/| \\_/|
-\\_/ \\____/\\____/\\____/ \\____/\\____/____/\\_/   \\____/
+      _   ___  ____  _      _____ ____ ____      ____  ____ 
+     | | / _ \|  _ \| |    | ____/ ___/ ___|    |  _ \/ _  |
+     | || | | | |_) | |    |  _| \___ \___ \    | |_) | | | |
+  _  | || |_| |  _ <| |___ | |___ ___) |__) )   |  _ <| |_| |
+  \_/ \_/ \___/|_| \_\_____|_____|____/____/    |_| \_\____/ 
             </div>
             <div style="font-size:10px; margin-bottom:25px; color:#aaa; letter-spacing: 1px;">${DB.txt('mobile_ed').toUpperCase()}</div>
             <button onclick="G.showReg()" class="btn-block" style="font-size: 14px; letter-spacing: 2px;">${DB.txt('start').toUpperCase()}</button>
