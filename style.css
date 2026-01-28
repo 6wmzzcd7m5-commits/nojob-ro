@@ -169,7 +169,7 @@ button:active {
 
 .btn-sm {
     padding: 4px 8px;
-    font-size: 10px;
+    font-size: 7px;
 }
 
 .btn-red {
@@ -234,7 +234,7 @@ button:active {
     width: 100%;
     text-align: center;
     top: 0;
-    font-size: 10px;
+    font-size: 7px;
     color: #fff;
     text-shadow: 1px 1px 2px #000;
     line-height: 14px;
@@ -264,7 +264,7 @@ button:active {
 #log {
     height: 70px;
     overflow-y: hidden;
-    font-size: 10px;
+    font-size: 7px;
     margin-top: 5px;
     flex-shrink: 0;
     display: flex;
@@ -453,6 +453,6 @@ button:active {
 
 @media screen and (min-width: 400px) {
     .ascii-title {
-        font-size: 10px;
+        font-size: 7px;
     }
 }
