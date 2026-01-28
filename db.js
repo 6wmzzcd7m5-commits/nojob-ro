@@ -225,15 +225,15 @@ window.DB = {
         },
         scaling: (floor) => {
             const isBoss = (floor % 10 === 0);
-            const multi = isBoss ? 5 : 1;
-            const NERF = 0.75;
+            const multi = isBoss ? 4 : 1; // Slight multi nerf from 5 to 4
+            const NERF = 0.65; // Increase global nerf from 0.75 to 0.65
             const mName = window.DB.mobs.names[Math.min(floor - 1, 19)] || `Void Spectre #${floor}`;
 
             return {
                 n: mName,
-                hp: Math.floor(((50 + (floor * 40)) * multi) * NERF),
-                atk: Math.floor(((10 + (floor * 10)) * multi) * NERF),
-                def: Math.floor((floor * 1.5) * NERF),
+                hp: Math.floor(((40 + (floor * 20)) * multi) * NERF), // Reduced base from 50 to 40, scale from 25 to 20
+                atk: Math.floor(((8 + (floor * 4)) * multi) * NERF), // Reduced base from 10 to 8, scale from 6 to 4
+                def: Math.floor((floor * 1.0) * NERF), // Reduced from 1.2 to 1.0
                 zeny: floor * 20,
                 card: window.DB.mobs.cards[mName] || null
             };

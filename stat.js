@@ -14,8 +14,8 @@ window.STATS = {
     // Refresh Sub-stats (Derived from Base Stats)
     // Note: Most logic is in UI.render, but we can centralize specific HP/SP bonuses here if needed.
     refreshVitals: (p) => {
-        // Base Novice Vit provides 10 HP per point
-        // Job-specific modifiers are handled in the XP loop or UI layer
-        p.mh = 100 + (p.vit * 10);
+        // RO Style: 10 HP per Point of VIT
+        const baseHp = p.job === 'Novice' ? 100 : 200;
+        p.mh = baseHp + (p.vit * 10) + (p.lvl * 5);
     }
 };

@@ -1,7 +1,7 @@
 /* --- AEGIS_SCENE_DATABASE_V1.02 --- */
 window.SCENES = {
     start: (p, s) => `
-        <div class="panel grid g-1" style="text-align:center; padding: 30px 20px;">
+        <div class="panel grid g-1 scene-start">
             <div class="ascii-title">
       _  ____  ____  _      ______  _____ _____   _____   ____  
      | |/ __ \|  _ \| |     |  ____|/ ____/ ____| |  __ \ / __ \ 
@@ -10,15 +10,15 @@ window.SCENES = {
 | |__| | |__| | |_) | |___  | |____ ____) |___) | | | \ \| |__| |
  \____/ \____/|____/|_____|______|_____/_____/  |_|  \_\\____/
             </div>
-            <div style="font-size:10px; margin-bottom:25px; color:#aaa; letter-spacing: 1px;">${DB.txt('mobile_ed').toUpperCase()}</div>
-            <button onclick="G.showReg()" class="btn-block" style="font-size: 14px; letter-spacing: 2px;">${DB.txt('start').toUpperCase()}</button>
+            <div class="mobile-tag">${DB.txt('mobile_ed').toUpperCase()}</div>
+            <button onclick="G.showReg()" class="btn-block btn-start">${DB.txt('start').toUpperCase()}</button>
         </div>`,
 
     // 1. Ported: Registration Scene
     reg: (p, s) => `
-        <div class="panel grid g-1" style="position:relative;">
-            <div style="text-align:center; padding:10px 0; background:rgba(0,0,0,0.3); border-bottom:1px solid #222; margin-bottom:10px;">
-                <div class="avatar-box" style="margin:0 auto; width:100%;">
+        <div class="panel grid g-1 scene-reg">
+            <div class="spr-preview-box">
+                <div class="avatar-box spr-container">
                     <div id="reg-spr" class="spr j-Novice ${G.s.tmpG === 'f' ? 'ro-f' : 'ro-m'}">
                         <div class="hd"><div class="pony"></div></div>
                         <div class="bd"></div>
@@ -26,19 +26,19 @@ window.SCENES = {
                 </div>
             </div>
 
-            <div class="flex" style="gap:5px;">
-                <input id="pname" placeholder="${DB.txt('init')}" class="panel" style="background:#000; color:var(--neon); border-color:var(--neon); width:70%; font-size:9px;">
-                <select id="pgender" onchange="G.setG(this.value)" class="panel" style="width:30%; background:#000; color:var(--neon); border-color:var(--neon); font-size:9px; height:28px;">
+            <div class="flex input-row">
+                <input id="pname" placeholder="${DB.txt('init')}" class="panel input-reg pname">
+                <select id="pgender" onchange="G.setG(this.value)" class="panel input-reg pgender">
                     <option value="m" ${G.s.tmpG === 'm' ? 'selected' : ''}>_M</option>
                     <option value="f" ${G.s.tmpG === 'f' ? 'selected' : ''}>_F</option>
                 </select>
             </div>
             
-            <button onclick="G.initChar()" class="btn-block" style="margin: 5px 0;">
+            <button onclick="G.initChar()" class="btn-block btn-reg">
                 ${DB.txt('start')}
             </button>
 
-            <select id="pdiff" class="panel" style="width:100%; background:#000; color:var(--neon); border-color:var(--neon); font-size:9px; height:25px;">
+            <select id="pdiff" class="panel input-reg pdiff">
                 <option value="0.8">${DB.txt('easy')} (0.8x ${DB.txt('stats')})</option>
                 <option value="1.0" selected>${DB.txt('normal')} (1.0x ${DB.txt('stats')})</option>
                 <option value="1.5">${DB.txt('hard')} (1.5x ${DB.txt('stats')})</option>
@@ -49,8 +49,8 @@ window.SCENES = {
     mnu: (p, s) => {
         return `
             <div class="grid g-1">
-                <button onclick="G.startBattle()" class="panel btn-block" style="border-color:var(--neon); padding:20px;">${DB.txt('warp_to')} ${DB.getLocation(s.f)}</button>
-                <button onclick="G.loadRank()" class="panel btn-block" style="font-size:10px; border-color:var(--sp); color:var(--sp); padding:8px;">${DB.txt('rank')}</button>
+                <button onclick="G.startBattle()" class="panel btn-block btn-warp">${DB.txt('warp_to')} ${DB.getLocation(s.f)}</button>
+                <button onclick="G.loadRank()" class="panel btn-block btn-rank">${DB.txt('rank')}</button>
             </div>`;
     },
 
@@ -103,7 +103,8 @@ window.SCENES = {
     // 4. Ported: Job Selection Office
     job: (p) => {
         const jobs = DB.getJob(p.job).next;
-        const btns = jobs.map(j => `<button onclick="G.changeJob('${j}')" class="panel btn-block">${DB.getName('jobs', j)}</button>`).join('');
+        const suffix = p.gender === 'f' ? '_F' : '_M';
+        const btns = jobs.map(j => `<button onclick="G.changeJob('${j}')" class="panel btn-block">${DB.getName('jobs', j)}${suffix}</button>`).join('');
         return `<div class="panel grid g-1"><div style="text-align:center; margin-bottom:5px;">${DB.txt('job_office')}</div>${btns}</div>`;
     },
 
@@ -119,7 +120,7 @@ window.SCENES = {
     // 6. NEW: Leaderboard Scene
     rank: (list) => {
         const rows = (list || []).map((r, i) => `
-            <div class="flex" style="justify-content:space-between; font-size:9px; padding:6px 4px; border-bottom:1px solid #222;">
+            <div class="flex rank-row">
                 <span style="color:var(--zeny);">#${i + 1} ${r.n}</span>
                 <span class="c-yel">F${r.f}</span>
                 <span class="c-blu" style="font-size:8px;">${r.j}</span>
@@ -127,9 +128,9 @@ window.SCENES = {
         `).join('');
         return `
             <div class="panel grid g-1" style="border-color:var(--sp);">
-                <div style="text-align:center; color:var(--sp); font-weight:bold; margin-bottom:10px; font-size:12px;">${DB.txt('legends')}</div>
-                <div style="max-height:200px; overflow-y:auto; background:rgba(0,0,0,0.3); padding:5px; border-radius:4px;">${rows || '<div style="text-align:center; color:#444;">NO DATA</div>'}</div>
-                <button onclick="UI.loadScene('mnu', G.p, G.s)" class="btn-block" style="margin-top:10px;">${DB.txt('back')}</button>
+                <div class="rank-header">${DB.txt('legends')}</div>
+                <div class="rank-list">${rows || '<div class="no-data">NO DATA</div>'}</div>
+                <button onclick="UI.loadScene('mnu', G.p, G.s)" class="btn-block mt-2">${DB.txt('back')}</button>
             </div>`;
     }
 };
