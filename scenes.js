@@ -3,11 +3,12 @@ window.SCENES = {
     start: (p, s) => `
         <div class="panel grid g-1" style="text-align:center; padding: 30px 20px;">
             <div class="ascii-title">
-      _   ___  ____  _      _____ ____ ____      ____  ____ 
-     | | / _ \|  _ \| |    | ____/ ___/ ___|    |  _ \/ _  |
-     | || | | | |_) | |    |  _| \___ \___ \    | |_) | | | |
-  _  | || |_| |  _ <| |___ | |___ ___) |__) )   |  _ <| |_| |
-  \_/ \_/ \___/|_| \_\_____|_____|____/____/    |_| \_\____/ 
+      _  ____  ____  _      ______  _____ _____   _____   ____  
+     | |/ __ \|  _ \| |     |  ____|/ ____/ ____| |  __ \ / __ \ 
+     | | |  | | |_) | |     | |__  | (___| (___   | |__) | |  | |
+ _   | | |  | |  _ <| |     |  __|  \___ \\___ \  |  _  /| |  | |
+| |__| | |__| | |_) | |___  | |____ ____) |___) | | | \ \| |__| |
+ \____/ \____/|____/|_____|______|_____/_____/  |_|  \_\\____/
             </div>
             <div style="font-size:10px; margin-bottom:25px; color:#aaa; letter-spacing: 1px;">${DB.txt('mobile_ed').toUpperCase()}</div>
             <button onclick="G.showReg()" class="btn-block" style="font-size: 14px; letter-spacing: 2px;">${DB.txt('start').toUpperCase()}</button>

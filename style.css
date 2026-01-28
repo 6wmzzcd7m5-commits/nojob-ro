@@ -395,32 +395,59 @@ button:active {
 .ascii-title {
     font-family: 'Courier New', Courier, monospace;
     white-space: pre;
-    font-size: 7px;
-    /* Slightly smaller for better fit */
+    font-size: 5px;
+    /* Reduced for the larger art */
     font-weight: bold;
     line-height: 1.1;
     color: var(--neon);
-    text-shadow: 0 0 8px var(--neon);
-    animation: pulse-neon 2s infinite ease-in-out;
+    text-shadow: 0 0 10px var(--neon), 0 0 20px var(--neon);
+    animation: pulse-neon 3s infinite ease-in-out;
     margin-bottom: 25px;
-    overflow-x: hidden;
-    /* Avoid side scroll inside container */
+    position: relative;
+    overflow: hidden;
     text-align: center;
     display: block;
     width: 100%;
+}
+
+/* CRT Scanline Effect */
+.ascii-title::after {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%,
+            rgba(0, 0, 0, 0.2) 50%), linear-gradient(90deg,
+            rgba(255, 0, 0, 0.06),
+            rgba(0, 255, 0, 0.02),
+            rgba(0, 0, 255, 0.06));
+    z-index: 2;
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: none;
 }
 
 @keyframes pulse-neon {
 
     0%,
     100% {
+        text-shadow: 0 0 10px var(--neon), 0 0 20px var(--neon);
         opacity: 1;
-        text-shadow: 0 0 10px var(--neon);
+        transform: scale(1);
     }
 
-    50% {
-        opacity: 0.8;
-        text-shadow: 0 0 20px var(--neon), 0 0 30px var(--neon);
+    33% {
+        text-shadow: 0 0 15px var(--neon), 0 0 30px var(--neon);
+        opacity: 0.9;
+        transform: scale(1.02);
+    }
+
+    66% {
+        text-shadow: 0 0 8px var(--neon), 0 0 15px var(--neon);
+        opacity: 0.95;
+        transform: scale(0.98);
     }
 }
 
