@@ -1,25 +1,33 @@
 /* --- AEGIS_SCENE_DATABASE_V1.02 --- */
 window.SCENES = {
-    // 0. NEW: Start / Splash Screen
     start: (p, s) => `
-        <div class="panel grid g-1" style="border-color:var(--neon); text-align:center;">
-            <div style="font-family:var(--impact); font-size:24px; margin-bottom:10px;">JOBLESS RO</div>
-            <div style="font-size:10px; margin-bottom:15px; color:#888;">${DB.txt('mobile_ed')}</div>
-            <button onclick="G.showReg()" style="width:100%; padding:15px;">${DB.txt('start')}</button>
+        <div class="panel grid g-1" style="text-align:center; padding: 30px 20px;">
+            <div style="font-family:var(--impact); font-size:32px; margin-bottom:10px; color:var(--neon); text-shadow: 0 0 10px var(--neon);">JOBLESS RO</div>
+            <div style="font-size:10px; margin-bottom:25px; color:#aaa; letter-spacing: 1px;">${DB.txt('mobile_ed').toUpperCase()}</div>
+            <button onclick="G.showReg()" class="btn-block" style="font-size: 14px; letter-spacing: 2px;">${DB.txt('start').toUpperCase()}</button>
         </div>`,
 
     // 1. Ported: Registration Scene
     reg: (p, s) => `
-        <div class="panel grid g-1" style="border-color:var(--neon);">
+        <div class="panel grid g-1" style="position:relative;">
+            <div style="text-align:center; padding:10px 0; background:rgba(0,0,0,0.3); border-bottom:1px solid #222; margin-bottom:10px;">
+                <div class="avatar-box" style="margin:0 auto; width:100%;">
+                    <div id="reg-spr" class="spr j-Novice ${G.s.tmpG === 'f' ? 'ro-f' : 'ro-m'}">
+                        <div class="hd"><div class="pony"></div></div>
+                        <div class="bd"></div>
+                    </div>
+                </div>
+            </div>
+
             <div class="flex" style="gap:5px;">
                 <input id="pname" placeholder="${DB.txt('init')}" class="panel" style="background:#000; color:var(--neon); border-color:var(--neon); width:70%; font-size:9px;">
                 <select id="pgender" onchange="G.setG(this.value)" class="panel" style="width:30%; background:#000; color:var(--neon); border-color:var(--neon); font-size:9px; height:28px;">
-                    <option value="m">_M</option>
-                    <option value="f">_F</option>
+                    <option value="m" ${G.s.tmpG === 'm' ? 'selected' : ''}>_M</option>
+                    <option value="f" ${G.s.tmpG === 'f' ? 'selected' : ''}>_F</option>
                 </select>
             </div>
             
-            <button onclick="G.initChar()" style="width:100%; margin: 5px 0; border-color:var(--neon); background:#000; color:var(--neon); font-weight:bold;">
+            <button onclick="G.initChar()" class="btn-block" style="margin: 5px 0;">
                 ${DB.txt('start')}
             </button>
 
@@ -35,7 +43,7 @@ window.SCENES = {
         const hasPts = p.pts > 0;
         return `
             <div class="grid g-1">
-                <button onclick="G.startBattle()" class="panel" style="width:100%; padding:20px; border-color:var(--neon);">${DB.txt('warp_to')} ${DB.getLocation(s.f)}</button>
+                <button onclick="G.startBattle()" class="panel btn-block" style="border-color:var(--neon); padding:20px;">${DB.txt('warp_to')} ${DB.getLocation(s.f)}</button>
                 <div class="flex" style="gap:5px;">
                     <button onclick="UI.loadScene('stats', G.p, G.s)" class="panel" style="flex:1; font-size:10px; border-color:${hasPts ? 'var(--neon)' : 'var(--sp)'}; color:${hasPts ? 'var(--neon)' : 'var(--sp)'}; padding:8px;">${DB.txt('stats')}${hasPts ? ' (!)' : ''}</button>
                     <button onclick="G.loadRank()" class="panel" style="flex:1; font-size:10px; border-color:var(--sp); color:var(--sp); padding:8px;">${DB.txt('rank')}</button>
@@ -54,11 +62,11 @@ window.SCENES = {
         `).join('');
 
         return `
-            <div class="panel grid g-1" style="border-color:var(--neon);">
+            <div class="panel grid g-1">
                 <div style="text-align:center; color:var(--neon); font-weight:bold; margin-bottom:5px;">${DB.txt('stats')}</div>
                 <div style="font-size:10px; text-align:center; margin-bottom:10px;">${DB.txt('pts')} <b class="c-yel">${p.pts || 0}</b></div>
-                <div style="background:rgba(0,0,0,0.5); padding:5px;">${rows}</div>
-                <button onclick="UI.loadScene('mnu', G.p, G.s)" style="width:100%; font-size:10px; border-color:var(--neon); margin-top:10px; padding:10px;">${DB.txt('back')}</button>
+                <div style="background:rgba(0,0,0,0.3); padding:5px; border-radius:4px;">${rows}</div>
+                <button onclick="UI.loadScene('mnu', G.p, G.s)" class="btn-block" style="margin-top:10px;">${DB.txt('back')}</button>
             </div>`;
     },
 
@@ -68,7 +76,7 @@ window.SCENES = {
             let sd = null;
             for (let c in DB.skills) if (DB.skills[c][sn]) sd = DB.skills[c][sn];
             const typeLabel = sd.mode === 'act' ? '[A]' : '[P]';
-            return `<button onclick="G.learnSkill('${sn}')" class="panel" style="text-align:left; padding:10px; border-color:var(--sp); font-size:9px;">
+            return `<button onclick="G.learnSkill('${sn}')" class="panel" style="text-align:left; padding:10px; border-color:var(--sp); font-size:9px; width:100%;">
                 <div class="flex" style="justify-content:space-between;">
                     <b style="color:var(--sp);">${DB.getName('skills', sn)}</b>
                     <span style="color:#666;">${typeLabel}</span>
@@ -85,28 +93,28 @@ window.SCENES = {
     },
 
     // 3. Ported: Active Combat Status
-    btl: () => `<div class="panel" style="text-align:center; color:var(--hp); border:1px dotted var(--neon); background:#000;">${DB.txt('combat')}</div>`,
+    btl: () => `<div class="panel" style="text-align:center; color:var(--hp); border:1px dotted var(--neon); background:rgba(0,0,0,0.5);">${DB.txt('combat')}</div>`,
 
     // 4. Ported: Job Selection Office
     job: (p) => {
         const jobs = DB.getJob(p.job).next;
-        const btns = jobs.map(j => `<button onclick="G.changeJob('${j}')" class="panel" style="border-color:var(--neon);">${DB.getName('jobs', j)}</button>`).join('');
-        return `<div class="panel grid g-1" style="border-color:var(--neon);"><div style="text-align:center; margin-bottom:5px;">${DB.txt('job_office')}</div>${btns}</div>`;
+        const btns = jobs.map(j => `<button onclick="G.changeJob('${j}')" class="panel btn-block">${DB.getName('jobs', j)}</button>`).join('');
+        return `<div class="panel grid g-1"><div style="text-align:center; margin-bottom:5px;">${DB.txt('job_office')}</div>${btns}</div>`;
     },
 
     // 5. NEW: Game Over Scene
     gameover: (p, s) => `
-        <div class="panel grid g-1" style="border-color:var(--hp); text-align:center;">
-            <div style="color:var(--hp); font-size:18px; font-weight:bold;">GAME OVER</div>
-            <div style="font-size:10px; margin:10px 0;">${DB.txt('reached')} ${s.f}</div>
-            <div style="font-size:10px; color:#888; margin-bottom:10px;">${DB.txt('ended')}</div>
-            <button onclick="location.reload()" class="btn-red" style="width:100%;">${DB.txt('retry')}</button>
+        <div class="panel grid g-1" style="border-color:var(--hp); text-align:center; padding: 20px;">
+            <div style="color:var(--hp); font-size:24px; font-weight:bold; font-family:var(--impact);">GAME OVER</div>
+            <div style="font-size:12px; margin:15px 0;">${DB.txt('reached')} ${s.f}</div>
+            <div style="font-size:10px; color:#888; margin-bottom:20px;">${DB.txt('ended')}</div>
+            <button onclick="location.reload()" class="btn-red btn-block">${DB.txt('retry')}</button>
         </div>`,
 
     // 6. NEW: Leaderboard Scene
     rank: (list) => {
         const rows = (list || []).map((r, i) => `
-            <div class="flex" style="justify-content:space-between; font-size:9px; padding:3px 2px; border-bottom:1px solid #222;">
+            <div class="flex" style="justify-content:space-between; font-size:9px; padding:6px 4px; border-bottom:1px solid #222;">
                 <span style="color:var(--zeny);">#${i + 1} ${r.n}</span>
                 <span class="c-yel">F${r.f}</span>
                 <span class="c-blu" style="font-size:8px;">${r.j}</span>
@@ -114,9 +122,9 @@ window.SCENES = {
         `).join('');
         return `
             <div class="panel grid g-1" style="border-color:var(--sp);">
-                <div style="text-align:center; color:var(--sp); font-weight:bold; margin-bottom:5px; font-size:11px;">${DB.txt('legends')}</div>
-                <div style="max-height:140px; overflow-y:auto; background:rgba(0,0,0,0.5); padding:2px;">${rows || '<div style="text-align:center; color:#444;">NO DATA</div>'}</div>
-                <button onclick="UI.loadScene('mnu', G.p, G.s)" style="width:100%; font-size:9px; border-color:var(--sp); margin-top:5px; padding:10px;">${DB.txt('back')}</button>
+                <div style="text-align:center; color:var(--sp); font-weight:bold; margin-bottom:10px; font-size:12px;">${DB.txt('legends')}</div>
+                <div style="max-height:200px; overflow-y:auto; background:rgba(0,0,0,0.3); padding:5px; border-radius:4px;">${rows || '<div style="text-align:center; color:#444;">NO DATA</div>'}</div>
+                <button onclick="UI.loadScene('mnu', G.p, G.s)" class="btn-block" style="margin-top:10px;">${DB.txt('back')}</button>
             </div>`;
     }
 };

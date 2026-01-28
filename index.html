@@ -11,40 +11,38 @@
 
 <body class="lang-en" style="background:#000;">
 
-    <div id="app" style="height: 100dvh; display: flex; flex-direction: column;">
-        <header class="panel" style="border-color: var(--neon); background:#000;">
-            <div class="flex" style="border-bottom:1px solid var(--neon); padding-bottom:5px; margin-bottom:5px;">
-                <div class="flex" style="gap:5px">
+    <div id="app">
+        <header class="panel main-hud">
+            <div class="flex hud-top">
+                <div class="flex nav-btns">
                     <button class="btn-sm" id="btn-save" onclick="G.exp()">SAVE</button>
                     <button class="btn-sm btn-red" id="btn-reset" onclick="G.reset()">RESET</button>
-                    <button class="btn-sm" id="btn-rank" onclick="G.loadRank()" style="color:var(--zeny)">RANK</button>
+                    <button class="btn-sm btn-yel" id="btn-rank" onclick="G.loadRank()">RANK</button>
                     <button class="btn-sm" onclick="G.toggleLang()">EN/繁</button>
                 </div>
                 <button class="btn-sm" id="btn-speed" onclick="G.cycleSpd()" style="min-width:40px;">1x</button>
             </div>
 
-            <div class="flex">
+            <div class="flex player-info">
                 <div style="flex:1;">
-                    <div class="flex">
-                        <div>
-                            <span id="ui-name" class="c-n" style="font-weight:bold; margin-right:5px;">Novice</span>
-                            <b id="ui-job" class="c-n">Novice</b>
+                    <div class="flex info-row">
+                        <div class="name-job">
+                            <span id="ui-name" class="c-n name-text">Novice</span>
+                            <b id="ui-job" class="c-n job-text">Novice</b>
                         </div>
-                        <div style="font-size: 9px;"><span id="lbl-lv">Lv</span> <span id="ui-lvl">1</span></div>
+                        <div class="lvl-box"><span id="lbl-lv">Lv</span> <span id="ui-lvl">1</span></div>
                     </div>
-                    <div class="bar-container" style="border-color:var(--neon); position: relative;">
+                    <div class="bar-container hp-bar">
                         <div id="hp-fill" class="fill"></div>
-                        <div id="hp-text"
-                            style="position: absolute; width:100%; text-align:center; top:0; font-size:8px; color:#fff; text-shadow:1px 1px #000; line-height:10px;">
-                            0/0</div>
+                        <div id="hp-text" class="bar-text">0/0</div>
                     </div>
-                    <div class="bar-container" style="height:2px; margin-top:2px; border:none; background:transparent;">
-                        <div id="atb-fill" style="width:0%; height:100%; background:var(--neon); opacity:0.4;"></div>
+                    <div class="bar-container atb-bar-mini">
+                        <div id="atb-fill" class="fill atb-fill"></div>
                     </div>
                 </div>
             </div>
 
-            <div class="grid g-6" style="margin-top:5px; font-size:8px;">
+            <div class="grid g-6 battle-stats">
                 <div class="stat-cell"><span id="lbl-atk">ATK</span><b id="ui-atk">0</b></div>
                 <div class="stat-cell"><span id="lbl-matk">MATK</span><b id="ui-matk">0</b></div>
                 <div class="stat-cell"><span id="lbl-cri">CRI</span><b id="ui-cri">0</b></div>
@@ -53,7 +51,7 @@
                 <div class="stat-cell"><span id="lbl-def">DEF</span><b id="ui-def">0</b></div>
             </div>
 
-            <div class="grid g-6" style="margin-top:4px;">
+            <div class="grid g-6 primary-stats">
                 <div class="stat-cell"><span id="lbl-str">STR</span><b id="ui-str">1</b></div>
                 <div class="stat-cell"><span id="lbl-agi">AGI</span><b id="ui-agi">1</b></div>
                 <div class="stat-cell"><span id="lbl-vit">VIT</span><b id="ui-vit">1</b></div>
@@ -62,18 +60,18 @@
                 <div class="stat-cell"><span id="lbl-luk">LUK</span><b id="ui-luk">1</b></div>
             </div>
 
-            <div class="flex"
-                style="margin-top:5px; padding-top:2px; border-top:1px solid #111; justify-content:space-between; font-size:9px;">
-                <div id="ui-loc" class="c-ora" style="font-weight:bold;">Prontera Field</div>
-                <div class="c-n"><span id="lbl-flr">FLR</span>: <span id="ui-floor">1</span></div>
+            <div class="flex world-info">
+                <div id="ui-loc" class="c-ora loc-text">Prontera Field</div>
+                <div class="c-n floor-box"><span id="lbl-flr">FLR</span>: <span id="ui-floor">1</span></div>
             </div>
         </header>
 
         <section id="stage" class="panel">
             <div id="p-box" class="avatar-box">
                 <div id="p-spr" class="spr">
-                    <div class="pony"></div>
-                    <div class="hd"></div>
+                    <div class="hd">
+                        <div class="pony"></div>
+                    </div>
                     <div class="bd"></div>
                 </div>
             </div>
@@ -82,29 +80,23 @@
                     <div class="hd"></div>
                     <div class="bd"></div>
                 </div>
-                <small id="e-name"
-                    style="position:absolute; top:-35px; width:100%; text-align:center; font-size:9px; color:var(--hp); font-weight:bold;"></small>
-                <div style="position:absolute; top:-20px; width:100%;">
-                    <div class="bar-container" style="height:4px; border-color:var(--neon);">
-                        <div id="e-hp-fill" class="fill" style="background:var(--hp); width:100%;"></div>
+                <small id="e-name" class="enemy-name"></small>
+                <div class="enemy-vitals">
+                    <div class="bar-container e-hp">
+                        <div id="e-hp-fill" class="fill"></div>
                     </div>
-                    <div class="bar-container" style="height:2px; border:none; background:transparent;">
-                        <div id="e-atb-fill" style="width:0%; height:100%; background:rgba(255,255,255,0.3);"></div>
+                    <div class="bar-container e-atb">
+                        <div id="e-atb-fill" class="fill"></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <div id="inv-hud" class="panel"
-            style="margin-top:5px; font-size:9px; height:45px; overflow-x:auto; display:flex; gap:5px; align-items:center; border-color:var(--neon); background:#000;">
-        </div>
-
-        <div id="skill-hud" class="panel"
-            style="margin-top:2px; font-size:9px; height:40px; overflow-x:auto; display:flex; gap:3px; align-items:center; border-color:var(--sp); background:#000;">
-        </div>
+        <div id="inv-hud" class="panel inventory-panel"></div>
+        <div id="skill-hud" class="panel skill-panel"></div>
 
         <main id="ctl" class="grid"></main>
-        <footer id="log" class="panel"></footer>
+        <footer id="log" class="panel log-panel"></footer>
     </div>
 
     <script src="db.js"></script>
@@ -160,7 +152,13 @@
 
             reset() { if (confirm(DB.txt('confirm_reset'))) { localStorage.removeItem('ro_prime_v3'); location.reload(); } },
 
-            setG(val) { this.s.tmpG = val; },
+            setG(val) {
+                this.s.tmpG = val;
+                const spr = el('reg-spr');
+                if (spr) spr.className = `spr j-Novice ${val === 'f' ? 'ro-f' : 'ro-m'}`;
+                const pspr = el('p-spr');
+                if (pspr) pspr.className = `spr j-Novice ${val === 'f' ? 'ro-f' : 'ro-m'}`;
+            },
 
             initChar() {
                 if (this.s.pvw) clearInterval(this.s.pvw);
