@@ -457,13 +457,14 @@
                 UI.render(this.p, this.s);
             },
 
-            this.p.job = newJob;
-            ['str', 'agi', 'vit', 'int', 'dex', 'luk'].forEach(s => this.p[s] += 5);
-            STATS.refreshVitals(this.p);
-            this.p.hp = this.p.mh;
-            this.grantSkill();
-            this.sv(); UI.render(this.p, this.s); UI.loadScene('stats', this.p, this.s);
-        },
+            changeJob(newJob) {
+                this.p.job = newJob;
+                ['str', 'agi', 'vit', 'int', 'dex', 'luk'].forEach(s => this.p[s] += 5);
+                STATS.refreshVitals(this.p);
+                this.p.hp = this.p.mh;
+                this.grantSkill();
+                this.sv(); UI.render(this.p, this.s); UI.loadScene('stats', this.p, this.s);
+            },
 
             grantSkill() {
                 if (!this.p.skills) this.p.skills = [];
@@ -480,31 +481,31 @@
                 }
             },
 
-                startBattle() {
-            const isBoss = (this.s.f % 10 === 0);
-            let mobIndex;
-            if (isBoss) {
-                const bossPool = DB.mobs.names.filter(n => n.includes('[MVP]'));
-                mobIndex = DB.mobs.names.indexOf(bossPool[Math.floor(Math.random() * bossPool.length)]);
-            } else {
-                const regularPool = DB.mobs.names.filter(n => !n.includes('[MVP]'));
-                mobIndex = DB.mobs.names.indexOf(regularPool[Math.floor(Math.random() * regularPool.length)]);
-            }
+            startBattle() {
+                const isBoss = (this.s.f % 10 === 0);
+                let mobIndex;
+                if (isBoss) {
+                    const bossPool = DB.mobs.names.filter(n => n.includes('[MVP]'));
+                    mobIndex = DB.mobs.names.indexOf(bossPool[Math.floor(Math.random() * bossPool.length)]);
+                } else {
+                    const regularPool = DB.mobs.names.filter(n => !n.includes('[MVP]'));
+                    mobIndex = DB.mobs.names.indexOf(regularPool[Math.floor(Math.random() * regularPool.length)]);
+                }
 
-            this.s.mob = DB.mobs.scaling(this.s.f);
-            this.s.mob.n = DB.mobs.names[mobIndex];
-            this.s.mob.hp *= (this.p.diff || 1.0);
-            this.s.mob.atk *= (this.p.diff || 1.0);
-            this.s.mob.mhp = this.s.mob.hp;
+                this.s.mob = DB.mobs.scaling(this.s.f);
+                this.s.mob.n = DB.mobs.names[mobIndex];
+                this.s.mob.hp *= (this.p.diff || 1.0);
+                this.s.mob.atk *= (this.p.diff || 1.0);
+                this.s.mob.mhp = this.s.mob.hp;
 
-            el('e-spr').className = `spr ${this.s.mob.n.includes('[MVP]') ? 'spr-mvp' : ''} m-${this.s.mob.n.replace(/ \[MVP\]/g, '').replace(/\s+/g, '-')}`;
-            el('e-name').innerText = DB.getName('mobs', this.s.mob.n); el('e-hp-fill').style.width = "100%";
-            this.s.b = true; this.s.atb = 0; this.s.eatb = 0;
-            this.startLoop(); UI.loadScene('btl', this.p, this.s);
-        },
+                el('e-spr').className = `spr ${this.s.mob.n.includes('[MVP]') ? 'spr-mvp' : ''} m-${this.s.mob.n.replace(/ \[MVP\]/g, '').replace(/\s+/g, '-')}`;
+                el('e-name').innerText = DB.getName('mobs', this.s.mob.n); el('e-hp-fill').style.width = "100%";
+                this.s.b = true; this.s.atb = 0; this.s.eatb = 0;
+                this.startLoop(); UI.loadScene('btl', this.p, this.s);
+            },
 
-        sv() { localStorage.setItem('ro_prime_v3', btoa(JSON.stringify(this.p))); },
-        exp() { const a = document.createElement('a'); a.href = 'data:text/plain;base64,' + btoa(JSON.stringify(this.p)); a.download = 'save.jro'; a.click(); }
+            sv() { localStorage.setItem('ro_prime_v3', btoa(JSON.stringify(this.p))); },
+            exp() { const a = document.createElement('a'); a.href = 'data:text/plain;base64,' + btoa(JSON.stringify(this.p)); a.download = 'save.jro'; a.click(); }
         };
         window.onload = () => G.boot();
     </script>
