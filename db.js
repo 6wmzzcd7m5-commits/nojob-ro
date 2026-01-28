@@ -78,9 +78,9 @@ window.DB = {
                 "Magma Dungeon": "諾可羅德 (火洞)", "Ice Dungeon": "冰洞穴", "Abyss Lake": "深淵湖水", "Thanatos Tower": "達納托斯之塔"
             },
             mobs: {
-                "Poring": "波利", "Fabre": "綠棉蟲", "Lunatic": "瘋兔", "Chonchon": "蒼蠅", "Roda Frog": "羅達蛙",
-                "Spore": "蘑菇", "Tarou": "塔魯安", "Poison Spore": "毒蘑菇", "Wormtail": "土波利", "Angeling [MVP]": "天使波利 [MVP]",
-                "Zombie": "殭屍", "Skeleton": "邪骸戰士", "Poporing": "波波利", "Hydra": "海葵", "Vadon": "螃蟹",
+                "Poring": "波利", "Fabre": "法貝", "Lunatic": "瘋兔", "Chonchon": "蒼蠅", "Roda Frog": "羅達蛙",
+                "Spore": "孢子", "Tarou": "塔若", "Poison Spore": "毒孢子", "Wormtail": "蚯蚓", "Angeling [MVP]": "天使波利 [MVP]",
+                "Zombie": "殭屍", "Skeleton": "邪骸戰士", "Poporing": "波波利", "Hydra": "海葵", "Vadon": "瓦頓",
                 "Marina": "瑪麗娜", "Thief Bug": "盜蟲", "Soldier Skeleton": "邪骸士兵", "Archer Skeleton": "邪骸弓箭手", "Golden Thief Bug [MVP]": "黃金盜蟲 [MVP]"
             },
             jobs: {
@@ -98,8 +98,8 @@ window.DB = {
                 'Lord of Vermilion': '怒雷強擊', 'Meteor Storm': '隕石術', 'Meditation': '冥想',
                 'Turn Undead': '轉生術', 'Envenom': '施毒', 'Double Strafe': '二連矢',
                 'Owl\'s Eye': '梟之眼', 'Vulture\'s Eye': '鵂鶹之眼', 'Improve Concentration': '集中力向上',
-                'Sonic Blow': '音速投擲', 'Falcon Assault': '獵鷹突擊', 'Venom Splasher': '毒性反彈',
-                'Back Stab': '背刺', 'Slasher': '斬擊', 'Increase HP Recovery': '生命力恢復', 'Two-Hand Mastery': '雙手劍修練',
+                'Sonic Blow': '音速投擲', 'Falcon Assault': '獵鷹突擊', 'Venom Splasher': '毒性感染',
+                'Back Stab': '背刺', 'Slasher': '斬擊', 'Increase HP Recovery': '生命力回復', 'Two-Hand Mastery': '雙手劍修練',
                 'First Aid': '急救', 'Basic Skill': '基本技能'
             }
         }
